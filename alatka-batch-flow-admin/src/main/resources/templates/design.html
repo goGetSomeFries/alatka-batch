@@ -13,8 +13,9 @@
 
 <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
-<script th:src="@{/webjars/mxgraph/javascript/mxClient.min.js}"></script>
+<script th:src="@{/webjars/mxgraph/javascript/src/js/mxClient.js}"></script>
 <script>
+    mxBasePath = 'src/'
     initDAG();
 
     function initDAG() {
