@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>alatka-batch-flow-admin</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div class="container mt-4">
+    <div id="dagContainer"></div>
+</div>
+
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/webjars/mxgraph/javascript/mxClient.min.js}"></script>
+<script>
+    initDAG();
+
+    function initDAG() {
+        let graph = new mxGraph($('#dagContainer')[0]);
+        let parent = graph.getDefaultParent();
+
+        graph.setConnectable(true);
+        graph.setMultigraph(false);
+    }
+</script>
+</body>
+</html>

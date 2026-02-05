@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: alatka-batch-example
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.sqlite.JDBC
+    url: jdbc:sqlite:${user.dir}/alatka-batch-example/db/example.db
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.sqlite.hibernate.dialect.SQLiteDialect
+server:
+  port: 8087

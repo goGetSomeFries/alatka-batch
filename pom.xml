@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>alatka</artifactId>
+        <groupId>com.alatka</groupId>
+        <version>1.69.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.alatka.batch</groupId>
+    <artifactId>alatka-batch</artifactId>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>alatka-batch-flow</module>
+        <module>alatka-batch-flow-infra</module>
+        <module>alatka-batch-flow-admin</module>
+        <module>alatka-batch-example</module>
+    </modules>
+
+    <properties>
+        <revision>0.1.1-SNAPSHOT</revision>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.alatka</groupId>
+                <artifactId>alatka-dependencies</artifactId>
+                <version>${alatka-version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <configuration>
+                    <flattenMode>defaults</flattenMode>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

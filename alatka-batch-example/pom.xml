@@ -1,0 +1,29 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.alatka.batch</groupId>
+        <artifactId>alatka-batch</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <groupId>com.alatka.batch.example</groupId>
+    <artifactId>alatka-batch-example</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.alatka.batch.flow</groupId>
+            <artifactId>alatka-batch-flow-admin</artifactId>
+            <version>0.1.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.gwenn</groupId>
+            <artifactId>sqlite-dialect</artifactId>
+            <version>0.1.2</version>
+        </dependency>
+    </dependencies>
+</project>
