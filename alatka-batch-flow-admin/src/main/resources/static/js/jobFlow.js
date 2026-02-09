@@ -1,4 +1,5 @@
 class JobFlow {
+
     constructor(graphContainer, toolbarContainer) {
         if (!mxClient.isBrowserSupported()) {
             mxUtils.error('浏览器不支持 mxGraph!', 200, false);
@@ -15,6 +16,7 @@ class JobFlow {
         }
 
         this.graph = new mxGraph(this.graphContainer);
+        this.shapeProps = {};
         this.#configureGraph();
         this.#configureNodeStyle();
         this.#configureContextMenu();
@@ -29,6 +31,8 @@ class JobFlow {
         this.graph.setCellsResizable(false);
         // 不允许两个节点间多条线
         this.graph.setMultigraph(false);
+        // 允许拆分连线
+        this.graph.setSplitEnabled(true);
         // 启用引导线 (Guide) 帮助对齐
         mxGraphHandler.prototype.guidesEnabled = true;
         // 通过拖拽选择多个元素
@@ -56,15 +60,7 @@ class JobFlow {
             style[mxConstants.STYLE_STROKECOLOR] = '#28a745';
             style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
             stylesheet.putCellStyle('START', style);
-        }
-
-        // Step 节点样式
-        {
-            const style = mxUtils.clone(baseStyle);
-            style[mxConstants.STYLE_FILLCOLOR] = '#cfe2ff';
-            style[mxConstants.STYLE_STROKECOLOR] = '#0d6efd';
-            style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
-            stylesheet.putCellStyle('STEP', style);
+            this.shapeProps['START'] = {width: 70, height: 70, name: 'Start'};
         }
 
         // End 节点样式
@@ -76,6 +72,17 @@ class JobFlow {
             style[mxConstants.STYLE_STROKECOLOR] = '#dc3545';
             style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
             stylesheet.putCellStyle('END', style);
+            this.shapeProps['END'] = {width: 70, height: 70, name: 'End'};
+        }
+
+        // Step 节点样式
+        {
+            const style = mxUtils.clone(baseStyle);
+            style[mxConstants.STYLE_FILLCOLOR] = '#cfe2ff';
+            style[mxConstants.STYLE_STROKECOLOR] = '#0d6efd';
+            style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
+            stylesheet.putCellStyle('STEP', style);
+            this.shapeProps['STEP'] = {width: 70, height: 70, name: 'Step'};
         }
     }
 
@@ -84,12 +91,30 @@ class JobFlow {
     }
 
     addStartNode(x, y) {
-        this.#addNode('START', 'Start', x, y, 70, 70);
+        const type = 'START';
+        const prop = this.shapeProps[type];
+        this.#addNode(type, prop.name, x, y, prop.width, prop.height);
     };
 
-    addEndNode(x, y) {
-        this.#addNode('END', 'End', x, y, 70, 70);
-    };
+    makeDraggable(elementId, type) {
+        const shapeProps = this.shapeProps[type];
+        // 拖拽时的预览
+        const dragPreview = document.createElement('div');
+        dragPreview.style.border = '1px dashed #000';
+        dragPreview.style.width = shapeProps.width + 'px';
+        dragPreview.style.height = shapeProps.height + 'px';
+
+        const xOffset = -(shapeProps.width / 2);
+        const yOffset = -(shapeProps.height / 2);
+
+        // 绑定拖拽释放后的动作
+        const onDrop = (graph, evt, cell, x, y) => {
+            this.#addNode(type, shapeProps.name, x + xOffset, y + yOffset, shapeProps.width, shapeProps.height);
+        };
+
+        const element = document.getElementById(elementId);
+        mxUtils.makeDraggable(element, this.graph, onDrop, dragPreview, xOffset, yOffset);
+    }
 
     #addNode(type, label, x, y, w, h) {
         const parent = this.graph.getDefaultParent();
@@ -100,4 +125,5 @@ class JobFlow {
             this.graph.getModel().endUpdate();
         }
     }
+
 }
