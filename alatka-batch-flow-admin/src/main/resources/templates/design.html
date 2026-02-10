@@ -35,10 +35,12 @@
                 <div class="mb-3">
                     <small class="text-muted d-block mb-2 fw-bold" style="font-size: 0.7rem;">逻辑步骤</small>
                     <div class="d-flex flex-wrap gap-2">
-                        <button type="button" class="btn btn-sm btn-outline-primary d-flex align-items-center">
+                        <button type="button" id="stepComponent"
+                                class="btn btn-sm btn-outline-primary d-flex align-items-center">
                             <i class="bi bi-box-seam me-1"></i>Step
                         </button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center">
+                        <button type="button" id="decisionComponent"
+                                class="btn btn-sm btn-outline-secondary d-flex align-items-center">
                             <i class="bi bi-signpost-split me-1"></i>Decision
                         </button>
                     </div>
@@ -62,10 +64,12 @@
 <script th:src="@{/webjars/mxgraph/javascript/mxClient.min.js}"></script>
 <script th:src="@{/js/jobFlow.js}"></script>
 <script>
-    const jobFlow = new JobFlow("graphContainer", "toolbarContainer");
+    const jobFlow = new JobFlow("graphContainer");
     jobFlow.addStartNode(60, 240);
-    jobFlow.makeDraggable('startComponent', 'START');
-    jobFlow.makeDraggable('endComponent', 'END');
+    jobFlow.bindToolbarComponent('startComponent', JobFlow.NODE_START);
+    jobFlow.bindToolbarComponent('endComponent', JobFlow.NODE_END);
+    jobFlow.bindToolbarComponent('decisionComponent', JobFlow.NODE_DECISION);
+    jobFlow.bindToolbarComponent('stepComponent', JobFlow.NODE_STEP);
 </script>
 </body>
 </html>
