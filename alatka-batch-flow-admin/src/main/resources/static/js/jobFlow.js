@@ -22,11 +22,14 @@ class JobFlow {
         this.#configureShortcuts();
         this.#configureNodeStyle();
         this.#configureContextMenu();
+        this.#validConnection();
     };
 
     #configureGraph() {
-        // 禁用文本编辑
-        this.graph.setCellsEditable(false);
+        // 只允许连线编辑文字
+        this.graph.isCellEditable = function (cell) {
+            return this.getModel().isEdge(cell);
+        };
         // 允许连线
         this.graph.setConnectable(true);
         // 不允许悬空边
@@ -43,60 +46,65 @@ class JobFlow {
         new mxRubberband(this.graph);
     };
 
+    #validConnection() {
+        this.graph.isValidConnection = function (source, target) {
+            return true;
+        };
+    }
+
     #configureShortcuts() {
         this.graphContainer.tabIndex = 0;
         this.graphContainer.style.outline = 'none';
 
-        this.undoManager = new mxUndoManager(50);
-
-        this.graph.getModel().addListener(mxEvent.UNDO, (sender, evt) => {
+        this.undoManager = new mxUndoManager();
+        const listener = (sender, evt) => {
             this.undoManager.undoableEditHappened(evt.getProperty('edit'));
-        });
-        this.graph.getView().addListener(mxEvent.UNDO, (sender, evt) => {
-            this.undoManager.undoableEditHappened(evt.getProperty('edit'));
-        });
+        };
+        this.graph.getModel().addListener(mxEvent.UNDO, listener);
+        this.graph.getView().addListener(mxEvent.UNDO, listener);
 
-        this.#registerShortcuts({
-            'delete': {
-                handler: () => {
-                    const cells = this.graph.getSelectionCells();
-                    cells.length > 0 && this.graph.removeCells(cells);
-                }, key: 'delete'
-            },
-            'backspace': {
-                handler: () => {
-                    const cells = this.graph.getSelectionCells();
-                    cells.length > 0 && this.graph.removeCells(cells);
-                }, key: 'backspace'
-            },
-            'ctrl-Z': {
-                handler: () => {
-                    this.undoManager.canUndo() && this.undoManager.undo();
-                }, key: 'z', ctrl: true
+
+        const keyHandler = new mxKeyHandler(this.graph);
+        // Delete
+        keyHandler.bindKey(46, () => {
+            const cells = this.graph.getSelectionCells();
+            cells.length > 0 && this.graph.removeCells(cells);
+        });
+        // Ctrl-Z (撤销)
+        keyHandler.bindControlKey(90, () => {
+            if (this.undoManager.canUndo()) this.undoManager.undo();
+        });
+        // Ctrl-Y (重做)
+        keyHandler.bindControlKey(89, () => {
+            if (this.undoManager.canRedo()) this.undoManager.redo();
+        });
+        // Ctrl-A (全选)
+        keyHandler.bindControlKey(65, () => {
+            this.graph.selectAll();
+        });
+        // Ctrl-C
+        keyHandler.bindControlKey(67, () => {
+            if (!this.graph.isSelectionEmpty()) {
+                mxClipboard.copy(this.graph);
             }
         });
-    }
-
-    #registerShortcuts(shortcuts) {
-        mxEvent.addListener(this.graphContainer, 'keydown', (evt) => {
-            Object.keys(shortcuts).forEach(key => {
-                const config = shortcuts[key];
-                // 判断组合键
-                const isMatch = evt.key.toLowerCase() === config.key.toLowerCase() &&
-                    (config.ctrl === undefined || evt.ctrlKey === config.ctrl) &&
-                    (config.shift === undefined || evt.shiftKey === config.shift);
-
-                if (isMatch) {
-                    evt.preventDefault();
-                    evt.stopPropagation();
-                    config.handler();
-                }
-            });
+        // Ctrl-V
+        keyHandler.bindControlKey(86, () => {
+            mxClipboard.paste(this.graph);
         });
     }
 
     #configureNodeStyle() {
         const stylesheet = this.graph.getStylesheet();
+
+        // 设置连线默认样式
+        const edgeStyle = stylesheet.getDefaultEdgeStyle();
+        edgeStyle[mxConstants.STYLE_EDGE] = mxEdgeStyle.ElbowConnector;
+        edgeStyle[mxConstants.STYLE_ROUNDED] = true;
+        edgeStyle[mxConstants.STYLE_STROKEWIDTH] = 2;
+        edgeStyle[mxConstants.STYLE_BENDING_VARIABLE] = true;
+        edgeStyle[mxConstants.STYLE_ENDARROW] = mxConstants.ARROW_CLASSIC;
+
         // 基础通用样式
         const baseStyle = {
             [mxConstants.STYLE_ROUNDED]: true,
@@ -105,6 +113,7 @@ class JobFlow {
             [mxConstants.STYLE_FONTSTYLE]: mxConstants.FONT_BOLD,
             [mxConstants.STYLE_ALIGN]: mxConstants.ALIGN_CENTER,
             [mxConstants.STYLE_VERTICAL_ALIGN]: mxConstants.ALIGN_MIDDLE,
+            [mxConstants.STYLE_PERIMETER_SPACING]: 4
         };
 
         // Start 节点样式
@@ -171,6 +180,18 @@ class JobFlow {
         this.#onClick(element, type, shapeProps);
     }
 
+    exportModel() {
+        const encoder = new mxCodec();
+        const node = encoder.encode(this.graph.getModel());
+        return mxUtils.getXml(node);
+    }
+
+    importModel(xmlString) {
+        const doc = mxUtils.parseXml(xmlString);
+        const decoder = new mxCodec(doc);
+        decoder.decode(doc.documentElement, this.graph.getModel());
+    }
+
     #onClick(element, type, shapeProps) {
         element.onclick = () => {
             const width = this.graphContainer.clientWidth;
@@ -187,6 +208,7 @@ class JobFlow {
             const x = startX + Math.random() * centerWidth;
             const y = startY + Math.random() * centerHeight;
             this.#addNode(type, shapeProps.name, x, y, shapeProps.width, shapeProps.height);
+            this.graphContainer.focus();
         }
     }
 
