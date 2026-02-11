@@ -47,7 +47,6 @@
                 </div>
             </div>
             <div id="propertyContainer" class="flex-grow-1 p-2 overflow-auto bg-light position-relative">
-                <h6 class="fw-bold border-bottom pb-2 mb-3 small">节点属性</h6>
             </div>
         </div>
         <div id="graphContainer" class="col-md-9 col-lg-10 p-0 bg-white"
@@ -59,14 +58,16 @@
 <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
 <script>window.mxBasePath = "/webjars/mxgraph/javascript/src/";</script>
 <script th:src="@{/webjars/mxgraph/javascript/mxClient.min.js}"></script>
+<script th:src="@{/js/baseNode.js}"></script>
 <script th:src="@{/js/jobFlow.js}"></script>
 <script>
-    const jobFlow = new JobFlow("graphContainer");
+    const jobFlow = new JobFlow("graphContainer", "propertyContainer");
+    jobFlow.bindToolbarComponent('startComponent', BaseNode.NODE_START);
+    jobFlow.bindToolbarComponent('endComponent', BaseNode.NODE_END);
+    jobFlow.bindToolbarComponent('decisionComponent', BaseNode.NODE_DECISION);
+    jobFlow.bindToolbarComponent('stepComponent', BaseNode.NODE_STEP);
+
     jobFlow.addStartNode(60, 240);
-    jobFlow.bindToolbarComponent('startComponent', JobFlow.NODE_START);
-    jobFlow.bindToolbarComponent('endComponent', JobFlow.NODE_END);
-    jobFlow.bindToolbarComponent('decisionComponent', JobFlow.NODE_DECISION);
-    jobFlow.bindToolbarComponent('stepComponent', JobFlow.NODE_STEP);
 </script>
 </body>
 </html>

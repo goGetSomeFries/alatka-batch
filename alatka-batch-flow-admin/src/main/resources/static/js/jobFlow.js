@@ -1,11 +1,6 @@
 class JobFlow {
 
-    static NODE_START = 'START';
-    static NODE_END = 'END';
-    static NODE_DECISION = 'DECISION';
-    static NODE_STEP = 'STEP';
-
-    constructor(graphContainer) {
+    constructor(graphContainer, propertyContainer) {
         if (!mxClient.isBrowserSupported()) {
             mxUtils.error('浏览器不支持 mxGraph!', 200, false);
             return;
@@ -15,13 +10,17 @@ class JobFlow {
         if (!this.graphContainer) {
             throw new Error(`Container with id "${graphContainer}" not found.`);
         }
+        this.propertyContainer = document.getElementById(propertyContainer);
+        if (!this.propertyContainer) {
+            throw new Error(`Container with id "${propertyContainer}" not found.`);
+        }
 
         this.graph = new mxGraph(this.graphContainer);
-        this.shapeProps = {};
         this.#configureGraph();
         this.#configureShortcuts();
-        this.#configureNodeStyle();
+        this.#configureCellStyle();
         this.#configureContextMenu();
+        this.#configureSelectionListener();
         this.#validConnection();
     };
 
@@ -44,6 +43,13 @@ class JobFlow {
         mxGraphHandler.prototype.guidesEnabled = true;
         // 通过拖拽选择多个元素
         new mxRubberband(this.graph);
+        // 图形文字显示
+        this.graph.convertValueToString = function (cell) {
+            if (cell.isVertex()) {
+                return cell.value.data?.beanName ?? cell.value.label;
+            }
+            return mxGraph.prototype.convertValueToString.apply(this, arguments);
+        };
     };
 
     #validConnection() {
@@ -94,7 +100,37 @@ class JobFlow {
         });
     }
 
-    #configureNodeStyle() {
+    #configureSelectionListener() {
+        this.graph.getSelectionModel().addListener(mxEvent.CHANGE, (sender, evt) => {
+            const cell = this.graph.getSelectionCell();
+            if (!cell) {
+                this.propertyContainer.innerHTML = `<h6 class="fw-bold border-bottom pb-2 mb-3 small">节点属性</h6>`;
+            } else if (cell.isVertex()) {
+                const value = cell.value;
+                let html = `<h6 class="fw-bold border-bottom pb-2 mb-3 small">节点属性 - ${value.label}</h6>`;
+                if (value.data) {
+                    Object.keys(value.data).forEach(key => {
+                        let propertyHtml = `
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">${key}</label>
+                                <input type="text" name="${key}" class="form-control form-control-sm" value="${value.data[key] || ''}">
+                            </div>`;
+                        html += propertyHtml;
+                    });
+                }
+                this.propertyContainer.innerHTML = html;
+            } else if (cell.isEdge()) {
+                this.propertyContainer.innerHTML = `
+                   <h6 class="fw-bold border-bottom pb-2 mb-3 small">节点属性 - 连线</h6>
+                   <div class="mb-2">
+                       <label class="form-label small text-muted">属性</label>
+                       <input type="text" class="form-control form-control-sm" value="${cell.value || ''}">
+                   </div>`;
+            }
+        });
+    }
+
+    #configureCellStyle() {
         const stylesheet = this.graph.getStylesheet();
 
         // 设置连线默认样式
@@ -105,79 +141,14 @@ class JobFlow {
         edgeStyle[mxConstants.STYLE_BENDING_VARIABLE] = true;
         edgeStyle[mxConstants.STYLE_ENDARROW] = mxConstants.ARROW_CLASSIC;
 
-        // 基础通用样式
-        const baseStyle = {
-            [mxConstants.STYLE_ROUNDED]: true,
-            [mxConstants.STYLE_STROKEWIDTH]: 2,
-            [mxConstants.STYLE_FONTSIZE]: 16,
-            [mxConstants.STYLE_FONTSTYLE]: mxConstants.FONT_BOLD,
-            [mxConstants.STYLE_ALIGN]: mxConstants.ALIGN_CENTER,
-            [mxConstants.STYLE_VERTICAL_ALIGN]: mxConstants.ALIGN_MIDDLE,
-            [mxConstants.STYLE_PERIMETER_SPACING]: 4
-        };
-
-        // Start 节点样式
-        {
-            const style = mxUtils.clone(baseStyle);
-            style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_ELLIPSE;
-            style[mxConstants.STYLE_PERIMETER] = mxPerimeter.EllipsePerimeter;
-            style[mxConstants.STYLE_FILLCOLOR] = '#d4edda';
-            style[mxConstants.STYLE_STROKECOLOR] = '#28a745';
-            style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
-            stylesheet.putCellStyle(JobFlow.NODE_START, style);
-            this.shapeProps[JobFlow.NODE_START] = {width: 70, height: 70, name: 'Start'};
-        }
-
-        // End 节点样式
-        {
-            const style = mxUtils.clone(baseStyle);
-            style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_ELLIPSE;
-            style[mxConstants.STYLE_PERIMETER] = mxPerimeter.EllipsePerimeter;
-            style[mxConstants.STYLE_FILLCOLOR] = '#f8d7da';
-            style[mxConstants.STYLE_STROKECOLOR] = '#dc3545';
-            style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
-            stylesheet.putCellStyle(JobFlow.NODE_END, style);
-            this.shapeProps[JobFlow.NODE_END] = {width: 70, height: 70, name: 'End'};
-        }
-
-        // Decision 节点样式
-        {
-            const style = mxUtils.clone(baseStyle);
-            style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RHOMBUS;
-            style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RhombusPerimeter;
-            style[mxConstants.STYLE_FILLCOLOR] = '#E1D5E7';
-            style[mxConstants.STYLE_STROKECOLOR] = '#9673A6';
-            style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
-            stylesheet.putCellStyle(JobFlow.NODE_DECISION, style);
-            this.shapeProps[JobFlow.NODE_DECISION] = {width: 180, height: 90, name: 'Decision'};
-        }
-
-        // Step 节点样式
-        {
-            const style = mxUtils.clone(baseStyle);
-            style[mxConstants.STYLE_FILLCOLOR] = '#cfe2ff';
-            style[mxConstants.STYLE_STROKECOLOR] = '#0d6efd';
-            style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
-            stylesheet.putCellStyle(JobFlow.NODE_STEP, style);
-            this.shapeProps[JobFlow.NODE_STEP] = {width: 140, height: 60, name: 'Step'};
-        }
+        Object.keys(NodeFactory.nodes).forEach(key => {
+            const node = NodeFactory.nodes[key];
+            stylesheet.putCellStyle(node.type, node.getStyleConfig());
+        });
     }
 
     // 自定义右键菜单
     #configureContextMenu() {
-    }
-
-    addStartNode(x, y) {
-        const type = JobFlow.NODE_START;
-        const prop = this.shapeProps[type];
-        this.#addNode(type, prop.name, x, y, prop.width, prop.height);
-    };
-
-    bindToolbarComponent(elementId, type) {
-        const element = document.getElementById(elementId);
-        const shapeProps = this.shapeProps[type];
-        this.#makeDraggable(element, type, shapeProps);
-        this.#onClick(element, type, shapeProps);
     }
 
     exportModel() {
@@ -192,7 +163,18 @@ class JobFlow {
         decoder.decode(doc.documentElement, this.graph.getModel());
     }
 
-    #onClick(element, type, shapeProps) {
+    addStartNode(x, y) {
+        const baseNode = NodeFactory.createNode(BaseNode.NODE_START);
+        this.#addNode(baseNode, x, y);
+    };
+
+    bindToolbarComponent(elementId, type) {
+        const element = document.getElementById(elementId);
+        this.#makeDraggable(element, type);
+        this.#onClick(element, type);
+    }
+
+    #onClick(element, type) {
         element.onclick = () => {
             const width = this.graphContainer.clientWidth;
             const height = this.graphContainer.clientHeight;
@@ -207,34 +189,38 @@ class JobFlow {
 
             const x = startX + Math.random() * centerWidth;
             const y = startY + Math.random() * centerHeight;
-            this.#addNode(type, shapeProps.name, x, y, shapeProps.width, shapeProps.height);
+            const baseNode = NodeFactory.createNode(type);
+            this.#addNode(baseNode, x, y);
             this.graphContainer.focus();
         }
     }
 
-    #makeDraggable(element, type, shapeProps) {
+    #makeDraggable(element, type) {
+        const baseNode = NodeFactory.createNode(type);
         // 拖拽时的预览
         const dragPreview = document.createElement('div');
         dragPreview.style.border = '1px dashed #000';
-        dragPreview.style.width = shapeProps.width + 'px';
-        dragPreview.style.height = shapeProps.height + 'px';
+        dragPreview.style.width = baseNode.width + 'px';
+        dragPreview.style.height = baseNode.height + 'px';
 
-        const xOffset = -(shapeProps.width / 2);
-        const yOffset = -(shapeProps.height / 2);
+        const xOffset = -(baseNode.width / 2);
+        const yOffset = -(baseNode.height / 2);
 
         // 绑定拖拽释放后的动作
         const onDrop = (graph, evt, cell, x, y) => {
-            this.#addNode(type, shapeProps.name, x + xOffset, y + yOffset, shapeProps.width, shapeProps.height);
+            this.#addNode(baseNode, x + xOffset, y + yOffset);
         };
 
         mxUtils.makeDraggable(element, this.graph, onDrop, dragPreview, xOffset, yOffset);
     }
 
-    #addNode(type, label, x, y, w, h) {
+    #addNode(baseNode, x, y) {
         const parent = this.graph.getDefaultParent();
         this.graph.getModel().beginUpdate();
         try {
-            return this.graph.insertVertex(parent, null, label, x, y, w, h, type);
+            const vertex = this.graph.insertVertex(parent, null, baseNode, x, y, baseNode.width, baseNode.height, baseNode.type);
+            this.graph.setSelectionCell(vertex);
+            return vertex;
         } finally {
             this.graph.getModel().endUpdate();
         }
