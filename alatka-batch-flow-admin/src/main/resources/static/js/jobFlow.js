@@ -208,6 +208,7 @@ class JobFlow {
 
         // 绑定拖拽释放后的动作
         const onDrop = (graph, evt, cell, x, y) => {
+            const baseNode = NodeFactory.createNode(type);
             this.#addNode(baseNode, x + xOffset, y + yOffset);
         };
 
