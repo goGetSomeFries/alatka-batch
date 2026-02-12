@@ -41,20 +41,26 @@ class JobFlow {
         this.graph.setSplitEnabled(true);
         // 启用引导线 (Guide) 帮助对齐
         mxGraphHandler.prototype.guidesEnabled = true;
+        // 网格吸附
+        this.graph.setGridEnabled(true);
+        this.graph.gridSize = 10;
         // 通过拖拽选择多个元素
         new mxRubberband(this.graph);
         // 图形文字显示
         this.graph.convertValueToString = function (cell) {
             if (cell.isVertex()) {
-                return cell.value.data?.beanName ?? cell.value.label;
+                return cell.value.data?.beanName || cell.value.label;
             }
             return mxGraph.prototype.convertValueToString.apply(this, arguments);
         };
     };
 
     #validConnection() {
-        this.graph.isValidConnection = function (source, target) {
-            return true;
+        this.graph.isValidConnection = (source, target) => {
+            return target.isVertex() && NodeFactory.nodes[target.value.type].isValidConnection(this.graph, source, target);
+        };
+        this.graph.isCellConnectable = (cell) => {
+            return cell.isEdge() || NodeFactory.nodes[cell.value.type].isCellConnectable(this.graph, cell);
         };
     }
 
@@ -105,15 +111,17 @@ class JobFlow {
             const cell = this.graph.getSelectionCell();
             if (!cell) {
                 this.propertyContainer.innerHTML = `<h6 class="fw-bold border-bottom pb-2 mb-3 small">节点属性</h6>`;
-            } else if (cell.isVertex()) {
-                const value = cell.value;
-                let html = `<h6 class="fw-bold border-bottom pb-2 mb-3 small">节点属性 - ${value.label}</h6>`;
-                if (value.data) {
-                    Object.keys(value.data).forEach(key => {
+                return;
+            }
+
+            if (cell.isVertex()) {
+                let html = `<h6 class="fw-bold border-bottom pb-2 mb-3 small">节点属性 - ${cell.value.label}</h6>`;
+                if (cell.value.data) {
+                    Object.keys(cell.value.data).forEach(key => {
                         let propertyHtml = `
                             <div class="mb-2">
                                 <label class="form-label small text-muted">${key}</label>
-                                <input type="text" name="${key}" class="form-control form-control-sm" value="${value.data[key] || ''}">
+                                <input type="text" name="${key}" class="form-control form-control-sm" value="${cell.value.data[key] || ''}">
                             </div>`;
                         html += propertyHtml;
                     });
@@ -127,6 +135,28 @@ class JobFlow {
                        <input type="text" class="form-control form-control-sm" value="${cell.value || ''}">
                    </div>`;
             }
+            this.#bindInputs(cell);
+        });
+    }
+
+    #bindInputs(cell) {
+        const inputs = this.propertyContainer.querySelectorAll('.form-control');
+        inputs.forEach(input => {
+            input.oninput = (e) => {
+                const value = e.target.value;
+                const name = e.target.name;
+
+                if (cell.isEdge()) {
+                    // 专门处理连线文字
+                    this.graph.getModel().setValue(cell, value);
+                } else if (name) {
+                    cell.value.data[name] = value;
+                } else {
+                    cell.value = value;
+                }
+                // 触发画布重绘，让节点上的文字实时变化
+                this.graph.view.refresh(cell);
+            };
         });
     }
 
@@ -149,6 +179,13 @@ class JobFlow {
 
     // 自定义右键菜单
     #configureContextMenu() {
+        // 阻止浏览器默认菜单
+        this.graphContainer.oncontextmenu = (e) => {
+            e.preventDefault();
+            return false;
+        };
+        // 禁用 mxGraph 的内置右键处理逻辑
+        this.graph.popupMenuHandler.setEnabled(false);
     }
 
     exportModel() {
@@ -164,8 +201,7 @@ class JobFlow {
     }
 
     addStartNode(x, y) {
-        const baseNode = NodeFactory.createNode(BaseNode.NODE_START);
-        this.#addNode(baseNode, x, y);
+        this.#addNode(BaseNode.NODE_START, x, y);
     };
 
     bindToolbarComponent(elementId, type) {
@@ -189,8 +225,7 @@ class JobFlow {
 
             const x = startX + Math.random() * centerWidth;
             const y = startY + Math.random() * centerHeight;
-            const baseNode = NodeFactory.createNode(type);
-            this.#addNode(baseNode, x, y);
+            this.#addNode(type, x, y);
             this.graphContainer.focus();
         }
     }
@@ -208,14 +243,14 @@ class JobFlow {
 
         // 绑定拖拽释放后的动作
         const onDrop = (graph, evt, cell, x, y) => {
-            const baseNode = NodeFactory.createNode(type);
-            this.#addNode(baseNode, x + xOffset, y + yOffset);
+            this.#addNode(type, x + xOffset, y + yOffset);
         };
 
         mxUtils.makeDraggable(element, this.graph, onDrop, dragPreview, xOffset, yOffset);
     }
 
-    #addNode(baseNode, x, y) {
+    #addNode(type, x, y) {
+        const baseNode = NodeFactory.createNode(type);
         const parent = this.graph.getDefaultParent();
         this.graph.getModel().beginUpdate();
         try {

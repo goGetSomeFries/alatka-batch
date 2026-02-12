@@ -1,7 +1,6 @@
 class BaseData {
     constructor(beanName) {
         this.beanName = beanName;
-        this.itemReader = null;
     }
 }
 
@@ -31,6 +30,14 @@ class BaseNode {
             [mxConstants.STYLE_PERIMETER_SPACING]: 4
         };
     }
+
+    isValidConnection(graph, source, target) {
+        return source !== target;
+    }
+
+    isCellConnectable(graph, cell) {
+        return true;
+    }
 }
 
 class StartNode extends BaseNode {
@@ -46,6 +53,15 @@ class StartNode extends BaseNode {
         style[mxConstants.STYLE_STROKECOLOR] = '#28a745';
         style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
         return style;
+    }
+
+    isValidConnection(graph, source, target) {
+        const flag = super.isValidConnection(source, target);
+        return flag && target.value?.type !== BaseNode.NODE_START;
+    }
+
+    isCellConnectable(graph, cell) {
+        return graph.getModel().getOutgoingEdges(cell).length < 1;
     }
 }
 
@@ -63,6 +79,14 @@ class EndNode extends BaseNode {
         style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
         return style;
     }
+
+    isValidConnection(graph, source, target) {
+        return super.isValidConnection(source, target);
+    }
+
+    isCellConnectable(graph, cell) {
+        return false;
+    }
 }
 
 class DecisionNode extends BaseNode {
@@ -79,6 +103,14 @@ class DecisionNode extends BaseNode {
         style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
         return style;
     }
+
+    isValidConnection(graph, source, target) {
+        return super.isValidConnection(source, target);
+    }
+
+    isCellConnectable(graph, cell) {
+        return super.isCellConnectable(cell, graph);
+    }
 }
 
 class StepNode extends BaseNode {
@@ -92,6 +124,14 @@ class StepNode extends BaseNode {
         style[mxConstants.STYLE_STROKECOLOR] = '#0d6efd';
         style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
         return style;
+    }
+
+    isValidConnection(graph, source, target) {
+        return super.isValidConnection(source, target) && graph.getModel().getOutgoingEdges(target).length < 1;
+    }
+
+    isCellConnectable(graph, cell) {
+        return graph.getModel().getOutgoingEdges(cell).length < 1;
     }
 }
 
