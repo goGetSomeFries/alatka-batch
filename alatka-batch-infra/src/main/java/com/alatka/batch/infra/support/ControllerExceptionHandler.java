@@ -1,6 +1,6 @@
-package com.alatka.batch.flow.support;
+package com.alatka.batch.infra.support;
 
-import com.alatka.batch.flow.model.ResMessage;
+import com.alatka.batch.infra.model.ResMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Component("ruleControllerExceptionHandler")
-@RestControllerAdvice(basePackages = "com.alatka.batch.flow.admin")
+@RestControllerAdvice(basePackages = "com.alatka.batch.*.controller")
 public class ControllerExceptionHandler {
 
     private final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);

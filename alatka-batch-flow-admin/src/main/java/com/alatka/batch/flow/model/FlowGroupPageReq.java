@@ -1,6 +1,6 @@
-package com.alatka.batch.flow.model.group;
+package com.alatka.batch.flow.model;
 
-import com.alatka.batch.flow.model.PageReqMessage;
+import com.alatka.batch.infra.model.PageReqMessage;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "流程组请求")

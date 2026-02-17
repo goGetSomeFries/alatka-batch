@@ -1,20 +1,26 @@
-package com.alatka.batch.flow.model.group;
+package com.alatka.batch.flow.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(description = "流程组响应")
-public class FlowGroupRes {
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
-    @Schema(description = "主键", requiredMode = Schema.RequiredMode.REQUIRED)
+@Schema(description = "流程组请求")
+public class FlowGroupReq {
+
+    @Schema(description = "主键")
     private Long id;
 
     @Schema(description = "关键字", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotEmpty(message = "key 不能为空")
     private String key;
 
     @Schema(description = "名称", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotEmpty(message = "name 不能为空")
     private String name;
 
     @Schema(description = "是否可用", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "enabled 不能为空")
     private Boolean enabled;
 
     public Long getId() {

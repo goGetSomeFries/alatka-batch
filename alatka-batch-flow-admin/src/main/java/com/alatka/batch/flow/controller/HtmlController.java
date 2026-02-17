@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Tag(name = "前端页面跳转")
 @Controller("batchFlowHtmlController")
-@RequestMapping("/flow")
+@RequestMapping("/batch/flow")
 public class HtmlController {
 
     @Operation(summary = "流程组")

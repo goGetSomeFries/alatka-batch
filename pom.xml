@@ -19,10 +19,11 @@
         <module>alatka-batch-flow-infra</module>
         <module>alatka-batch-flow-admin</module>
         <module>alatka-batch-example</module>
+        <module>alatka-batch-infra</module>
     </modules>
 
     <properties>
-        <revision>0.1.1-SNAPSHOT</revision>
+        <revision>0.1.0-SNAPSHOT</revision>
     </properties>
 
     <dependencyManagement>

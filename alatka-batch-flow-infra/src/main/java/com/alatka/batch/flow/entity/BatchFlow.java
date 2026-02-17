@@ -2,40 +2,51 @@ package com.alatka.batch.flow.entity;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "ALK_BATCH_FLOW_GROUP")
-@EntityListeners(AuditingEntityListener.class)
-public class BatchFlowGroup {
+@Table(name = "ALK_BATCH_FLOW")
+public class BatchFlow {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "G_ID")
+    @Column(name = "F_ID")
     private Long id;
 
     @CreatedDate
-    @Column(name = "G_CREATE_AT", updatable = false)
+    @Column(name = "F_CREATE_AT")
     private LocalDateTime createAt;
 
     @LastModifiedDate
-    @Column(name = "G_UPDATE_AT", insertable = false)
+    @Column(name = "F_UPDATE_AT")
     private LocalDateTime updateAt;
 
-    @Column(name = "G_KEY")
+    @Column(name = "F_KEY")
     private String key;
 
-    @Column(name = "G_NAME")
+    @Column(name = "F_NAME")
     private String name;
 
-    @Column(name = "G_ENABLED")
-    private Boolean enabled;
+    @Column(name = "F_CONTENT")
+    private byte[] content;
+
+    @Column(name = "F_PREVIOUS_ID")
+    private Long previousId;
+
+    @Column(name = "F_STATUS")
+    private String status;
+
+    @Column(name = "G_KEY")
+    private String groupKey;
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public LocalDateTime getCreateAt() {
@@ -54,10 +65,6 @@ public class BatchFlowGroup {
         this.updateAt = updateAt;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getKey() {
         return key;
     }
@@ -74,11 +81,35 @@ public class BatchFlowGroup {
         this.name = name;
     }
 
-    public Boolean getEnabled() {
-        return enabled;
+    public byte[] getContent() {
+        return content;
     }
 
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
+
+    public Long getPreviousId() {
+        return previousId;
+    }
+
+    public void setPreviousId(Long previousId) {
+        this.previousId = previousId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getGroupKey() {
+        return groupKey;
+    }
+
+    public void setGroupKey(String groupKey) {
+        this.groupKey = groupKey;
     }
 }

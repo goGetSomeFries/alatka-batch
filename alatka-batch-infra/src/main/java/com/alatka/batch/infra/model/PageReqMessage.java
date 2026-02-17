@@ -1,4 +1,4 @@
-package com.alatka.batch.flow.model;
+package com.alatka.batch.infra.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.data.domain.PageRequest;

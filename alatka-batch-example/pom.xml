@@ -7,14 +7,12 @@
         <version>${revision}</version>
     </parent>
 
-    <groupId>com.alatka.batch.example</groupId>
     <artifactId>alatka-batch-example</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.alatka.batch.flow</groupId>
             <artifactId>alatka-batch-flow-admin</artifactId>
-            <version>0.1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.xerial</groupId>

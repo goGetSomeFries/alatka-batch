@@ -1,26 +1,28 @@
-package com.alatka.batch.flow.model.group;
+package com.alatka.batch.flow.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
-@Schema(description = "流程组请求")
-public class FlowGroupReq {
+@Schema(description = "流程组响应")
+public class FlowGroupRes {
 
-    @Schema(description = "主键")
+    @Schema(description = "主键", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long id;
 
+    @Schema(description = "创建日期", requiredMode = Schema.RequiredMode.REQUIRED)
+    private LocalDateTime createAt;
+
+    @Schema(description = "更新日期")
+    private LocalDateTime updateAt;
+
     @Schema(description = "关键字", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "key 不能为空")
     private String key;
 
     @Schema(description = "名称", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "name 不能为空")
     private String name;
 
     @Schema(description = "是否可用", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "enabled 不能为空")
     private Boolean enabled;
 
     public Long getId() {
@@ -29,6 +31,22 @@ public class FlowGroupReq {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public LocalDateTime getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(LocalDateTime createAt) {
+        this.createAt = createAt;
+    }
+
+    public LocalDateTime getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(LocalDateTime updateAt) {
+        this.updateAt = updateAt;
     }
 
     public String getKey() {

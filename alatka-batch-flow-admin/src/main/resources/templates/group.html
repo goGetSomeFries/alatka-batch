@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>alatka-rule-admin</title>
+    <title>alatka-batch-flow-admin</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.min.css}"/>
@@ -28,15 +28,9 @@
                     <label for="key" class="form-label">关键字</label>
                     <input type="text" class="form-control" id="key" name="key" placeholder="输入关键字">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <label for="name" class="form-label">名称</label>
                     <input type="text" class="form-control" id="name" name="name" placeholder="输入名称">
-                </div>
-                <div class="col-md-3">
-                    <label for="type" class="form-label">类型</label>
-                    <select class="form-select alk-select-type" id="type" name="type">
-                        <option value="">全部</option>
-                    </select>
                 </div>
                 <div class="col-md-3">
                     <label for="enabled" class="form-label">是否可用</label>
@@ -59,15 +53,15 @@
     </div>
     <div class="col-12 text-end mb-3">
         <button type="button" class="btn btn-sm btn-outline-info" id="addButton"
-                onclick="showEditModal('/rule/group/create', true)">
+                onclick="showEditModal('/batch/flow/group/create', true)">
             <i class="bi bi-plus-lg"></i> 新增
         </button>
         <button type="button" class="btn btn-sm btn-outline-warning" id="editButton"
-                onclick="showEditModal('/rule/group/update', false)">
+                onclick="showEditModal('/batch/flow/group/update', false)">
             <i class="bi bi-pencil-square"></i> 更新
         </button>
         <button type="button" class="btn btn-sm btn-danger" id="deleteButton"
-                onclick="showDeleteModal('/rule/group/delete')">
+                onclick="showDeleteModal('/batch/flow/group/delete')">
             <i class="bi bi-trash"></i> 删除
         </button>
     </div>
@@ -75,7 +69,7 @@
     <table id="dataTable"
            data-toggle="table"
            data-method="get"
-           data-url="/flow/group/page"
+           data-url="/batch/flow/group/page"
            data-sort-name="id"
            data-sort-order="desc"
            data-striped="true"
@@ -88,9 +82,10 @@
         <tr>
             <th data-radio="true"></th>
             <th data-field="id">ID</th>
+            <th data-field="createAt" data-sortable="true">创建日期</th>
+            <th data-field="updateAt" data-sortable="true">更新日期</th>
             <th data-field="key" data-sortable="true">关键字</th>
-            <th data-field="name" data-sortable="true">名称</th>
-            <th data-field="type">类型</th>
+            <th data-field="name">名称</th>
             <th data-field="enabled" data-formatter="enabledFormatter">是否可用</th>
         </tr>
         </thead>
@@ -116,11 +111,6 @@
                         <input type="text" class="form-control" id="editName" name="name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="editType" class="form-label">类型</label>
-                        <select class="form-select alk-select-type" id="editType" name="type" required>
-                        </select>
-                    </div>
-                    <div class="mb-3">
                         <label for="editEnabled" class="form-label">是否可用</label>
                         <select class="form-select" id="editEnabled" name="enabled" required>
                             <option value="true">正常</option>
@@ -140,7 +130,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">删除job组</h5>
+                <h5 class="modal-title">删除流程组</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
