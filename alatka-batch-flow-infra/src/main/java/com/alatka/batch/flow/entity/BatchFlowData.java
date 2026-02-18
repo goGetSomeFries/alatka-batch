@@ -8,34 +8,34 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "ALK_BATCH_FLOW")
+@Table(name = "ALK_BATCH_FLOW_DATA")
 @EntityListeners(AuditingEntityListener.class)
-public class BatchFlow {
+public class BatchFlowData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "F_ID")
+    @Column(name = "D_ID")
     private Long id;
 
     @CreatedDate
-    @Column(name = "F_CREATE_AT", updatable = false)
+    @Column(name = "D_CREATE_AT", updatable = false)
     private LocalDateTime createAt;
 
     @LastModifiedDate
-    @Column(name = "F_UPDATE_AT", insertable = false)
+    @Column(name = "D_UPDATE_AT", insertable = false)
     private LocalDateTime updateAt;
 
-    @Column(name = "F_KEY")
-    private String key;
+    @Column(name = "D_DATA")
+    private byte[] data;
 
-    @Column(name = "F_NAME")
-    private String name;
+    @Column(name = "D_PREVIOUS_ID")
+    private Long previousId;
 
-    @Column(name = "F_ENABLED")
-    private Boolean enabled;
+    @Column(name = "D_STATUS")
+    private String status;
 
-    @Column(name = "G_KEY")
-    private String groupKey;
+    @Column(name = "F_ID")
+    private Long flowId;
 
     public Long getId() {
         return id;
@@ -61,35 +61,35 @@ public class BatchFlow {
         this.updateAt = updateAt;
     }
 
-    public String getKey() {
-        return key;
+    public byte[] getData() {
+        return data;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setData(byte[] data) {
+        this.data = data;
     }
 
-    public String getName() {
-        return name;
+    public Long getPreviousId() {
+        return previousId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPreviousId(Long previousId) {
+        this.previousId = previousId;
     }
 
-    public Boolean getEnabled() {
-        return enabled;
+    public String getStatus() {
+        return status;
     }
 
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public String getGroupKey() {
-        return groupKey;
+    public Long getFlowId() {
+        return flowId;
     }
 
-    public void setGroupKey(String groupKey) {
-        this.groupKey = groupKey;
+    public void setFlowId(Long flowId) {
+        this.flowId = flowId;
     }
 }

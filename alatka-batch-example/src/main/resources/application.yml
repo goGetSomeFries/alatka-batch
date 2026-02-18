@@ -1,14 +1,6 @@
 spring:
   application:
     name: alatka-batch-example
-  jackson:
-    date-format: yyyy-MM-dd HH:mm:ss
-    time-zone: GMT+8
-    visibility:
-      field: any
-    serialization:
-      write-dates-as-timestamps: false
-    register-modules: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.sqlite.JDBC

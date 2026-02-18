@@ -12,7 +12,7 @@
 <div class="container mt-4">
     <div class="card mb-3">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">流程组查询</h5>
+            <h5 class="mb-0">流程查询</h5>
             <button class="btn btn-sm btn-outline-secondary"
                     type="button"
                     data-bs-toggle="collapse"
@@ -24,15 +24,21 @@
         </div>
         <div class="card-body collapse show" id="cardCollapse">
             <form id="searchForm" class="row g-3">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label for="key" class="form-label">关键字</label>
                     <input type="text" class="form-control" id="key" name="key" placeholder="输入关键字">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label for="name" class="form-label">名称</label>
                     <input type="text" class="form-control" id="name" name="name" placeholder="输入名称">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
+                    <label for="groupKey" class="form-label">流程组名称</label>
+                    <select class="form-select alk-select-groupKey" id="groupKey" name="groupKey">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
                     <label for="enabled" class="form-label">是否可用</label>
                     <select class="form-select" id="enabled" name="enabled">
                         <option value="">全部</option>
@@ -52,16 +58,24 @@
         </div>
     </div>
     <div class="col-12 text-end mb-3">
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="fallbackButton"
+                onclick="showBuildModal('/rule/build', 'fallback')">
+            <i class="bi bi-arrow-left"></i> 回退
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-primary me-5" id="deployButton"
+                onclick="showBuildModal('/rule/build', 'deploy')">
+            <i class="bi bi-rocket"></i> 部署
+        </button>
         <button type="button" class="btn btn-sm btn-outline-info" id="addButton"
-                onclick="showEditModal('/batch/flow/group/create', true)">
+                onclick="showEditModal('/batch/flow/create', true)">
             <i class="bi bi-plus-lg"></i> 新增
         </button>
         <button type="button" class="btn btn-sm btn-outline-warning" id="editButton"
-                onclick="showEditModal('/batch/flow/group/update', false)">
+                onclick="showEditModal('/batch/flow/update', false)">
             <i class="bi bi-pencil-square"></i> 更新
         </button>
         <button type="button" class="btn btn-sm btn-danger" id="deleteButton"
-                onclick="showDeleteModal('/batch/flow/group/delete')">
+                onclick="showDeleteModal('/batch/flow/delete')">
             <i class="bi bi-trash"></i> 删除
         </button>
     </div>
@@ -69,7 +83,7 @@
     <table id="dataTable"
            data-toggle="table"
            data-method="get"
-           data-url="/batch/flow/group/page"
+           data-url="/batch/flow/page"
            data-sort-name="id"
            data-sort-order="desc"
            data-striped="true"
@@ -86,6 +100,7 @@
             <th data-field="updateAt" data-sortable="true">更新日期</th>
             <th data-field="key" data-sortable="true">关键字</th>
             <th data-field="name">名称</th>
+            <th data-field="groupKey" data-formatter="groupKeyFormatter">流程组名称</th>
             <th data-field="enabled" data-formatter="enabledFormatter">是否可用</th>
         </tr>
         </thead>
@@ -111,6 +126,11 @@
                         <input type="text" class="form-control" id="editName" name="name" required>
                     </div>
                     <div class="mb-3">
+                        <label for="editGroupKey" class="form-label">规则组名称</label>
+                        <select class="form-select alk-select-groupKey" id="editGroupKey" name="groupKey" required>
+                        </select>
+                    </div>
+                    <div class="mb-3">
                         <label for="editEnabled" class="form-label">是否可用</label>
                         <select class="form-select" id="editEnabled" name="enabled" required>
                             <option value="true">正常</option>
@@ -130,7 +150,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">删除流程组</h5>
+                <h5 class="modal-title">删除流程</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -152,6 +172,16 @@
 <script th:src="@{/js/table.js}"></script>
 <script>
 initTable();
+initRuleGroupSelect();
+
+function initRuleGroupSelect() {
+    httpClient('/batch/flow/group/map', 'GET', null, function (data) {
+        const map = new Map(Object.entries(data));
+        map.forEach((value, key) => {
+            $('.alk-select-groupKey').append($('<option>', {value: key, text: value}))
+        });
+    });
+}
 </script>
 </body>
 </html>

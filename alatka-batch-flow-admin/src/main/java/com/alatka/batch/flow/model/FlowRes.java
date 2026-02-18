@@ -1,40 +1,34 @@
-package com.alatka.batch.flow.entity;
+package com.alatka.batch.flow.model;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "ALK_BATCH_FLOW")
-@EntityListeners(AuditingEntityListener.class)
-public class BatchFlow {
+@Schema(description = "流程响应")
+public class FlowRes {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "F_ID")
+    @Schema(description = "主键", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long id;
 
-    @CreatedDate
-    @Column(name = "F_CREATE_AT", updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Schema(description = "创建日期", requiredMode = Schema.RequiredMode.REQUIRED)
     private LocalDateTime createAt;
 
-    @LastModifiedDate
-    @Column(name = "F_UPDATE_AT", insertable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Schema(description = "更新日期")
     private LocalDateTime updateAt;
 
-    @Column(name = "F_KEY")
+    @Schema(description = "关键字", requiredMode = Schema.RequiredMode.REQUIRED)
     private String key;
 
-    @Column(name = "F_NAME")
+    @Schema(description = "名称", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;
 
-    @Column(name = "F_ENABLED")
+    @Schema(description = "是否可用", requiredMode = Schema.RequiredMode.REQUIRED)
     private Boolean enabled;
 
-    @Column(name = "G_KEY")
+    @Schema(description = "流程组关键字")
     private String groupKey;
 
     public Long getId() {
