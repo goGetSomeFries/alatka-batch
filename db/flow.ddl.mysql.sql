@@ -32,5 +32,5 @@ CREATE TABLE `ALK_BATCH_FLOW_DATA`
     `D_PREVIOUS_ID` int unsigned          COMMENT '上一部署状态主键',
     `D_STATUS`      varchar(20)  NOT NULL COMMENT '状态',
     `F_ID`          varchar(50)  NOT NULL COMMENT '流程主键',
-    PRIMARY KEY (`C_ID`)
+    PRIMARY KEY (`D_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='流程数据表';

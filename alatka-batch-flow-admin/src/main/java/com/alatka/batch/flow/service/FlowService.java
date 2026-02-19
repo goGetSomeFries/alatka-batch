@@ -85,8 +85,6 @@ public class FlowService {
             }
             if (condition.getGroupKey() != null) {
                 list.add(criteriaBuilder.equal(root.get("groupKey").as(String.class), condition.getGroupKey()));
-            } else {
-                list.add(criteriaBuilder.isNull(root.get("groupKey")));
             }
             return criteriaBuilder.and(list.toArray(new Predicate[0]));
         };

@@ -27,20 +27,20 @@ public class FlowController {
         return ResMessage.success(flowService.create(req));
     }
 
-    @Operation(summary = "删除流程组")
+    @Operation(summary = "删除流程")
     @Parameter(name = "id", description = "编号", required = true)
     @DeleteMapping("/delete")
     public ResMessage<Void> delete(@RequestParam Long id) {
         return ResMessage.success(() -> flowService.delete(id));
     }
 
-    @Operation(summary = "修改流程组")
+    @Operation(summary = "修改流程")
     @PutMapping("/update")
     public ResMessage<Void> update(@Valid @RequestBody FlowReq req) {
         return ResMessage.success(() -> flowService.update(req));
     }
 
-    @Operation(summary = "分页查询流程组")
+    @Operation(summary = "分页查询流程")
     @GetMapping("/page")
     public PageResMessage<FlowRes> queryPage(@Valid FlowPageReq pageReqMessage) {
         return PageResMessage.success(flowService.queryPage(pageReqMessage));

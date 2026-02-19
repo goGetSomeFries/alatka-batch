@@ -182,6 +182,14 @@ function initRuleGroupSelect() {
         });
     });
 }
+
+function groupKeyFormatter(arg) {
+    const keyValuePairs = {};
+    $('select#groupKey option').each(function () {
+        keyValuePairs[$(this).val()] = $(this).text();
+    });
+    return keyValuePairs[arg];
+}
 </script>
 </body>
 </html>
