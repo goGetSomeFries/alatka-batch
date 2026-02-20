@@ -21,6 +21,7 @@ class JobFlow {
         this.#configureCellStyle();
         this.#configureContextMenu();
         this.#configureSelectionListener();
+        this.#configureXmlCodec();
         this.#validConnection();
     };
 
@@ -186,6 +187,21 @@ class JobFlow {
         };
         // 禁用 mxGraph 的内置右键处理逻辑
         this.graph.popupMenuHandler.setEnabled(false);
+    }
+
+    #configureXmlCodec() {
+        Object.keys(NodeFactory.nodes).forEach(key => {
+            const node = NodeFactory.nodes[key];
+            const clazz = node.constructor;
+            const codec = new mxObjectCodec(new clazz());
+            codec.getName = () => clazz.name;
+            mxCodecRegistry.register(codec);
+        });
+        {
+            const codec = new mxObjectCodec(new BaseData());
+            codec.getName = () => "BaseData";
+            mxCodecRegistry.register(codec);
+        }
     }
 
     exportModel() {

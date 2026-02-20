@@ -28,7 +28,7 @@ CREATE TABLE `ALK_BATCH_FLOW_GRAPH`
     `D_ID`          int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
     `D_CREATE_AT`   datetime     NOT NULL COMMENT '创建日期',
     `D_UPDATE_AT`   datetime              COMMENT '更新日期',
-    `D_DATA`        TEXT         NOT NULL COMMENT '内容',
+    `D_DATA`        blob         NOT NULL COMMENT '内容',
     `D_PREVIOUS_ID` int unsigned          COMMENT '上一部署状态主键',
     `D_STATUS`      varchar(20)  NOT NULL COMMENT '状态',
     `F_ID`          varchar(50)  NOT NULL COMMENT '流程主键',

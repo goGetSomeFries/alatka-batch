@@ -2,7 +2,8 @@ package com.alatka.batch.flow.service;
 
 
 import com.alatka.batch.flow.entity.BatchFlowGraph;
-import com.alatka.batch.flow.model.FlowHistory;
+import com.alatka.batch.flow.model.FlowGraphHistory;
+import com.alatka.batch.flow.model.FlowGraphReq;
 import com.alatka.batch.flow.repository.FlowGraphRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,19 +27,19 @@ public class FlowGraphService {
 
     private static final Charset DATA_CHARSET = Charset.forName("UTF-8");
 
-    public void save(Long flowId, String data) {
+    public void save(FlowGraphReq req) {
         BatchFlowGraph condition = new BatchFlowGraph();
-        condition.setFlowId(flowId);
+        condition.setFlowId(req.getFlowId());
         condition.setStatus("SAVE");
         Optional<BatchFlowGraph> optional = flowGraphRepository.findOne(this.condition(condition));
         if (optional.isPresent()) {
             BatchFlowGraph entity = optional.get();
-            entity.setData(data.getBytes(DATA_CHARSET));
+            entity.setData(req.getData().getBytes(DATA_CHARSET));
         } else {
             BatchFlowGraph entity = new BatchFlowGraph();
-            entity.setFlowId(flowId);
+            entity.setFlowId(req.getFlowId());
             entity.setStatus("SAVE");
-            entity.setData(data.getBytes(DATA_CHARSET));
+            entity.setData(req.getData().getBytes(DATA_CHARSET));
 
             condition.setStatus("DEPLOY");
             flowGraphRepository.findOne(this.condition(condition))
@@ -63,20 +64,20 @@ public class FlowGraphService {
         flowGraphRepository.deleteAllById(result);
     }
 
-    public List<FlowHistory> queryHistory(Long previousId) {
-        List<FlowHistory> result = new ArrayList<>();
+    public List<FlowGraphHistory> queryHistory(Long previousId) {
+        List<FlowGraphHistory> result = new ArrayList<>();
         AtomicInteger time = new AtomicInteger(1);
         this.doQueryHistory(previousId, result, time);
         return result;
     }
 
-    private void doQueryHistory(Long previousId, List<FlowHistory> result, AtomicInteger time) {
+    private void doQueryHistory(Long previousId, List<FlowGraphHistory> result, AtomicInteger time) {
         if (previousId == null || time.getAndIncrement() >= 5) {
             return;
         }
         BatchFlowGraph entity = flowGraphRepository.findById(previousId)
                 .orElseThrow(() -> new IllegalArgumentException("id: <" + previousId + "> not exists."));
-        FlowHistory model = new FlowHistory();
+        FlowGraphHistory model = new FlowGraphHistory();
         BeanUtils.copyProperties(entity, model);
         result.add(model);
         this.doQueryHistory(entity.getPreviousId(), result, time);

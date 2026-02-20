@@ -36,6 +36,7 @@
                     <label for="groupKey" class="form-label">流程组名称</label>
                     <select class="form-select alk-select-groupKey" id="groupKey" name="groupKey">
                         <option value="">全部</option>
+                        <option value="default_">默认</option>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -58,9 +59,9 @@
         </div>
     </div>
     <div class="col-12 text-end mb-3">
-        <button type="button" class="btn btn-sm btn-outline-secondary" id="fallbackButton"
-                onclick="showBuildModal('/rule/build', 'fallback')">
-            <i class="bi bi-arrow-left"></i> 回退
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="graphButton"
+                onclick="redirectToGraph()">
+            <i class="bi bi-arrow-left"></i> 设计流程图
         </button>
         <button type="button" class="btn btn-sm btn-outline-primary me-5" id="deployButton"
                 onclick="showBuildModal('/rule/build', 'deploy')">
@@ -126,8 +127,9 @@
                         <input type="text" class="form-control" id="editName" name="name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="editGroupKey" class="form-label">规则组名称</label>
+                        <label for="editGroupKey" class="form-label">流程组名称</label>
                         <select class="form-select alk-select-groupKey" id="editGroupKey" name="groupKey" required>
+                            <option value="default_">默认</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -169,6 +171,7 @@
 <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/js/infra.js}"></script>
 <script th:src="@{/js/table.js}"></script>
 <script>
 initTable();
@@ -190,6 +193,17 @@ function groupKeyFormatter(arg) {
     });
     return keyValuePairs[arg];
 }
+
+function redirectToGraph() {
+    const selections = $('#dataTable').bootstrapTable('getSelections');
+    if (selections.length !== 1) {
+        showWarningToast("请选择一条记录");
+        return;
+    }
+    const row = selections[0];
+    window.location.href = `graph?flowId=${row.id}`;
+}
+
 </script>
 </body>
 </html>

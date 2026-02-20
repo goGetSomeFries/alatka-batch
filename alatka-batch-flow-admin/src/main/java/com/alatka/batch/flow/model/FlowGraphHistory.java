@@ -1,13 +1,18 @@
 package com.alatka.batch.flow.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.LocalDateTime;
 
-public class FlowHistory {
+public class FlowGraphHistory {
 
+    @Schema(description = "标识", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long id;
 
+    @Schema(description = "上一标识")
     private Long previousId;
 
+    @Schema(description = "更新时间", requiredMode = Schema.RequiredMode.REQUIRED)
     private LocalDateTime updateAt;
 
     public Long getId() {

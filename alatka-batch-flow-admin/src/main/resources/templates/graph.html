@@ -11,6 +11,11 @@
 <nav class="navbar navbar-dark bg-dark flex-shrink-0">
     <div class="container-fluid">
         <span class="navbar-brand mb-0 h1">Spring Batch Job Editor</span>
+        <div class="d-flex">
+            <button class="btn btn-success btn-sm me-2" onclick="loader.saveGraph()">
+                <i class="bi bi-save"></i> 保存
+            </button>
+        </div>
     </div>
 </nav>
 
@@ -56,18 +61,44 @@
 </div>
 
 <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script>window.mxBasePath = "/webjars/mxgraph/javascript/src/";</script>
 <script th:src="@{/webjars/mxgraph/javascript/mxClient.min.js}"></script>
 <script th:src="@{/js/baseNode.js}"></script>
 <script th:src="@{/js/jobFlow.js}"></script>
+<script th:src="@{/js/infra.js}"></script>
 <script>
-    const jobFlow = new JobFlow("graphContainer", "propertyContainer");
-    jobFlow.bindToolbarComponent('startComponent', BaseNode.NODE_START);
-    jobFlow.bindToolbarComponent('endComponent', BaseNode.NODE_END);
-    jobFlow.bindToolbarComponent('decisionComponent', BaseNode.NODE_DECISION);
-    jobFlow.bindToolbarComponent('stepComponent', BaseNode.NODE_STEP);
+const loader = {
+    jobFlow: null,
+    init: function() {
+        this.jobFlow = new JobFlow("graphContainer", "propertyContainer");
+        this.jobFlow.bindToolbarComponent('startComponent', BaseNode.NODE_START);
+        this.jobFlow.bindToolbarComponent('endComponent', BaseNode.NODE_END);
+        this.jobFlow.bindToolbarComponent('decisionComponent', BaseNode.NODE_DECISION);
+        this.jobFlow.bindToolbarComponent('stepComponent', BaseNode.NODE_STEP);
 
-    jobFlow.addStartNode(60, 240);
+        const urlParams = new URLSearchParams(window.location.search);
+        const flowId = urlParams.get('flowId');
+        httpClient(`/batch/flow/graph/getData?flowId=${flowId}`, 'GET', null, (data) => {
+            if (data) {
+                this.jobFlow.importModel(data);
+            } else {
+                this.jobFlow.addStartNode(60, 240);
+            }
+        });
+    },
+    saveGraph: function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const flowId = urlParams.get('flowId');
+        const data = this.jobFlow.exportModel();
+        const req = {'flowId': flowId, 'data': data};
+
+        httpClient('/batch/flow/graph/save', 'POST', req, function (data) {
+            showSuccessToast("保存成功！！");
+        });
+    }
+};
+loader.init();
 </script>
 </body>
 </html>

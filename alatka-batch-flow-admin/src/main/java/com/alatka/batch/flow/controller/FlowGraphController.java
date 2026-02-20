@@ -1,6 +1,7 @@
 package com.alatka.batch.flow.controller;
 
-import com.alatka.batch.flow.model.FlowHistory;
+import com.alatka.batch.flow.model.FlowGraphHistory;
+import com.alatka.batch.flow.model.FlowGraphReq;
 import com.alatka.batch.flow.service.FlowGraphService;
 import com.alatka.batch.infra.model.ResMessage;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,18 +20,23 @@ public class FlowGraphController {
     private FlowGraphService flowGraphService;
 
     @Operation(summary = "保存流程图")
-    @Parameter(name = "flowId", description = "流程ID", required = true)
-    @Parameter(name = "data", description = "流程图数据", required = true)
     @PostMapping("/save")
-    public ResMessage<Void> save(@RequestParam Long flowId, @RequestBody String data) {
-        return ResMessage.success(() -> flowGraphService.save(flowId, data));
+    public ResMessage<Void> save(@RequestBody FlowGraphReq req) {
+        return ResMessage.success(() -> flowGraphService.save(req));
     }
 
     @Operation(summary = "查询流程图历史")
     @Parameter(name = "previousId", description = "编号", required = true)
     @GetMapping("/history")
-    public ResMessage<List<FlowHistory>> queryHistory(@RequestParam Long previousId) {
+    public ResMessage<List<FlowGraphHistory>> queryHistory(@RequestParam Long previousId) {
         return ResMessage.success(flowGraphService.queryHistory(previousId));
+    }
+
+    @Operation(summary = "查询流程图数据")
+    @Parameter(name = "flowId", description = "流程ID", required = true)
+    @GetMapping("/getData")
+    public ResMessage<String> getData(@RequestParam Long flowId) {
+        return ResMessage.success(flowGraphService.queryData(flowId));
     }
 
     @Operation(summary = "删除历史流程图")
