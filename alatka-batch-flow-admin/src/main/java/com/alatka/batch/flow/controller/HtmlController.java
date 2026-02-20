@@ -23,10 +23,10 @@ public class HtmlController {
         return "flow";
     }
 
-    @Operation(summary = "流程设计")
-    @GetMapping("/flow/design")
-    public String design() {
-        return "design";
+    @Operation(summary = "流程图设计")
+    @GetMapping("/flow/graph")
+    public String graph() {
+        return "graph";
     }
 
 }

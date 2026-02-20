@@ -8,9 +8,9 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "ALK_BATCH_FLOW_DATA")
+@Table(name = "ALK_BATCH_FLOW_GRAPH")
 @EntityListeners(AuditingEntityListener.class)
-public class BatchFlowData {
+public class BatchFlowGraph {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
