@@ -190,18 +190,24 @@ class JobFlow {
     }
 
     #configureXmlCodec() {
-        Object.keys(NodeFactory.nodes).forEach(key => {
-            const node = NodeFactory.nodes[key];
-            const clazz = node.constructor;
-            const codec = new mxObjectCodec(new clazz());
-            codec.getName = () => clazz.name;
-            mxCodecRegistry.register(codec);
-        });
-        {
-            const codec = new mxObjectCodec(new BaseData());
-            codec.getName = () => "BaseData";
-            mxCodecRegistry.register(codec);
-        }
+//        Object.keys(NodeFactory.nodes).forEach(key => {
+//            const node = NodeFactory.nodes[key];
+//            const clazz = node.constructor;
+//            const codec = new mxObjectCodec(new clazz());
+//            codec.getName = () => clazz.name;
+//            mxCodecRegistry.register(codec);
+//        });
+       const nodeClasses = [StartNode, EndNode, DecisionNode, StepNode, BaseData];
+            nodeClasses.forEach(Clazz => {
+                const codec = new mxObjectCodec(new Clazz());
+                codec.getName = () => Clazz.name;
+                mxCodecRegistry.register(codec);
+            });
+//        {
+//            const codec = new mxObjectCodec(new BaseData());
+//            codec.getName = () => "BaseData";
+//            mxCodecRegistry.register(codec);
+//        }
     }
 
     exportModel() {
@@ -214,6 +220,7 @@ class JobFlow {
         const doc = mxUtils.parseXml(xmlString);
         const decoder = new mxCodec(doc);
         decoder.decode(doc.documentElement, this.graph.getModel());
+        this.graph.view.refresh();
     }
 
     addStartNode(x, y) {
