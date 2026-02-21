@@ -197,12 +197,31 @@ class JobFlow {
 //            codec.getName = () => clazz.name;
 //            mxCodecRegistry.register(codec);
 //        });
-       const nodeClasses = [StartNode, EndNode, DecisionNode, StepNode, BaseData];
-            nodeClasses.forEach(Clazz => {
-                const codec = new mxObjectCodec(new Clazz());
-                codec.getName = () => Clazz.name;
-                mxCodecRegistry.register(codec);
-            });
+//       const nodeClasses = [StartNode, EndNode, DecisionNode, StepNode, BaseData];
+//            nodeClasses.forEach(Clazz => {
+//                const codec = new mxObjectCodec(new Clazz());
+//                codec.getName = () => Clazz.name;
+//                mxCodecRegistry.register(codec);
+//            });
+            const nodeClasses = [StartNode, EndNode, DecisionNode, StepNode, BaseData];
+                nodeClasses.forEach(Clazz => {
+                    const codec = new mxObjectCodec(new Clazz());
+
+                    // 关键：这里的返回值必须严格等于 XML 里的标签名（区分大小写）
+                    codec.getName = () => {
+                        if (Clazz === StartNode) return "StartNode";
+                        if (Clazz === EndNode) return "EndNode";
+                        if (Clazz === DecisionNode) return "DecisionNode";
+                        if (Clazz === StepNode) return "StepNode";
+                        if (Clazz === BaseData) return "BaseData";
+                        return Clazz.name;
+                    };
+
+                    // 排除掉干扰，只保留业务属性
+                    codec.exclude = ['id', 'style', 'geometry', 'parent', 'source', 'target', 'edges', 'mxObjectId', 'value'];
+
+                    mxCodecRegistry.register(codec);
+                });
 //        {
 //            const codec = new mxObjectCodec(new BaseData());
 //            codec.getName = () => "BaseData";
