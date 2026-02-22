@@ -136,6 +136,9 @@ class StepNode extends BaseNode {
 }
 
 class NodeFactory {
+
+    static classes = [StartNode, EndNode, DecisionNode, StepNode, BaseData];
+
     static nodes = {
         [BaseNode.NODE_START]: NodeFactory.createNode(BaseNode.NODE_START),
         [BaseNode.NODE_END]: NodeFactory.createNode(BaseNode.NODE_END),
