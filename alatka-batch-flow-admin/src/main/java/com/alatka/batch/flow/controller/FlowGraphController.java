@@ -28,8 +28,8 @@ public class FlowGraphController {
     @Operation(summary = "查询流程图历史")
     @Parameter(name = "previousId", description = "编号", required = true)
     @GetMapping("/history")
-    public ResMessage<List<FlowGraphHistory>> queryHistory(@RequestParam Long previousId) {
-        return ResMessage.success(flowGraphService.queryHistory(previousId));
+    public ResMessage<List<FlowGraphHistory>> queryHistory(@RequestParam Long flowId) {
+        return ResMessage.success(flowGraphService.queryHistory(flowId));
     }
 
     @Operation(summary = "查询流程图数据")

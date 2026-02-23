@@ -1,27 +1,42 @@
 package com.alatka.batch.flow.service;
 
 
+import com.alatka.batch.flow.AutoConfiguration;
 import com.alatka.batch.flow.entity.BatchFlow;
+import com.alatka.batch.flow.model.FlowDeployReq;
 import com.alatka.batch.flow.model.FlowPageReq;
 import com.alatka.batch.flow.model.FlowReq;
 import com.alatka.batch.flow.model.FlowRes;
 import com.alatka.batch.flow.repository.FlowRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class FlowService {
 
+    private RestTemplate restTemplate;
+
+    private TaskExecutor taskExecutor;
+
     private FlowRepository flowRepository;
+
+    private FlowGraphService flowGraphService;
 
     public Long create(FlowReq req) {
         BatchFlow entity = new BatchFlow();
@@ -59,6 +74,39 @@ public class FlowService {
         entity.setEnabled(false);
     }
 
+    public void deploy(FlowDeployReq req) {
+        flowGraphService.deploy(req.getFlowIdList());
+//        this.build(req);
+    }
+
+    private void build(FlowDeployReq req) {
+        Map<String, String> resultMap = new HashMap<>(req.getUris().size());
+        CompletableFuture<Void> completableFuture = req.getUris().stream()
+                .map(uri -> uri.startsWith("http://") || uri.startsWith("https://") ? uri : "http://" + uri)
+                .map(uri -> uri.concat(req.getPath()))
+                .map(url -> this.doBuild(url, req.getFlowIdList(), resultMap))
+                .collect(Collectors.collectingAndThen(Collectors.toList(),
+                        list -> CompletableFuture.allOf(list.toArray(new CompletableFuture[0]))));
+        completableFuture.join();
+    }
+
+    private CompletableFuture<Void> doBuild(String url, List<Long> flowIds, Map<String, String> resultMap) {
+        return CompletableFuture.supplyAsync(() -> restTemplate.postForObject(url, flowIds, String.class), taskExecutor)
+                .handleAsync((result, ex) -> "ok".equalsIgnoreCase(result) ? "success" : "fail")
+                .thenAccept(result -> resultMap.put(url, result));
+    }
+
+    public List<FlowRes> queryUndeploy() {
+        List<Long> flowIds = flowGraphService.queryUndeploy();
+        return flowRepository.findAllById(flowIds).stream()
+                .filter(BatchFlow::getEnabled)
+                .map(entity -> {
+                    FlowRes res = new FlowRes();
+                    BeanUtils.copyProperties(entity, res);
+                    return res;
+                }).collect(Collectors.toList());
+    }
+
     public Page<FlowRes> queryPage(FlowPageReq pageReq) {
         BatchFlow condition = new BatchFlow();
         BeanUtils.copyProperties(pageReq, condition);
@@ -93,5 +141,22 @@ public class FlowService {
     @Autowired
     public void setFlowRepository(FlowRepository flowRepository) {
         this.flowRepository = flowRepository;
+    }
+
+    @Autowired
+    public void setFlowGraphService(FlowGraphService flowGraphService) {
+        this.flowGraphService = flowGraphService;
+    }
+
+    @Autowired
+    @Qualifier(AutoConfiguration.REST_TEMPLATE_NAME)
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
+    @Autowired
+    @Qualifier(AutoConfiguration.TASK_EXECUTOR_NAME)
+    public void setTaskExecutor(TaskExecutor taskExecutor) {
+        this.taskExecutor = taskExecutor;
     }
 }

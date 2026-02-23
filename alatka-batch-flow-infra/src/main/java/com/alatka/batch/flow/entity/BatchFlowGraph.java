@@ -34,6 +34,9 @@ public class BatchFlowGraph {
     @Column(name = "D_STATUS")
     private String status;
 
+    @Column(name = "D_CURRENT")
+    private Boolean current;
+
     @Column(name = "F_ID")
     private Long flowId;
 
@@ -83,6 +86,14 @@ public class BatchFlowGraph {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Boolean getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(Boolean current) {
+        this.current = current;
     }
 
     public Long getFlowId() {

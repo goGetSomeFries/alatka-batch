@@ -1,5 +1,6 @@
 package com.alatka.batch.flow.controller;
 
+import com.alatka.batch.flow.model.FlowDeployReq;
 import com.alatka.batch.flow.model.FlowPageReq;
 import com.alatka.batch.flow.model.FlowReq;
 import com.alatka.batch.flow.model.FlowRes;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Tag(name = "流程")
 @RestController
@@ -44,6 +46,18 @@ public class FlowController {
     @GetMapping("/page")
     public PageResMessage<FlowRes> queryPage(@Valid FlowPageReq pageReqMessage) {
         return PageResMessage.success(flowService.queryPage(pageReqMessage));
+    }
+
+    @Operation(summary = "查询未部署流程")
+    @GetMapping("/undeploy")
+    public ResMessage<List<FlowRes>> queryUndeploy() {
+        return PageResMessage.success(flowService.queryUndeploy());
+    }
+
+    @Operation(summary = "部署流程")
+    @PostMapping("/deploy")
+    public ResMessage<Void> deploy(@RequestBody FlowDeployReq req) {
+        return ResMessage.success(() -> flowService.deploy(req));
     }
 
     @Autowired

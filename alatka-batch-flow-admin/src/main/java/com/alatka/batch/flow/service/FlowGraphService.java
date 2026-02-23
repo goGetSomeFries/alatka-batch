@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -30,6 +31,7 @@ public class FlowGraphService {
     public void save(FlowGraphReq req) {
         BatchFlowGraph condition = new BatchFlowGraph();
         condition.setFlowId(req.getFlowId());
+        condition.setCurrent(true);
         condition.setStatus("SAVE");
         Optional<BatchFlowGraph> optional = flowGraphRepository.findOne(this.condition(condition));
         if (optional.isPresent()) {
@@ -38,18 +40,30 @@ public class FlowGraphService {
         } else {
             BatchFlowGraph entity = new BatchFlowGraph();
             entity.setFlowId(req.getFlowId());
+            entity.setCurrent(true);
             entity.setStatus("SAVE");
             entity.setData(req.getData().getBytes(DATA_CHARSET));
 
             condition.setStatus("DEPLOY");
             flowGraphRepository.findOne(this.condition(condition))
-                    .ifPresent(e -> entity.setPreviousId(e.getId()));
+                    .ifPresent(e -> {
+                        e.setCurrent(false);
+                        entity.setPreviousId(e.getId());
+                    });
             flowGraphRepository.save(entity);
         }
     }
 
-    public void deploy(Long id) {
-
+    public void deploy(List<Long> flowIds) {
+        flowIds.forEach(flowId -> {
+            BatchFlowGraph condition = new BatchFlowGraph();
+            condition.setFlowId(flowId);
+            condition.setCurrent(true);
+            condition.setStatus("SAVE");
+            BatchFlowGraph entity = flowGraphRepository.findOne(this.condition(condition))
+                    .orElseThrow(() -> new IllegalArgumentException("没有未部署的流程图"));
+            entity.setStatus("DEPLOY");
+        });
     }
 
     public void delete(Long previousId) {
@@ -64,7 +78,15 @@ public class FlowGraphService {
         flowGraphRepository.deleteAllById(result);
     }
 
-    public List<FlowGraphHistory> queryHistory(Long previousId) {
+    public List<Long> queryUndeploy() {
+        BatchFlowGraph condition = new BatchFlowGraph();
+        condition.setCurrent(true);
+        condition.setStatus("SAVE");
+        return flowGraphRepository.findAll(this.condition(condition))
+                .stream().map(BatchFlowGraph::getFlowId).collect(Collectors.toList());
+    }
+
+    public List<FlowGraphHistory> queryHistory(Long flowId) {
         List<FlowGraphHistory> result = new ArrayList<>();
         AtomicInteger time = new AtomicInteger(1);
         this.doQueryHistory(previousId, result, time);
@@ -72,7 +94,7 @@ public class FlowGraphService {
     }
 
     private void doQueryHistory(Long previousId, List<FlowGraphHistory> result, AtomicInteger time) {
-        if (previousId == null || time.getAndIncrement() >= 5) {
+        if (previousId == null || time.getAndIncrement() >= 8) {
             return;
         }
         BatchFlowGraph entity = flowGraphRepository.findById(previousId)
@@ -86,6 +108,7 @@ public class FlowGraphService {
     public String queryData(Long flowId) {
         BatchFlowGraph condition = new BatchFlowGraph();
         condition.setFlowId(flowId);
+        condition.setCurrent(true);
         Optional<BatchFlowGraph> optional = flowGraphRepository.findOne(this.condition(condition));
         return optional.isPresent() ? new String(optional.get().getData(), DATA_CHARSET) : null;
     }
@@ -99,10 +122,14 @@ public class FlowGraphService {
             if (condition.getFlowId() != null) {
                 list.add(criteriaBuilder.equal(root.get("flowId").as(Long.class), condition.getFlowId()));
             }
+            if (condition.getStatus() != null) {
+                list.add(criteriaBuilder.equal(root.get("status").as(String.class), condition.getStatus()));
+            }
+            if (condition.getCurrent() != null) {
+                list.add(criteriaBuilder.equal(root.get("current").as(Boolean.class), condition.getCurrent()));
+            }
             if (condition.getPreviousId() != null) {
                 list.add(criteriaBuilder.equal(root.get("previousId").as(Long.class), condition.getPreviousId()));
-            } else {
-                list.add(criteriaBuilder.isNull(root.get("previousId").as(Long.class)));
             }
             return criteriaBuilder.and(list.toArray(new Predicate[0]));
         };
@@ -112,4 +139,5 @@ public class FlowGraphService {
     public void setFlowGraphRepository(FlowGraphRepository flowGraphRepository) {
         this.flowGraphRepository = flowGraphRepository;
     }
+
 }

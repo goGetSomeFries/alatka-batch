@@ -6,6 +6,7 @@
     <title>alatka-batch-flow-admin</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/tom-select/dist/css/tom-select.bootstrap5.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.min.css}"/>
 </head>
 <body>
@@ -59,13 +60,13 @@
         </div>
     </div>
     <div class="col-12 text-end mb-3">
+        <button type="button" class="btn btn-sm btn-outline-primary me-5" id="deployButton"
+                onclick="showDeployModal()">
+            <i class="bi bi-rocket"></i> 部署
+        </button>
         <button type="button" class="btn btn-sm btn-outline-secondary" id="graphButton"
                 onclick="redirectToGraph()">
-            <i class="bi bi-arrow-left"></i> 设计流程图
-        </button>
-        <button type="button" class="btn btn-sm btn-outline-primary me-5" id="deployButton"
-                onclick="showBuildModal('/rule/build', 'deploy')">
-            <i class="bi bi-rocket"></i> 部署
+            <i class="bi bi-pencil-square"></i> 设计流程图
         </button>
         <button type="button" class="btn btn-sm btn-outline-info" id="addButton"
                 onclick="showEditModal('/batch/flow/create', true)">
@@ -90,6 +91,8 @@
            data-striped="true"
            data-pagination="true"
            data-pagination-loop="false"
+           data-detail-view="true"
+           data-detail-formatter="detailFormatter"
            data-side-pagination="server"
            data-click-to-select="true"
            data-maintain-selected="true">
@@ -165,44 +168,164 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="deployModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">部署流程</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="deployForm">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="deployKey" class="form-label">流程</label>
+                            <select class="form-select alk-select-deployKey" multiple id="deployKey" name="key"
+                                    aria-describedby="deployKeyDesc">
+                            </select>
+                            <div id="deployKeyDesc" class="form-text">
+                                可部署多个流程
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="deployPath" class="form-label">路径</label>
+                            <input type="text" class="form-control" id="deployPath" name="path"
+                                   aria-describedby="deployPathDesc" required>
+                            <div id="deployPathDesc" class="form-text">
+                                例如：/deploy 或 /flow/build
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="deployUris" class="form-label">uris</label>
+                            <textarea class="form-control" rows="3" id="deployUris" name="uris"
+                                      aria-describedby="deployUrisDesc" required></textarea>
+                            <div id="deployUrisDesc" class="form-text">
+                                多个用逗号分割，例如：192.x.xx.xx:8000,192.xxx.xxx.xxx:8001
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="saveDeployBtn">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
 <script th:src="@{/webjars/interactjs/dist/interact.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/webjars/tom-select/dist/js/tom-select.complete.min.js}"></script>
 <script th:src="@{/js/infra.js}"></script>
 <script th:src="@{/js/table.js}"></script>
 <script>
-initTable();
-initRuleGroupSelect();
+    initTable();
+    initGroupSelect();
+    initDeployModal();
 
-function initRuleGroupSelect() {
-    httpClient('/batch/flow/group/map', 'GET', null, function (data) {
-        const map = new Map(Object.entries(data));
-        map.forEach((value, key) => {
-            $('.alk-select-groupKey').append($('<option>', {value: key, text: value}))
+    function initDeployModal() {
+        const $deployKey = $('#deployKey');
+        const tomSelect = new TomSelect($deployKey, {
+            plugins: ['remove_button'],
+            placeholder: '请选择...'
         });
-    });
-}
+        $deployKey.data('tomSelect-instance', tomSelect);
 
-function groupKeyFormatter(arg) {
-    const keyValuePairs = {};
-    $('select#groupKey option').each(function () {
-        keyValuePairs[$(this).val()] = $(this).text();
-    });
-    return keyValuePairs[arg];
-}
-
-function redirectToGraph() {
-    const selections = $('#dataTable').bootstrapTable('getSelections');
-    if (selections.length !== 1) {
-        showWarningToast("请选择一条记录");
-        return;
+        $('#saveDeployBtn').off('click').on('click', function (event) {
+            const formData = {};
+            const $deployForm = $('#deployForm');
+            if (!$deployForm[0].checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+                $deployForm.addClass('was-validated');
+            } else {
+                formData['path'] = $('#deployPath').val();
+                formData['uris'] = $('#deployUris').val().split(",").map(item => item.trim());
+                const tomSelect = $('#deployKey').data('tomSelect-instance');
+                formData['flowIdList'] = tomSelect.getValue();
+                httpClient('/batch/flow/deploy', 'POST', formData, function (data) {
+                    showSuccessToast('部署成功！');
+                    $('#deployModal').modal('hide');
+                });
+            }
+        });
     }
-    const row = selections[0];
-    window.location.href = `graph?flowId=${row.id}`;
-}
+
+    function initGroupSelect() {
+        httpClient('/batch/flow/group/map', 'GET', null, function (data) {
+            const map = new Map(Object.entries(data));
+            map.forEach((value, key) => {
+                $('.alk-select-groupKey').append($('<option>', {value: key, text: value}))
+            });
+        });
+    }
+
+    function groupKeyFormatter(arg) {
+        const keyValuePairs = {};
+        $('select#groupKey option').each(function () {
+            keyValuePairs[$(this).val()] = $(this).text();
+        });
+        return keyValuePairs[arg];
+    }
+
+    function redirectToGraph() {
+        const selections = $('#dataTable').bootstrapTable('getSelections');
+        if (selections.length !== 1) {
+            showWarningToast("请选择一条记录");
+            return;
+        }
+        const row = selections[0];
+        window.location.href = `graph?flowId=${row.id}`;
+    }
+
+    function showDeployModal() {
+        httpClient('/batch/flow/undeploy', 'GET', null, function (list) {
+            if (list.length === 0) {
+                showWarningToast('无待部署流程！');
+                return;
+            }
+
+            const tomSelect = $('#deployKey').data('tomSelect-instance');
+            tomSelect.clear();
+            tomSelect.clearOptions();
+            const newOptions = list.map(data => ({
+                value: data.id,
+                text: `${data.key} - ${data.name}`
+            }));
+
+            tomSelect.addOptions(newOptions);
+            tomSelect.refreshOptions(false);
+
+            $('#deployPath').val('');
+            $('#deployUris').val('');
+
+            $('#deployModal').modal('show');
+        });
+
+    }
+
+    function detailFormatter(index, row) {
+        queryGraphHistory(row.id, (list) => {
+            list
+        });
+        const html = [];
+        html.push('</dl>');
+        return html.join('');
+    }
+
+    function queryGraphHistory(flowId, callback) {
+        httpClient(`/batch/flow/graph/history?flowId=${flowId}`, 'GET', null, function (list) {
+            callback(list);
+        });
+    }
 
 </script>
 </body>
