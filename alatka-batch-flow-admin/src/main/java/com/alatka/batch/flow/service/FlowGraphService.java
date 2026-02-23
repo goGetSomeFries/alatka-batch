@@ -86,15 +86,27 @@ public class FlowGraphService {
                 .stream().map(BatchFlowGraph::getFlowId).collect(Collectors.toList());
     }
 
-    public List<FlowGraphHistory> queryHistory(Long flowId) {
+    public List<FlowGraphHistory> queryHistory(Long flowId, Long previousId) {
         List<FlowGraphHistory> result = new ArrayList<>();
         AtomicInteger time = new AtomicInteger(1);
+        if (previousId == null) {
+            BatchFlowGraph condition = new BatchFlowGraph();
+            condition.setFlowId(flowId);
+            condition.setCurrent(true);
+            previousId = flowGraphRepository.findOne(this.condition(condition))
+                    .map(entity -> {
+                        FlowGraphHistory model = new FlowGraphHistory();
+                        BeanUtils.copyProperties(entity, model);
+                        result.add(model);
+                        return entity.getPreviousId();
+                    }).orElse(null);
+        }
         this.doQueryHistory(previousId, result, time);
         return result;
     }
 
     private void doQueryHistory(Long previousId, List<FlowGraphHistory> result, AtomicInteger time) {
-        if (previousId == null || time.getAndIncrement() >= 8) {
+        if (previousId == null || time.getAndIncrement() >= 6) {
             return;
         }
         BatchFlowGraph entity = flowGraphRepository.findById(previousId)

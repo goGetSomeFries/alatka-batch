@@ -26,10 +26,12 @@ public class FlowGraphController {
     }
 
     @Operation(summary = "查询流程图历史")
-    @Parameter(name = "previousId", description = "编号", required = true)
+    @Parameter(name = "flowId", description = "流程编号", required = true)
+    @Parameter(name = "previousId", description = "编号")
     @GetMapping("/history")
-    public ResMessage<List<FlowGraphHistory>> queryHistory(@RequestParam Long flowId) {
-        return ResMessage.success(flowGraphService.queryHistory(flowId));
+    public ResMessage<List<FlowGraphHistory>> queryHistory(@RequestParam Long flowId,
+                                                           @RequestParam(required = false) Long previousId) {
+        return ResMessage.success(flowGraphService.queryHistory(flowId, previousId));
     }
 
     @Operation(summary = "查询流程图数据")

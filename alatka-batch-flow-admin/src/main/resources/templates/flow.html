@@ -313,16 +313,22 @@
     }
 
     function detailFormatter(index, row) {
-        queryGraphHistory(row.id, (list) => {
-            list
+        queryGraphHistory(row.id, null, (list) => {
+            console.log(list);
         });
         const html = [];
-        html.push('</dl>');
+        html.push('1111');
         return html.join('');
     }
 
-    function queryGraphHistory(flowId, callback) {
-        httpClient(`/batch/flow/graph/history?flowId=${flowId}`, 'GET', null, function (list) {
+    function queryGraphHistory(flowId, previousId, callback) {
+        const params = new URLSearchParams({
+            flowId: flowId
+        });
+        if (previousId !== null) {
+            params.append('previousId', previousId);
+        }
+        httpClient(`/batch/flow/graph/history?${params.toString()}`, 'GET', null, function (list) {
             callback(list);
         });
     }
