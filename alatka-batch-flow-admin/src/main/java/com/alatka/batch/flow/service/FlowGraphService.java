@@ -109,7 +109,7 @@ public class FlowGraphService {
     }
 
     private void doQueryHistory(Long previousId, List<FlowGraphHistory> result, AtomicInteger time) {
-        if (previousId == null || time.getAndIncrement() >= 16) {
+        if (previousId == null || time.getAndIncrement() >= 5) {
             return;
         }
         BatchFlowGraph entity = flowGraphRepository.findById(previousId)

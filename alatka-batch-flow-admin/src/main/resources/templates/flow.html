@@ -316,10 +316,7 @@
         const containerId = `history-detail-${row.id}`;
 
         initGraphHistory(row.id, null, (html) => {
-            const $container = document.getElementById(containerId);
-            if ($container) {
-                $container.innerHTML = html;
-            }
+            $(`#${containerId}`).html(html);
         });
 
         return `<div class="p-3 text-center text-muted small">
@@ -328,6 +325,13 @@
                         </div>
                     </div>
                 </div>`;
+    }
+
+
+    function moreGraphHistory(flowId, previousId) {
+        initGraphHistory(flowId, previousId, (html) => {
+            $(`#history-detail-${flowId}`).append(html);
+        });
     }
 
     function initGraphHistory(flowId, previousId, callback) {
@@ -352,7 +356,21 @@
                 </div>
             `).join('');
 
-            callback(html);
+            const lastId = list[list.length - 1].previousId;
+            const moreHtml = lastId ? `
+                <div class="px-4 text-center position-relative more-node" style="min-width: 150px; z-index: 1;">
+                    <div class="position-absolute" style="top: 34px; left: 0; width: 50%; border-top: 2px solid #dee2e6;"></div>
+
+                    <div class="rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center bg-white border border-primary text-primary"
+                         style="width: 32px; height: 32px; cursor: pointer;"
+                         onclick="moreGraphHistory('${flowId}', '${lastId}')">
+                        <i class="fa fa-plus small"></i>
+                    </div>
+                    <div class="fw-bold small text-primary">更多记录</div>
+                    <div class="text-muted" style="font-size: 0.7rem;">点击加载更多</div>
+                </div>` : '';
+
+            callback(html + moreHtml);
         });
     }
 
