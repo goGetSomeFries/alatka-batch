@@ -13,11 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,7 +26,7 @@ public class FlowGraphService {
 
     private FlowGraphRepository flowGraphRepository;
 
-    private static final Charset DATA_CHARSET = Charset.forName("UTF-8");
+    private static final Charset DATA_CHARSET = StandardCharsets.UTF_8;
 
     public void save(FlowGraphReq req) {
         BatchFlowGraph condition = new BatchFlowGraph();
@@ -66,16 +66,19 @@ public class FlowGraphService {
         });
     }
 
-    public void delete(Long previousId) {
-        List<Long> result = new ArrayList<>();
-        AtomicReference<Long> theOne = new AtomicReference(previousId);
-        while (theOne.get() != null) {
-            BatchFlowGraph entity = flowGraphRepository.findById(theOne.get())
-                    .orElseThrow(() -> new IllegalArgumentException("id: <" + theOne.get() + "> not found"));
-            result.add(entity.getId());
-            theOne.set(entity.getPreviousId());
+    public void delete(Long id) {
+        BatchFlowGraph entity = flowGraphRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("id: <" + id + "> not found"));
+        if (entity.getCurrent()) {
+            throw new IllegalArgumentException("不能删除最新节点！");
         }
-        flowGraphRepository.deleteAllById(result);
+        flowGraphRepository.delete(entity);
+
+        BatchFlowGraph condition = new BatchFlowGraph();
+        condition.setPreviousId(id);
+        flowGraphRepository.findOne(this.condition(condition)).ifPresent(e -> {
+            e.setPreviousId(entity.getPreviousId());
+        });
     }
 
     public List<Long> queryUndeploy() {
@@ -106,7 +109,7 @@ public class FlowGraphService {
     }
 
     private void doQueryHistory(Long previousId, List<FlowGraphHistory> result, AtomicInteger time) {
-        if (previousId == null || time.getAndIncrement() >= 6) {
+        if (previousId == null || time.getAndIncrement() >= 16) {
             return;
         }
         BatchFlowGraph entity = flowGraphRepository.findById(previousId)
@@ -117,12 +120,16 @@ public class FlowGraphService {
         this.doQueryHistory(entity.getPreviousId(), result, time);
     }
 
-    public String queryData(Long flowId) {
-        BatchFlowGraph condition = new BatchFlowGraph();
-        condition.setFlowId(flowId);
-        condition.setCurrent(true);
-        Optional<BatchFlowGraph> optional = flowGraphRepository.findOne(this.condition(condition));
-        return optional.isPresent() ? new String(optional.get().getData(), DATA_CHARSET) : null;
+    public String queryData(Long flowId, Long id) {
+        if (id == null) {
+            BatchFlowGraph condition = new BatchFlowGraph();
+            condition.setFlowId(flowId);
+            condition.setCurrent(true);
+            Optional<BatchFlowGraph> optional = flowGraphRepository.findOne(this.condition(condition));
+            return optional.map(entity -> new String(entity.getData(), DATA_CHARSET)).orElse(null);
+        }
+        return flowGraphRepository.findById(id).map(entity -> new String(entity.getData(), DATA_CHARSET))
+                .orElseThrow(() -> new IllegalArgumentException("id: <" + id + "> not found."));
     }
 
     private Specification<BatchFlowGraph> condition(BatchFlowGraph condition) {

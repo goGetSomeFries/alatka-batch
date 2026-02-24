@@ -127,7 +127,7 @@ class StepNode extends BaseNode {
     }
 
     isValidConnection(graph, source, target) {
-        return super.isValidConnection(source, target) && graph.getModel().getOutgoingEdges(target).length < 1;
+        return super.isValidConnection(source, target) && graph.getModel().getIncomingEdges(target).length < 1;
     }
 
     isCellConnectable(graph, cell) {

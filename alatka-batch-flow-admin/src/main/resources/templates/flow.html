@@ -313,15 +313,24 @@
     }
 
     function detailFormatter(index, row) {
-        queryGraphHistory(row.id, null, (list) => {
-            console.log(list);
+        const containerId = `history-detail-${row.id}`;
+
+        initGraphHistory(row.id, null, (html) => {
+            const $container = document.getElementById(containerId);
+            if ($container) {
+                $container.innerHTML = html;
+            }
         });
-        const html = [];
-        html.push('1111');
-        return html.join('');
+
+        return `<div class="p-3 text-center text-muted small">
+                    <div class="p-3 bg-light rounded shadow-sm" style="width: 0; min-width: 100%; overflow: hidden;">
+                        <div id="${containerId}" class="d-flex flex-nowrap position-relative overflow-x-auto pb-4 pt-2" style="scrollbar-width: thin;">
+                        </div>
+                    </div>
+                </div>`;
     }
 
-    function queryGraphHistory(flowId, previousId, callback) {
+    function initGraphHistory(flowId, previousId, callback) {
         const params = new URLSearchParams({
             flowId: flowId
         });
@@ -329,7 +338,21 @@
             params.append('previousId', previousId);
         }
         httpClient(`/batch/flow/graph/history?${params.toString()}`, 'GET', null, function (list) {
-            callback(list);
+            let html = list.map((item) => `
+                <div class="px-4 text-center position-relative" style="min-width: 150px; z-index: 1; background: linear-gradient(to bottom, transparent 34px, #dee2e6 34px, #dee2e6 36px, transparent 36px);">
+                    <div class="rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center bg-light"
+                         style="width: 32px; height: 32px;">
+                        <div class="rounded-circle ${item.current ? 'bg-primary shadow' : 'bg-secondary opacity-50'}"
+                             style="width: 14px; height: 14px;"></div>
+                    </div>
+                    <div class="fw-bold small ${item.current ? 'text-primary' : 'text-dark'}">${item.status}</div>
+                    <div class="text-muted" style="font-size: 0.7rem;">${item.updateAt || item.createAt}</div>
+                    <a href="graph?flowId=${flowId}&id=${item.id}" class="btn btn-sm btn-outline-primary py-0 px-2 mt-2"
+                       style="font-size: 0.65rem;">查看流程图</a>
+                </div>
+            `).join('');
+
+            callback(html);
         });
     }
 

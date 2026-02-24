@@ -37,15 +37,15 @@ public class FlowGraphController {
     @Operation(summary = "查询流程图数据")
     @Parameter(name = "flowId", description = "流程ID", required = true)
     @GetMapping("/getData")
-    public ResMessage<String> getData(@RequestParam Long flowId) {
-        return ResMessage.success(flowGraphService.queryData(flowId));
+    public ResMessage<String> getData(@RequestParam Long flowId, @RequestParam(required = false) Long id) {
+        return ResMessage.success(flowGraphService.queryData(flowId, id));
     }
 
     @Operation(summary = "删除历史流程图")
-    @Parameter(name = "previousId", description = "编号", required = true)
+    @Parameter(name = "id", description = "编号", required = true)
     @DeleteMapping("/delete")
-    public ResMessage<Void> delete(@RequestParam Long previousId) {
-        return ResMessage.success(() -> flowGraphService.delete(previousId));
+    public ResMessage<Void> delete(@RequestParam Long id) {
+        return ResMessage.success(() -> flowGraphService.delete(id));
     }
 
     @Autowired

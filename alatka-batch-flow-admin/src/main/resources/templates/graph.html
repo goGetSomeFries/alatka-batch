@@ -16,7 +16,7 @@
                 <i class="bi bi-arrow-left"></i> 返回上级
             </button>
             <button class="btn btn-success btn-sm me-2" onclick="loader.saveGraph()">
-                <i class="bi bi-save"></i> 保存
+                <i class="bi bi-save"></i> 保存为最新
             </button>
         </div>
     </div>
@@ -71,37 +71,39 @@
 <script th:src="@{/js/jobFlow.js}"></script>
 <script th:src="@{/js/infra.js}"></script>
 <script>
-const loader = {
-    jobFlow: null,
-    init: function() {
-        this.jobFlow = new JobFlow("graphContainer", "propertyContainer");
-        this.jobFlow.bindToolbarComponent('startComponent', BaseNode.NODE_START);
-        this.jobFlow.bindToolbarComponent('endComponent', BaseNode.NODE_END);
-        this.jobFlow.bindToolbarComponent('decisionComponent', BaseNode.NODE_DECISION);
-        this.jobFlow.bindToolbarComponent('stepComponent', BaseNode.NODE_STEP);
+    const loader = {
+        jobFlow: null,
+        init: function () {
+            this.jobFlow = new JobFlow("graphContainer", "propertyContainer");
+            this.jobFlow.bindToolbarComponent('startComponent', BaseNode.NODE_START);
+            this.jobFlow.bindToolbarComponent('endComponent', BaseNode.NODE_END);
+            this.jobFlow.bindToolbarComponent('decisionComponent', BaseNode.NODE_DECISION);
+            this.jobFlow.bindToolbarComponent('stepComponent', BaseNode.NODE_STEP);
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const flowId = urlParams.get('flowId');
-        httpClient(`/batch/flow/graph/getData?flowId=${flowId}`, 'GET', null, (data) => {
-            if (data) {
-                this.jobFlow.importModel(data);
-            } else {
-                this.jobFlow.addStartNode(60, 240);
-            }
-        });
-    },
-    saveGraph: function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const flowId = urlParams.get('flowId');
-        const data = this.jobFlow.exportModel();
-        const req = {'flowId': flowId, 'data': data};
+            const urlParams = new URLSearchParams(window.location.search);
+            const flowId = urlParams.get('flowId');
+            const id = urlParams.get('id');
+            let url = `/batch/flow/graph/getData?flowId=${flowId}${id ? '&id=' + id : ''}`;
+            httpClient(url, 'GET', null, (data) => {
+                if (data) {
+                    this.jobFlow.importModel(data);
+                } else {
+                    this.jobFlow.addStartNode(60, 240);
+                }
+            });
+        },
+        saveGraph: function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const flowId = urlParams.get('flowId');
+            const data = this.jobFlow.exportModel();
+            const req = {'flowId': flowId, 'data': data};
 
-        httpClient('/batch/flow/graph/save', 'POST', req, function (data) {
-            showSuccessToast("保存成功！！");
-        });
-    }
-};
-loader.init();
+            httpClient('/batch/flow/graph/save', 'POST', req, function (data) {
+                showSuccessToast("保存成功！！");
+            });
+        }
+    };
+    loader.init();
 </script>
 </body>
 </html>
