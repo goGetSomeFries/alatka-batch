@@ -17,7 +17,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @EnableJpaRepositories
 @EnableJpaAuditing
 @EntityScan
-@ComponentScan
+@ComponentScan(basePackages = {"com.alatka.batch.flow", "com.alatka.batch.infra"})
 @Configuration
 public class AutoConfiguration {
 

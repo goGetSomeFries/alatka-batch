@@ -74,11 +74,7 @@ public class FlowGraphService {
         }
         flowGraphRepository.delete(entity);
 
-        BatchFlowGraph condition = new BatchFlowGraph();
-        condition.setPreviousId(id);
-        flowGraphRepository.findOne(this.condition(condition)).ifPresent(e -> {
-            e.setPreviousId(entity.getPreviousId());
-        });
+        flowGraphRepository.updatePreviousId(entity.getPreviousId(), id);
     }
 
     public List<Long> queryUndeploy() {

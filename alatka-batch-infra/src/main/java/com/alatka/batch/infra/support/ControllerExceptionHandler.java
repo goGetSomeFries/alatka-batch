@@ -10,8 +10,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@Component("ruleControllerExceptionHandler")
-@RestControllerAdvice(basePackages = "com.alatka.batch.*.controller")
+@Component
+@RestControllerAdvice(basePackages = "com.alatka.batch")
 public class ControllerExceptionHandler {
 
     private final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);

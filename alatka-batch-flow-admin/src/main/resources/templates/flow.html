@@ -327,13 +327,6 @@
                 </div>`;
     }
 
-
-    function moreGraphHistory(flowId, previousId) {
-        initGraphHistory(flowId, previousId, (html) => {
-            $(`#history-detail-${flowId}`).append(html);
-        });
-    }
-
     function initGraphHistory(flowId, previousId, callback) {
         const params = new URLSearchParams({
             flowId: flowId
@@ -343,34 +336,51 @@
         }
         httpClient(`/batch/flow/graph/history?${params.toString()}`, 'GET', null, function (list) {
             let html = list.map((item) => `
-                <div class="px-4 text-center position-relative" style="min-width: 150px; z-index: 1; background: linear-gradient(to bottom, transparent 34px, #dee2e6 34px, #dee2e6 36px, transparent 36px);">
-                    <div class="rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center bg-light"
-                         style="width: 32px; height: 32px;">
-                        <div class="rounded-circle ${item.current ? 'bg-primary shadow' : 'bg-secondary opacity-50'}"
-                             style="width: 14px; height: 14px;"></div>
+                <div id="history-node-${item.id}" class="px-4 text-center position-relative" style="min-width: 150px; z-index: 1; background: linear-gradient(to bottom, transparent 34px, #dee2e6 34px, #dee2e6 36px, transparent 36px);">
+                    <div class="rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center bg-light" style="width: 32px; height: 32px;">
+                        <div class="rounded-circle ${item.current ? 'bg-primary shadow' : 'bg-secondary opacity-50'}" style="width: 14px; height: 14px;"></div>
                     </div>
                     <div class="fw-bold small ${item.current ? 'text-primary' : 'text-dark'}">${item.status}</div>
                     <div class="text-muted" style="font-size: 0.7rem;">${item.updateAt || item.createAt}</div>
-                    <a href="graph?flowId=${flowId}&id=${item.id}" class="btn btn-sm btn-outline-primary py-0 px-2 mt-2"
-                       style="font-size: 0.65rem;">查看流程图</a>
+                    <div class="d-flex justify-content-center align-items-center mt-2 gap-1">
+                        <a href="graph?flowId=${flowId}&id=${item.id}" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size: 0.65rem;">查看</a>
+                        <button class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size: 0.65rem;" onclick="deleteGraph('${item.id}')">
+                           <i class="fa fa-trash-o"></i>删除
+                        </button>
+                    </div>
                 </div>
             `).join('');
 
             const lastId = list[list.length - 1].previousId;
             const moreHtml = lastId ? `
-                <div class="px-4 text-center position-relative more-node" style="min-width: 150px; z-index: 1;">
-                    <div class="position-absolute" style="top: 34px; left: 0; width: 50%; border-top: 2px solid #dee2e6;"></div>
-
-                    <div class="rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center bg-white border border-primary text-primary"
-                         style="width: 32px; height: 32px; cursor: pointer;"
-                         onclick="moreGraphHistory('${flowId}', '${lastId}')">
-                        <i class="fa fa-plus small"></i>
+                <div id="more-history-button-${lastId}" class="d-flex align-items-center more-node ps-2" style="min-width: 80px; z-index: 1;">
+                    <div class="position-absolute" style="top: 34px; left: 0; width: 40px; border-top: 2px solid #dee2e6; z-index: 0;"></div>
+                    <div class="bg-light position-relative d-flex align-items-center justify-content-center" style="z-index: 1; height: 100%;">
+                        <button class="btn btn-sm btn-white border shadow-sm p-0 d-flex flex-column align-items-center justify-content-center"
+                                style="width: 28px; height: 70px; border-radius: 15px; background: white;"
+                                onclick="moreGraphHistory('${flowId}', '${lastId}')">
+                            <i class="bi bi-chevron-right text-primary mb-1" style="font-size: 0.8rem; -webkit-text-stroke: 1px;"></i>
+                            <span style="font-size: 0.65rem; writing-mode: vertical-lr; letter-spacing: 0.2rem; margin-top: 2px;"
+                                  class="text-muted fw-bold">更多</span>
+                        </button>
                     </div>
-                    <div class="fw-bold small text-primary">更多记录</div>
-                    <div class="text-muted" style="font-size: 0.7rem;">点击加载更多</div>
                 </div>` : '';
 
             callback(html + moreHtml);
+        });
+    }
+
+    function moreGraphHistory(flowId, previousId) {
+        initGraphHistory(flowId, previousId, (html) => {
+            $(`#more-history-button-${previousId}`).remove();
+            $(`#history-detail-${flowId}`).append(html);
+        });
+    }
+
+    function deleteGraph(id) {
+        httpClient(`/batch/flow/graph/delete?id=${id}`, 'DELETE', null, function (data) {
+            $(`#history-node-${id}`).remove();
+            showSuccessToast("删除成功！");
         });
     }
 

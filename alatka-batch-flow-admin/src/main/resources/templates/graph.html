@@ -15,7 +15,7 @@
             <button type="button" class="btn btn-sm btn-outline-secondary me-2" onclick="window.history.back()">
                 <i class="bi bi-arrow-left"></i> 返回上级
             </button>
-            <button class="btn btn-success btn-sm me-2" onclick="loader.saveGraph()">
+            <button class="btn btn-success btn-sm me-2" onclick="showSaveModal()">
                 <i class="bi bi-save"></i> 保存为最新
             </button>
         </div>
@@ -62,6 +62,23 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="saveModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">确认保存</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>保存后会覆盖最新待部署流程图</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-danger" id="saveBtn">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
@@ -104,6 +121,14 @@
         }
     };
     loader.init();
+
+    function showSaveModal() {
+        $('#saveModal').modal('show');
+        $('#saveBtn').off('click').on('click', function () {
+            loader.saveGraph();
+            $('#saveModal').modal('hide');
+        });
+    }
 </script>
 </body>
 </html>
