@@ -67,16 +67,17 @@ class StartNode extends BaseNode {
 
 class EndNode extends BaseNode {
     constructor() {
-        super('End', 70, 70, BaseNode.NODE_END);
+        super('End', 50, 50, BaseNode.NODE_END);
     }
 
     getStyleConfig() {
         const style = super.getStyleConfig();
-        style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_ELLIPSE;
-        style[mxConstants.STYLE_PERIMETER] = mxPerimeter.EllipsePerimeter;
+        style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
+        style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
         style[mxConstants.STYLE_FILLCOLOR] = '#f8d7da';
         style[mxConstants.STYLE_STROKECOLOR] = '#dc3545';
         style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
+        style[mxConstants.STYLE_ROUNDED] = false;
         return style;
     }
 

@@ -61,7 +61,7 @@ class JobFlow {
             return target.isVertex() && NodeFactory.nodes[target.value.type].isValidConnection(this.graph, source, target);
         };
         this.graph.isCellConnectable = (cell) => {
-            return cell.isEdge() || NodeFactory.nodes[cell.value.type].isCellConnectable(this.graph, cell);
+            return cell === null || cell.isEdge() || NodeFactory.nodes[cell.value.type].isCellConnectable(this.graph, cell);
         };
     }
 
