@@ -67,7 +67,7 @@ class StartNode extends BaseNode {
 
 class EndNode extends BaseNode {
     constructor() {
-        super('End', 50, 50, BaseNode.NODE_END);
+        super('End', 55, 55, BaseNode.NODE_END);
     }
 
     getStyleConfig() {
@@ -77,7 +77,6 @@ class EndNode extends BaseNode {
         style[mxConstants.STYLE_FILLCOLOR] = '#f8d7da';
         style[mxConstants.STYLE_STROKECOLOR] = '#dc3545';
         style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
-        style[mxConstants.STYLE_ROUNDED] = false;
         return style;
     }
 
