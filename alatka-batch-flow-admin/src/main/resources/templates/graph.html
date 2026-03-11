@@ -5,6 +5,30 @@
     <title>alatka-batch-flow-admin</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}"/>
+    <style>
+        .btn-custom-indigo {
+            color: #6610f2 !important;
+            border-color: #6610f2 !important;
+            background-color: transparent;
+        }
+
+        .btn-custom-indigo:hover {
+            color: #6610f2 !important;
+            border: 1px dashed #6610f2 !important;
+            background-color: #f8f5ff;
+        }
+
+        .btn-custom-orange {
+            color: #fd7e14 !important;
+            border-color: #fd7e14 !important;
+            background-color: transparent;
+        }
+        .btn-custom-orange:hover {
+            color: #ffffff !important;
+            background-color: #fd7e14 !important;
+            border-color: #fd7e14 !important;
+        }
+    </style>
 </head>
 <body class="vh-100 d-flex flex-column overflow-hidden bg-light">
 
@@ -47,9 +71,17 @@
                                 class="btn btn-sm btn-outline-primary d-flex align-items-center">
                             <i class="bi bi-box-seam me-1"></i>Step
                         </button>
+                        <button type="button" id="flowComponent"
+                                class="btn btn-sm btn-custom-indigo d-flex align-items-center">
+                            <i class="bi bi-layout-split me-1"></i>Flow
+                        </button>
                         <button type="button" id="decisionComponent"
                                 class="btn btn-sm btn-outline-secondary d-flex align-items-center">
                             <i class="bi bi-signpost-split me-1"></i>Decision
+                        </button>
+                        <button type="button" id="splitComponent"
+                                class="btn btn-sm btn-custom-orange d-flex align-items-center">
+                            <i class="bi bi-diagram-3 me-1"></i>Split
                         </button>
                     </div>
                 </div>
@@ -95,7 +127,9 @@
             this.jobFlow.bindToolbarComponent('startComponent', BaseNode.NODE_START);
             this.jobFlow.bindToolbarComponent('endComponent', BaseNode.NODE_END);
             this.jobFlow.bindToolbarComponent('decisionComponent', BaseNode.NODE_DECISION);
+            this.jobFlow.bindToolbarComponent('splitComponent', BaseNode.NODE_SPLIT);
             this.jobFlow.bindToolbarComponent('stepComponent', BaseNode.NODE_STEP);
+            this.jobFlow.bindToolbarComponent('flowComponent', BaseNode.NODE_FLOW);
 
             const urlParams = new URLSearchParams(window.location.search);
             const flowId = urlParams.get('flowId');

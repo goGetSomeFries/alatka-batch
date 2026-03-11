@@ -9,7 +9,9 @@ class BaseNode {
     static NODE_START = 'START';
     static NODE_END = 'END';
     static NODE_DECISION = 'DECISION';
+    static NODE_SPLIT = 'SPLIT';
     static NODE_STEP = 'STEP';
+    static NODE_FLOW = 'FLOW';
 
     constructor(label, width, height, type, data) {
         this.label = label;
@@ -56,8 +58,7 @@ class StartNode extends BaseNode {
     }
 
     isValidConnection(graph, source, target) {
-        const flag = super.isValidConnection(source, target);
-        return flag && target.value?.type !== BaseNode.NODE_START;
+        return super.isValidConnection(source, target);
     }
 
     isCellConnectable(graph, cell) {
@@ -98,8 +99,33 @@ class DecisionNode extends BaseNode {
         const style = super.getStyleConfig();
         style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RHOMBUS;
         style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RhombusPerimeter;
-        style[mxConstants.STYLE_FILLCOLOR] = '#E1D5E7';
-        style[mxConstants.STYLE_STROKECOLOR] = '#9673A6';
+        style[mxConstants.STYLE_FILLCOLOR] = '#F5F5F5';
+        style[mxConstants.STYLE_STROKECOLOR] = '#666666';
+        style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
+        return style;
+    }
+
+    isValidConnection(graph, source, target) {
+        return super.isValidConnection(source, target);
+    }
+
+    isCellConnectable(graph, cell) {
+        return super.isCellConnectable(cell, graph);
+    }
+}
+
+class SplitNode extends BaseNode {
+    constructor() {
+        super('Split', 180, 60, BaseNode.NODE_SPLIT, new BaseData());
+    }
+
+    getStyleConfig() {
+        const style = super.getStyleConfig();
+        style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
+        style[mxConstants.STYLE_ROUNDED] = true;
+        style[mxConstants.STYLE_ARCSIZE] = 50;
+        style[mxConstants.STYLE_FILLCOLOR] = '#ffe5d0';
+        style[mxConstants.STYLE_STROKECOLOR] = '#fd7e14';
         style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
         return style;
     }
@@ -135,15 +161,41 @@ class StepNode extends BaseNode {
     }
 }
 
+class FlowNode extends BaseNode {
+    constructor() {
+        super('Flow', 140, 60, BaseNode.NODE_FLOW, new BaseData());
+    }
+
+    getStyleConfig() {
+        const style = super.getStyleConfig();
+        style[mxConstants.STYLE_DASHED] = true;
+        style[mxConstants.STYLE_DASH_PATTERN] = '3 3';
+        style[mxConstants.STYLE_FILLCOLOR] = '#E1D5E7';
+        style[mxConstants.STYLE_STROKECOLOR] = '#9673A6';
+        style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
+        return style;
+    }
+
+    isValidConnection(graph, source, target) {
+        return super.isValidConnection(source, target) && graph.getModel().getIncomingEdges(target).length < 1;
+    }
+
+    isCellConnectable(graph, cell) {
+        return graph.getModel().getOutgoingEdges(cell).length < 1;
+    }
+}
+
 class NodeFactory {
 
-    static classes = [StartNode, EndNode, DecisionNode, StepNode, BaseData];
+    static classes = [StartNode, EndNode, DecisionNode, SplitNode, StepNode, FlowNode, BaseData];
 
     static nodes = {
         [BaseNode.NODE_START]: NodeFactory.createNode(BaseNode.NODE_START),
         [BaseNode.NODE_END]: NodeFactory.createNode(BaseNode.NODE_END),
         [BaseNode.NODE_DECISION]: NodeFactory.createNode(BaseNode.NODE_DECISION),
+        [BaseNode.NODE_SPLIT]: NodeFactory.createNode(BaseNode.NODE_SPLIT),
         [BaseNode.NODE_STEP]: NodeFactory.createNode(BaseNode.NODE_STEP),
+        [BaseNode.NODE_FLOW]: NodeFactory.createNode(BaseNode.NODE_FLOW),
     };
 
     static createNode(type) {
@@ -154,8 +206,12 @@ class NodeFactory {
                 return new EndNode();
             case BaseNode.NODE_STEP:
                 return new StepNode();
+            case BaseNode.NODE_FLOW:
+                return new FlowNode();
             case BaseNode.NODE_DECISION:
                 return new DecisionNode();
+            case BaseNode.NODE_SPLIT:
+                return new SplitNode();
             default:
                 throw new Error("Unknown node type");
         }
