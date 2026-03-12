@@ -23,6 +23,7 @@
             border-color: #fd7e14 !important;
             background-color: transparent;
         }
+
         .btn-custom-orange:hover {
             color: #ffffff !important;
             background-color: #fd7e14 !important;
@@ -37,7 +38,7 @@
         <span class="navbar-brand mb-0 h1">Spring Batch Job Editor</span>
         <div class="d-flex">
             <button type="button" class="btn btn-sm btn-outline-secondary me-2" onclick="window.history.back()">
-                <i class="bi bi-arrow-left"></i> 返回上级
+                <i class="bi bi-arrow-left"></i> 返回
             </button>
             <button class="btn btn-success btn-sm me-2" onclick="showSaveModal()">
                 <i class="bi bi-save"></i> 保存为最新
@@ -69,24 +70,35 @@
                     <div class="d-flex flex-wrap gap-2">
                         <button type="button" id="stepComponent"
                                 class="btn btn-sm btn-outline-primary d-flex align-items-center">
-                            <i class="bi bi-box-seam me-1"></i>Step
+                            <i class="bi bi-app-indicator me-1"></i>Step
                         </button>
                         <button type="button" id="flowComponent"
                                 class="btn btn-sm btn-custom-indigo d-flex align-items-center">
-                            <i class="bi bi-layout-split me-1"></i>Flow
+                            <i class="bi bi-stack me-1"></i>Flow
                         </button>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted d-block mb-2 fw-bold" style="font-size: 0.7rem;">流程控制</small>
+                    <div class="d-flex flex-wrap gap-2">
                         <button type="button" id="decisionComponent"
                                 class="btn btn-sm btn-outline-secondary d-flex align-items-center">
-                            <i class="bi bi-signpost-split me-1"></i>Decision
+                            <i class="bi bi-list-check me-1"></i>Decision
                         </button>
                         <button type="button" id="splitComponent"
                                 class="btn btn-sm btn-custom-orange d-flex align-items-center">
                             <i class="bi bi-diagram-3 me-1"></i>Split
                         </button>
+                        <button type="button" id="joinComponent"
+                                class="btn btn-sm btn-node btn-custom-orange d-flex align-items-center">
+                            <i class="bi bi-diagram-3 me-1"
+                               style="display: inline-block; transform: rotate(180deg);"></i>Join
+                        </button>
                     </div>
                 </div>
             </div>
             <div id="propertyContainer" class="flex-grow-1 p-2 overflow-auto bg-light position-relative">
+                <h6 class="fw-bold border-bottom pb-2 mb-3 small">节点属性</h6>
             </div>
         </div>
         <div id="graphContainer" class="col-md-9 col-lg-10 p-0 bg-white"
@@ -102,7 +114,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>保存后会覆盖最新待部署流程图</p>
+                <p>保存后会覆盖最新待部署流程图，确定保存吗？</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
@@ -128,6 +140,7 @@
             this.jobFlow.bindToolbarComponent('endComponent', BaseNode.NODE_END);
             this.jobFlow.bindToolbarComponent('decisionComponent', BaseNode.NODE_DECISION);
             this.jobFlow.bindToolbarComponent('splitComponent', BaseNode.NODE_SPLIT);
+            this.jobFlow.bindToolbarComponent('joinComponent', BaseNode.NODE_JOIN);
             this.jobFlow.bindToolbarComponent('stepComponent', BaseNode.NODE_STEP);
             this.jobFlow.bindToolbarComponent('flowComponent', BaseNode.NODE_FLOW);
 

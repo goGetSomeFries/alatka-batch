@@ -10,6 +10,7 @@ class BaseNode {
     static NODE_END = 'END';
     static NODE_DECISION = 'DECISION';
     static NODE_SPLIT = 'SPLIT';
+    static NODE_JOIN = 'JOIN';
     static NODE_STEP = 'STEP';
     static NODE_FLOW = 'FLOW';
 
@@ -33,7 +34,11 @@ class BaseNode {
         };
     }
 
-    isValidConnection(graph, source, target) {
+    isValidSourceConnection(graph, source, target) {
+        return source !== target;
+    }
+
+    isValidTargetConnection(graph, source, target) {
         return source !== target;
     }
 
@@ -57,32 +62,29 @@ class StartNode extends BaseNode {
         return style;
     }
 
-    isValidConnection(graph, source, target) {
-        return super.isValidConnection(source, target);
+    isValidTargetConnection(graph, source, target) {
+        return false;
     }
 
     isCellConnectable(graph, cell) {
-        return graph.getModel().getOutgoingEdges(cell).length < 1;
+        return graph.getModel().getOutgoingEdges(cell).length === 0;
     }
 }
 
 class EndNode extends BaseNode {
     constructor() {
-        super('End', 55, 55, BaseNode.NODE_END);
+        super('End', 60, 60, BaseNode.NODE_END);
     }
 
     getStyleConfig() {
         const style = super.getStyleConfig();
         style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
         style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
+        style[mxConstants.STYLE_ARCSIZE] = 35;
         style[mxConstants.STYLE_FILLCOLOR] = '#f8d7da';
         style[mxConstants.STYLE_STROKECOLOR] = '#dc3545';
         style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
         return style;
-    }
-
-    isValidConnection(graph, source, target) {
-        return super.isValidConnection(source, target);
     }
 
     isCellConnectable(graph, cell) {
@@ -105,37 +107,62 @@ class DecisionNode extends BaseNode {
         return style;
     }
 
-    isValidConnection(graph, source, target) {
-        return super.isValidConnection(source, target);
+    isValidTargetConnection(graph, source, target) {
+        return super.isValidTargetConnection(source, target) && graph.getModel().getIncomingEdges(target).length === 0;
     }
 
-    isCellConnectable(graph, cell) {
-        return super.isCellConnectable(cell, graph);
-    }
 }
 
 class SplitNode extends BaseNode {
     constructor() {
-        super('Split', 180, 60, BaseNode.NODE_SPLIT, new BaseData());
+        super('Split', 60, 140, BaseNode.NODE_SPLIT);
     }
 
     getStyleConfig() {
         const style = super.getStyleConfig();
-        style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
-        style[mxConstants.STYLE_ROUNDED] = true;
-        style[mxConstants.STYLE_ARCSIZE] = 50;
+        style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_TRIANGLE;
+        style[mxConstants.STYLE_DIRECTION] = mxConstants.DIRECTION_WEST;
+        style[mxConstants.STYLE_PERIMETER] = mxPerimeter.TrianglePerimeter;
+        style[mxConstants.STYLE_ARCSIZE] = 30;
         style[mxConstants.STYLE_FILLCOLOR] = '#ffe5d0';
         style[mxConstants.STYLE_STROKECOLOR] = '#fd7e14';
         style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
         return style;
     }
 
-    isValidConnection(graph, source, target) {
-        return super.isValidConnection(source, target);
+    isValidSourceConnection(graph, source, target) {
+        return super.isValidSourceConnection(graph, source, target) && target.value.type === BaseNode.NODE_FLOW;
+    }
+
+    isValidTargetConnection(graph, source, target) {
+        return super.isValidTargetConnection(source, target) && graph.getModel().getIncomingEdges(target).length === 0;
+    }
+
+}
+
+class JoinNode extends BaseNode {
+    constructor() {
+        super('Join', 60, 140, BaseNode.NODE_JOIN);
+    }
+
+    getStyleConfig() {
+        const style = super.getStyleConfig();
+        style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_TRIANGLE;
+        style[mxConstants.STYLE_DIRECTION] = mxConstants.DIRECTION_EAST;
+        style[mxConstants.STYLE_PERIMETER] = mxPerimeter.TrianglePerimeter;
+        style[mxConstants.STYLE_ARCSIZE] = 30;
+        style[mxConstants.STYLE_FILLCOLOR] = '#ffe5d0';
+        style[mxConstants.STYLE_STROKECOLOR] = '#fd7e14';
+        style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
+        return style;
+    }
+
+    isValidTargetConnection(graph, source, target) {
+        return super.isValidTargetConnection(source, target) && source.value.type === BaseNode.NODE_FLOW;
     }
 
     isCellConnectable(graph, cell) {
-        return super.isCellConnectable(cell, graph);
+        return graph.getModel().getOutgoingEdges(cell).length === 0;
     }
 }
 
@@ -152,12 +179,12 @@ class StepNode extends BaseNode {
         return style;
     }
 
-    isValidConnection(graph, source, target) {
-        return super.isValidConnection(source, target) && graph.getModel().getIncomingEdges(target).length < 1;
+    isValidTargetConnection(graph, source, target) {
+        return super.isValidTargetConnection(source, target) && graph.getModel().getIncomingEdges(target).length === 0;
     }
 
     isCellConnectable(graph, cell) {
-        return graph.getModel().getOutgoingEdges(cell).length < 1;
+        return graph.getModel().getOutgoingEdges(cell).length === 0;
     }
 }
 
@@ -176,24 +203,25 @@ class FlowNode extends BaseNode {
         return style;
     }
 
-    isValidConnection(graph, source, target) {
-        return super.isValidConnection(source, target) && graph.getModel().getIncomingEdges(target).length < 1;
+    isValidTargetConnection(graph, source, target) {
+        return super.isValidTargetConnection(source, target) && graph.getModel().getIncomingEdges(target).length === 0;
     }
 
     isCellConnectable(graph, cell) {
-        return graph.getModel().getOutgoingEdges(cell).length < 1;
+        return graph.getModel().getOutgoingEdges(cell).length === 0;
     }
 }
 
 class NodeFactory {
 
-    static classes = [StartNode, EndNode, DecisionNode, SplitNode, StepNode, FlowNode, BaseData];
+    static CLASSES = [StartNode, EndNode, DecisionNode, SplitNode, JoinNode, StepNode, FlowNode, BaseData];
 
-    static nodes = {
+    static NODES = {
         [BaseNode.NODE_START]: NodeFactory.createNode(BaseNode.NODE_START),
         [BaseNode.NODE_END]: NodeFactory.createNode(BaseNode.NODE_END),
         [BaseNode.NODE_DECISION]: NodeFactory.createNode(BaseNode.NODE_DECISION),
         [BaseNode.NODE_SPLIT]: NodeFactory.createNode(BaseNode.NODE_SPLIT),
+        [BaseNode.NODE_JOIN]: NodeFactory.createNode(BaseNode.NODE_JOIN),
         [BaseNode.NODE_STEP]: NodeFactory.createNode(BaseNode.NODE_STEP),
         [BaseNode.NODE_FLOW]: NodeFactory.createNode(BaseNode.NODE_FLOW),
     };
@@ -212,6 +240,8 @@ class NodeFactory {
                 return new DecisionNode();
             case BaseNode.NODE_SPLIT:
                 return new SplitNode();
+            case BaseNode.NODE_JOIN:
+                return new JoinNode();
             default:
                 throw new Error("Unknown node type");
         }

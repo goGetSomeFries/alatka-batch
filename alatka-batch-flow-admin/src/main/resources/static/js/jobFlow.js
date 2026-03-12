@@ -58,10 +58,13 @@ class JobFlow {
 
     #validConnection() {
         this.graph.isValidConnection = (source, target) => {
-            return target.isVertex() && NodeFactory.nodes[target.value.type].isValidConnection(this.graph, source, target);
+            return target.isVertex()
+                && NodeFactory.NODES[source.value.type].isValidSourceConnection(this.graph, source, target)
+                && NodeFactory.NODES[target.value.type].isValidTargetConnection(this.graph, source, target);
         };
         this.graph.isCellConnectable = (cell) => {
-            return cell === null || cell.isEdge() || NodeFactory.nodes[cell.value.type].isCellConnectable(this.graph, cell);
+            return cell === null
+                || cell.isVertex() && NodeFactory.NODES[cell.value.type].isCellConnectable(this.graph, cell);
         };
     }
 
@@ -104,6 +107,11 @@ class JobFlow {
         // Ctrl-V
         keyHandler.bindControlKey(86, () => {
             mxClipboard.paste(this.graph);
+        });
+        // Ctrl-S
+        keyHandler.bindControlKey(83, (evt) => {
+            mxEvent.consume(evt);
+            showSaveModal();
         });
     }
 
@@ -172,15 +180,14 @@ class JobFlow {
         edgeStyle[mxConstants.STYLE_BENDING_VARIABLE] = true;
         edgeStyle[mxConstants.STYLE_ENDARROW] = mxConstants.ARROW_CLASSIC;
 
-        Object.keys(NodeFactory.nodes).forEach(key => {
-            const node = NodeFactory.nodes[key];
+        Object.keys(NodeFactory.NODES).forEach(key => {
+            const node = NodeFactory.NODES[key];
             stylesheet.putCellStyle(node.type, node.getStyleConfig());
         });
     }
 
     // 自定义右键菜单
     #configureContextMenu() {
-        // 阻止浏览器默认菜单
         this.graphContainer.oncontextmenu = (e) => {
             e.preventDefault();
             return false;
@@ -190,7 +197,7 @@ class JobFlow {
     }
 
     #configureXmlCodec() {
-        NodeFactory.classes.forEach(Clazz => {
+        NodeFactory.CLASSES.forEach(Clazz => {
             window[Clazz.name] = Clazz;
 
             const codec = new mxObjectCodec(new Clazz());
