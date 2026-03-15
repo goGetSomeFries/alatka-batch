@@ -1,0 +1,18 @@
+alatka.batch:
+  flow:
+    enabled: true
+    name: testJob
+    desc: 测试job
+    steps:
+      - type: Step
+        name: testStep1
+      - type: Step
+        name: testStep2
+      - type: Split
+        flows:
+          - name: testFlow1
+          - name: testFlow2
+      - type: Step
+        name: testStep3
+      - type: Decision
+        name: testDecision1
