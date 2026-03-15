@@ -12,6 +12,10 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.alatka.batch</groupId>
+      <artifactId>alatka-batch-infra</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.batch</groupId>
       <artifactId>spring-batch-core</artifactId>
     </dependency>
