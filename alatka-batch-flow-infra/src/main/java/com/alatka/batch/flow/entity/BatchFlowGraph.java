@@ -25,8 +25,11 @@ public class BatchFlowGraph {
     @Column(name = "D_UPDATE_AT", insertable = false)
     private LocalDateTime updateAt;
 
-    @Column(name = "D_DATA")
-    private byte[] data;
+    @Column(name = "D_ORIGIN_DATA", columnDefinition = "BLOB")
+    private byte[] originData;
+
+    @Column(name = "D_DEPLOY_DATA", columnDefinition = "BLOB")
+    private byte[] deployData;
 
     @Column(name = "D_PREVIOUS_ID")
     private Long previousId;
@@ -64,12 +67,20 @@ public class BatchFlowGraph {
         this.updateAt = updateAt;
     }
 
-    public byte[] getData() {
-        return data;
+    public byte[] getOriginData() {
+        return originData;
     }
 
-    public void setData(byte[] data) {
-        this.data = data;
+    public void setOriginData(byte[] originData) {
+        this.originData = originData;
+    }
+
+    public byte[] getDeployData() {
+        return deployData;
+    }
+
+    public void setDeployData(byte[] deployData) {
+        this.deployData = deployData;
     }
 
     public Long getPreviousId() {
@@ -103,4 +114,5 @@ public class BatchFlowGraph {
     public void setFlowId(Long flowId) {
         this.flowId = flowId;
     }
+
 }

@@ -36,13 +36,13 @@ public class FlowGraphService {
         Optional<BatchFlowGraph> optional = flowGraphRepository.findOne(this.condition(condition));
         if (optional.isPresent()) {
             BatchFlowGraph entity = optional.get();
-            entity.setData(req.getData().getBytes(DATA_CHARSET));
+            entity.setOriginData(req.getData().getBytes(DATA_CHARSET));
         } else {
             BatchFlowGraph entity = new BatchFlowGraph();
             entity.setFlowId(req.getFlowId());
             entity.setCurrent(true);
             entity.setStatus("SAVE");
-            entity.setData(req.getData().getBytes(DATA_CHARSET));
+            entity.setOriginData(req.getData().getBytes(DATA_CHARSET));
 
             condition.setStatus("DEPLOY");
             flowGraphRepository.findOne(this.condition(condition))
@@ -63,6 +63,7 @@ public class FlowGraphService {
             BatchFlowGraph entity = flowGraphRepository.findOne(this.condition(condition))
                     .orElseThrow(() -> new IllegalArgumentException("没有未部署的流程图"));
             entity.setStatus("DEPLOY");
+            // TODO
         });
     }
 
@@ -122,9 +123,9 @@ public class FlowGraphService {
             condition.setFlowId(flowId);
             condition.setCurrent(true);
             Optional<BatchFlowGraph> optional = flowGraphRepository.findOne(this.condition(condition));
-            return optional.map(entity -> new String(entity.getData(), DATA_CHARSET)).orElse(null);
+            return optional.map(entity -> new String(entity.getOriginData(), DATA_CHARSET)).orElse(null);
         }
-        return flowGraphRepository.findById(id).map(entity -> new String(entity.getData(), DATA_CHARSET))
+        return flowGraphRepository.findById(id).map(entity -> new String(entity.getOriginData(), DATA_CHARSET))
                 .orElseThrow(() -> new IllegalArgumentException("id: <" + id + "> not found."));
     }
 

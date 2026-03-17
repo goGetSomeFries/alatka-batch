@@ -11,3 +11,7 @@ spring:
         dialect: org.sqlite.hibernate.dialect.SQLiteDialect
 server:
   port: 8087
+alatka:
+  batch:
+    flow:
+      type: database
