@@ -12,6 +12,8 @@ spring:
   batch:
     jdbc:
       initialize-schema: never
+    job:
+      enabled: false
 server:
   port: 8087
 alatka:
