@@ -15,7 +15,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableConfigurationProperties(FlowProperties.class)
 @ConditionalOnProperty(value = "alatka.batch.flow.enabled", havingValue = "true", matchIfMissing = true)
-public class AutoConfiguration {
+public class FlowAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(FileFlowBuilder.class)

@@ -19,7 +19,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @EntityScan
 @ComponentScan(basePackages = {"com.alatka.batch.flow", "com.alatka.batch.infra"})
 @Configuration
-public class AdminAutoConfiguration {
+public class FlowAdminAutoConfiguration {
 
     @Value("${alatka.batch.flow.admin.rest.connectionTimeout:5000}")
     private int connectionTimeout;

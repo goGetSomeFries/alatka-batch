@@ -1,7 +1,7 @@
 package com.alatka.batch.flow.service;
 
 
-import com.alatka.batch.flow.AdminAutoConfiguration;
+import com.alatka.batch.flow.FlowAdminAutoConfiguration;
 import com.alatka.batch.flow.entity.BatchFlow;
 import com.alatka.batch.flow.model.FlowDeployReq;
 import com.alatka.batch.flow.model.FlowPageReq;
@@ -149,13 +149,13 @@ public class FlowService {
     }
 
     @Autowired
-    @Qualifier(AdminAutoConfiguration.REST_TEMPLATE_NAME)
+    @Qualifier(FlowAdminAutoConfiguration.REST_TEMPLATE_NAME)
     public void setRestTemplate(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
     @Autowired
-    @Qualifier(AdminAutoConfiguration.TASK_EXECUTOR_NAME)
+    @Qualifier(FlowAdminAutoConfiguration.TASK_EXECUTOR_NAME)
     public void setTaskExecutor(TaskExecutor taskExecutor) {
         this.taskExecutor = taskExecutor;
     }
