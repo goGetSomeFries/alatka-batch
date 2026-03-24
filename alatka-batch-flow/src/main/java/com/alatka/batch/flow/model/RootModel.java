@@ -1,5 +1,8 @@
 package com.alatka.batch.flow.model;
 
+import java.util.List;
+import java.util.Map;
+
 public class RootModel {
 
     private boolean enabled = true;
@@ -7,6 +10,8 @@ public class RootModel {
     private String name;
 
     private String desc;
+
+    private List<Map<String, Object>> steps;
 
     public boolean isEnabled() {
         return enabled;
@@ -30,5 +35,13 @@ public class RootModel {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public List<Map<String, Object>> getSteps() {
+        return steps;
+    }
+
+    public void setSteps(List<Map<String, Object>> steps) {
+        this.steps = steps;
     }
 }

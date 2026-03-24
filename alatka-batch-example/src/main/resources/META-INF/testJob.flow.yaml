@@ -3,16 +3,26 @@ alatka.batch:
     enabled: true
     name: testJob
     desc: 测试job
-#    steps:
-#      - type: Step
-#        name: testStep1
-#      - type: Step
-#        name: testStep2
+    steps:
+      - step:
+          name: testStep1
+      - step:
+          name: testStep2
+      - flow:
+          name: testFlow
 #      - type: Split
+#        taskExecutor:
 #        flows:
-#          - name: testFlow1
-#          - name: testFlow2
+#          - type: Flow
+#            name: testFlow1
+#          - type: Flow
+#            name: testFlow2
 #      - type: Step
 #        name: testStep3
 #      - type: Decision
 #        name: testDecision1
+#        decision:
+#          - on: COMPLETED
+#            to: testStep9
+#          - on: FAILED
+#            to: testStep10

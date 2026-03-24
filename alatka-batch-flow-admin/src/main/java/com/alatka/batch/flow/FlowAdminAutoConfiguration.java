@@ -1,6 +1,7 @@
 package com.alatka.batch.flow;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -30,6 +31,7 @@ public class FlowAdminAutoConfiguration {
     public static final String REST_TEMPLATE_NAME = "batchFlowRestTemplate";
 
     @Bean(REST_TEMPLATE_NAME)
+    @ConditionalOnMissingBean(name = REST_TEMPLATE_NAME)
     public RestTemplate restTemplate() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(connectionTimeout);
@@ -58,6 +60,7 @@ public class FlowAdminAutoConfiguration {
     public static final String TASK_EXECUTOR_NAME = "batchFlowTaskExecutor";
 
     @Bean(TASK_EXECUTOR_NAME)
+    @ConditionalOnMissingBean(name = TASK_EXECUTOR_NAME)
     public TaskExecutor taskExecutor() {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setCorePoolSize(corePoolSize);

@@ -55,14 +55,14 @@ public class TestJob implements ApplicationListener<ContextRefreshedEvent> {
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        try {
-            this.jobOperator.start("job_test", "x=3");
-        } catch (NoSuchJobException e) {
-            throw new RuntimeException(e);
-        } catch (JobInstanceAlreadyExistsException e) {
-            throw new RuntimeException(e);
-        } catch (JobParametersInvalidException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            this.jobOperator.start("job_test", "x=4");
+//        } catch (NoSuchJobException e) {
+//            throw new RuntimeException(e);
+//        } catch (JobInstanceAlreadyExistsException e) {
+//            throw new RuntimeException(e);
+//        } catch (JobParametersInvalidException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 }
