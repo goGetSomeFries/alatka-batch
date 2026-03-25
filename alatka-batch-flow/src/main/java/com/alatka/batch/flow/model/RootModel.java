@@ -11,7 +11,24 @@ public class RootModel {
 
     private String desc;
 
-    private List<Map<String, Object>> steps;
+    private List<Map<Type, Map<String, Object>>> steps;
+
+    public static enum Type {
+        STEP(StepModel.class),
+        FLOW(FlowModel.class),
+        DECISION(DecisionModel.class),
+        SPLIT(SplitModel.class);
+
+        private Class<? extends ComponentModel> clazz;
+
+        Type(Class<? extends ComponentModel> clazz) {
+            this.clazz = clazz;
+        }
+
+        public Class<? extends ComponentModel> getClazz() {
+            return clazz;
+        }
+    }
 
     public boolean isEnabled() {
         return enabled;
@@ -37,11 +54,11 @@ public class RootModel {
         this.desc = desc;
     }
 
-    public List<Map<String, Object>> getSteps() {
+    public List<Map<Type, Map<String, Object>>> getSteps() {
         return steps;
     }
 
-    public void setSteps(List<Map<String, Object>> steps) {
+    public void setSteps(List<Map<Type, Map<String, Object>>> steps) {
         this.steps = steps;
     }
 }
