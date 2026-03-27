@@ -1,11 +1,12 @@
 package com.alatka.batch.flow.builder;
 
-import com.alatka.batch.flow.component.IComponent;
+import com.alatka.batch.flow.model.BeanComponentModel;
 import com.alatka.batch.flow.model.RootModel;
 import com.alatka.batch.infra.util.JsonUtil;
 import com.alatka.batch.infra.util.YamlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -52,14 +53,22 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
     }
 
     private void doBuild(RootModel rootModel) {
+        JobBuilderFactory jobBuilderFactory = applicationContext.getBean(JobBuilderFactory.class);
+
         rootModel.getSteps().stream()
                 .flatMap(map -> map.entrySet().stream().map(entry -> JsonUtil.convertToObject(entry.getValue(), entry.getKey().getClazz())))
                 .forEach(model -> {
+                    if (model instanceof BeanComponentModel) {
+//                        applicationContext.getBean(((BeanComponentModel) model).getName())
+                    }
+//                    jobBuilderFactory.get(rootModel.getName()).start()
+/*
                     applicationContext.getBeansOfType(IComponent.class).values().stream()
                             .filter(component -> component.matched(model))
                             .findFirst()
                             .ifPresent(component -> {
                             });
+*/
                 });
     }
 
