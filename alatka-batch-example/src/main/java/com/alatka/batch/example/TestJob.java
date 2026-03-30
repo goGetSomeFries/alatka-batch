@@ -1,13 +1,13 @@
 package com.alatka.batch.example;
 
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.launch.JobInstanceAlreadyExistsException;
+import org.springframework.batch.core.job.builder.FlowBuilder;
+import org.springframework.batch.core.job.flow.Flow;
+import org.springframework.batch.core.job.flow.support.SimpleFlow;
 import org.springframework.batch.core.launch.JobOperator;
-import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -26,7 +26,12 @@ public class TestJob implements ApplicationListener<ContextRefreshedEvent> {
 
     @Bean("job_test")
     public Job testJob() {
-        return jobBuilderFactory.get("job_test").start(testStep()).build();
+        return jobBuilderFactory.get("job_test").start(testFlow()).end().build();
+    }
+
+    @Bean("flow_test")
+    public Flow testFlow() {
+        return new FlowBuilder<SimpleFlow>("testFlow").start(testStep()).build();
     }
 
     @Bean("step_test")

@@ -7,6 +7,7 @@ import com.alatka.batch.infra.util.YamlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -14,6 +15,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBean, ApplicationContextAware {
 
@@ -54,6 +56,8 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
 
     private void doBuild(RootModel rootModel) {
         JobBuilderFactory jobBuilderFactory = applicationContext.getBean(JobBuilderFactory.class);
+        JobBuilder jobBuilder = jobBuilderFactory.get(rootModel.getName());
+        AtomicReference<Object> reference = new AtomicReference<>(jobBuilder);
 
         rootModel.getSteps().stream()
                 .flatMap(map -> map.entrySet().stream().map(entry -> JsonUtil.convertToObject(entry.getValue(), entry.getKey().getClazz())))
@@ -61,7 +65,7 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
                     if (model instanceof BeanComponentModel) {
 //                        applicationContext.getBean(((BeanComponentModel) model).getName())
                     }
-//                    jobBuilderFactory.get(rootModel.getName()).start()
+
 /*
                     applicationContext.getBeansOfType(IComponent.class).values().stream()
                             .filter(component -> component.matched(model))
