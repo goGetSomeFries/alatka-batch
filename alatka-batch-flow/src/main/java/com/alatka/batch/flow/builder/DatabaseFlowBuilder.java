@@ -47,11 +47,10 @@ public class DatabaseFlowBuilder extends AbstractFlowBuilder {
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         if (dataSource == null) {
             throw new IllegalArgumentException("Property 'dataSource' is required");
         }
         this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-        super.afterPropertiesSet();
     }
 }

@@ -2,7 +2,14 @@ package com.alatka.batch.flow;
 
 import com.alatka.batch.flow.builder.DatabaseFlowBuilder;
 import com.alatka.batch.flow.builder.FileFlowBuilder;
+import com.alatka.batch.flow.component.DecisionComponent;
+import com.alatka.batch.flow.component.FlowComponent;
+import com.alatka.batch.flow.component.SplitComponent;
+import com.alatka.batch.flow.component.StepComponent;
 import com.alatka.batch.flow.config.FlowProperties;
+import org.springframework.batch.core.Step;
+import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,5 +43,33 @@ public class FlowAutoConfiguration {
         DatabaseFlowBuilder builder = new DatabaseFlowBuilder();
         builder.setDataSource(dataSource);
         return builder;
+    }
+
+    @Bean
+    public StepComponent stepComponent() {
+        return new StepComponent();
+    }
+
+    @Bean
+    public FlowComponent flowComponent() {
+        return new FlowComponent();
+    }
+
+    @Bean
+    public DecisionComponent decisionComponent() {
+        return new DecisionComponent();
+    }
+
+    @Bean
+    public SplitComponent splitComponent() {
+        return new SplitComponent();
+    }
+
+    public static final String STEP_PASSTHROUGH = "passthroughStep";
+
+    @Bean(STEP_PASSTHROUGH)
+    public Step passthroughStep() {
+        return new StepBuilder(STEP_PASSTHROUGH)
+                .tasklet((contribution, chunkContext) -> RepeatStatus.FINISHED).build();
     }
 }

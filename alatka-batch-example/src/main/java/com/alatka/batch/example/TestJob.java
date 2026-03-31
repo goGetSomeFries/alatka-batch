@@ -14,6 +14,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.task.SyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 
 @Configuration
 public class TestJob implements ApplicationListener<ContextRefreshedEvent> {
@@ -26,17 +28,40 @@ public class TestJob implements ApplicationListener<ContextRefreshedEvent> {
 
     @Bean("job_test")
     public Job testJob() {
-        return jobBuilderFactory.get("job_test").start(testFlow()).end().build();
+        return jobBuilderFactory.get("job_test").start(testFlow1()).end().build();
     }
 
-    @Bean("flow_test")
-    public Flow testFlow() {
-        return new FlowBuilder<SimpleFlow>("testFlow").start(testStep()).build();
+    @Bean("flow_test1")
+    public Flow testFlow1() {
+        return new FlowBuilder<SimpleFlow>("flow_test1").start(testStep2()).build();
     }
 
-    @Bean("step_test")
-    public Step testStep() {
-        return stepBuilderFactory.get("step_test").tasklet((contribution, chunkContext) -> {
+    @Bean("flow_test2")
+    public Flow testFlow2() {
+        return new FlowBuilder<SimpleFlow>("flow_test2").start(testStep3()).build();
+    }
+
+    @Bean("step_test1")
+    public Step testStep1() {
+        return stepBuilderFactory.get("step_test1").tasklet((contribution, chunkContext) -> {
+            System.out.println(contribution);
+            System.out.println(chunkContext);
+            return RepeatStatus.FINISHED;
+        }).build();
+    }
+
+    @Bean("step_test2")
+    public Step testStep2() {
+        return stepBuilderFactory.get("step_test2").tasklet((contribution, chunkContext) -> {
+            System.out.println(contribution);
+            System.out.println(chunkContext);
+            return RepeatStatus.FINISHED;
+        }).build();
+    }
+
+    @Bean("step_test3")
+    public Step testStep3() {
+        return stepBuilderFactory.get("step_test3").tasklet((contribution, chunkContext) -> {
             System.out.println(contribution);
             System.out.println(chunkContext);
             return RepeatStatus.FINISHED;
@@ -56,6 +81,11 @@ public class TestJob implements ApplicationListener<ContextRefreshedEvent> {
     @Autowired
     public void setJobOperator(JobOperator jobOperator) {
         this.jobOperator = jobOperator;
+    }
+
+    @Bean
+    public TaskExecutor defaultTaskExecutor() {
+        return new SyncTaskExecutor();
     }
 
     @Override

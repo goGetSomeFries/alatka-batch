@@ -5,21 +5,23 @@ alatka.batch:
     desc: 测试job
     steps:
       - STEP:
-          name: testStep1
+          name: step_test1
       - STEP:
-          name: testStep2
-      - FLOW:
-          name: testFlow
+          name: step_test2
+      #      - FLOW:
+      #          name: flow_test1
+      #      - FLOW:
+      #          name: flow_test2
+      #      - STEP:
+      #          name: step_test3
       - SPLIT:
           taskExecutor: defaultTaskExecutor
           flows:
-            - name: testFlow1
-            - name: testFlow2
-      - STEP:
-          name: testStep3
+            - name: flow_test1
+            - name: flow_test2
 #      - DECISION:
 #        name: testDecision1
-#        decision:
+#        decisions:
 #          - on: COMPLETED
 #            to: testStep9
 #          - on: FAILED

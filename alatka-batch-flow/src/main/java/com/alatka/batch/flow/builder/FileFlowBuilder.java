@@ -46,10 +46,9 @@ public class FileFlowBuilder extends AbstractFlowBuilder {
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         if (!StringUtils.hasLength(this.classpath)) {
             throw new IllegalArgumentException("Property 'classpath' is required");
         }
-        super.afterPropertiesSet();
     }
 }

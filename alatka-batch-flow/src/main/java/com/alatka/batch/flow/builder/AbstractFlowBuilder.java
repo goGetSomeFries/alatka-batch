@@ -1,23 +1,29 @@
 package com.alatka.batch.flow.builder;
 
-import com.alatka.batch.flow.model.BeanComponentModel;
+import com.alatka.batch.flow.component.IComponent;
 import com.alatka.batch.flow.model.RootModel;
 import com.alatka.batch.infra.util.JsonUtil;
 import com.alatka.batch.infra.util.YamlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.configuration.DuplicateJobException;
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.support.ReferenceJobFactory;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.io.Resource;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBean, ApplicationContextAware {
+public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBean, ApplicationContextAware, ApplicationListener<ContextRefreshedEvent> {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -51,38 +57,47 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
             this.logger.warn("model '{}' is disabled. Skipping build...", rootModel.getName());
             return;
         }
-        this.doBuild(rootModel);
+        Job job = this.doBuild(rootModel);
+        ReferenceJobFactory jobFactory = new ReferenceJobFactory(job);
+        JobRegistry jobRegistry = applicationContext.getBean(JobRegistry.class);
+        try {
+            jobRegistry.unregister(jobFactory.getJobName());
+            jobRegistry.register(jobFactory);
+        } catch (DuplicateJobException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private void doBuild(RootModel rootModel) {
+    private Job doBuild(RootModel rootModel) {
         JobBuilderFactory jobBuilderFactory = applicationContext.getBean(JobBuilderFactory.class);
         JobBuilder jobBuilder = jobBuilderFactory.get(rootModel.getName());
         AtomicReference<Object> reference = new AtomicReference<>(jobBuilder);
 
         rootModel.getSteps().stream()
-                .flatMap(map -> map.entrySet().stream().map(entry -> JsonUtil.convertToObject(entry.getValue(), entry.getKey().getClazz())))
-                .forEach(model -> {
-                    if (model instanceof BeanComponentModel) {
-//                        applicationContext.getBean(((BeanComponentModel) model).getName())
-                    }
+                .flatMap(map -> map.entrySet().stream()
+                        .map(entry -> JsonUtil.convertToObject(entry.getValue(), entry.getKey().getClazz())))
+                .forEach(model -> applicationContext.getBeansOfType(IComponent.class).values().stream()
+                        .filter(component -> component.matched(model))
+                        .findFirst()
+                        .ifPresent(component -> {
+                            Object builder = component.join(model, reference.get());
+                            reference.set(builder);
+                        })
+                );
 
-/*
-                    applicationContext.getBeansOfType(IComponent.class).values().stream()
-                            .filter(component -> component.matched(model))
-                            .findFirst()
-                            .ifPresent(component -> {
-                            });
-*/
-                });
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        this.build();
+        IComponent iComponent = applicationContext.getBeansOfType(IComponent.class).values().stream()
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("can not found bean of " + IComponent.class.getSimpleName()));
+        return iComponent.build(reference.get());
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        this.build();
     }
 }
