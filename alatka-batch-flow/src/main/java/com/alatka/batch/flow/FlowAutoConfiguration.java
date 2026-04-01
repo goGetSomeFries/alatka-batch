@@ -8,7 +8,7 @@ import com.alatka.batch.flow.component.SplitComponent;
 import com.alatka.batch.flow.component.StepComponent;
 import com.alatka.batch.flow.config.FlowProperties;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -68,8 +68,8 @@ public class FlowAutoConfiguration {
     public static final String STEP_PASSTHROUGH = "passthroughStep";
 
     @Bean(STEP_PASSTHROUGH)
-    public Step passthroughStep() {
-        return new StepBuilder(STEP_PASSTHROUGH)
+    public Step passthroughStep(StepBuilderFactory stepBuilderFactory) {
+        return stepBuilderFactory.get(STEP_PASSTHROUGH)
                 .tasklet((contribution, chunkContext) -> RepeatStatus.FINISHED).build();
     }
 }

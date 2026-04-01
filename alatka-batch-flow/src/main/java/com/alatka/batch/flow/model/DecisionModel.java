@@ -12,6 +12,10 @@ public class DecisionModel extends BeanComponentModel {
 
         private String to;
 
+        public static enum Status {
+            failed, stopped, end
+        }
+
         public String getOn() {
             return on;
         }
