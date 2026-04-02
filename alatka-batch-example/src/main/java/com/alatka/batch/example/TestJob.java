@@ -32,8 +32,10 @@ public class TestJob {
         return job;
     }
 
+    @Bean("job2")
     public Job job2(@Qualifier(FlowAutoConfiguration.STEP_PASSTHROUGH) Step step1, Flow flow_test1, Flow flow_test2) {
-        return jobBuilderFactory.get("job2").start(step1).split(new SyncTaskExecutor()).add(flow_test1, flow_test2).end().build();
+        Job job = jobBuilderFactory.get("job2").start(step1).split(new SyncTaskExecutor()).add(flow_test1, flow_test2).end().build();
+        return job;
     }
 
     @Autowired

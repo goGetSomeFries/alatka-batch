@@ -12,18 +12,18 @@ import java.util.function.BiFunction;
 public class SplitComponent extends AbstractComponent<SplitModel> {
 
     @Override
-    protected Object doJoin(SplitModel model, JobBuilder jobBuilder) {
+    protected FlowBuilder<FlowJobBuilder> doJoin(SplitModel model, JobBuilder jobBuilder) {
         Step passthroughStep = applicationContext.getBean(FlowAutoConfiguration.STEP_PASSTHROUGH, Step.class);
         return this.execute(model, (taskExecutor, flows) -> jobBuilder.start(passthroughStep).split(taskExecutor).add(flows));
     }
 
     @Override
-    protected Object doJoin(SplitModel model, SimpleJobBuilder simpleJobBuilder) {
+    protected FlowBuilder<FlowJobBuilder> doJoin(SplitModel model, SimpleJobBuilder simpleJobBuilder) {
         return this.execute(model, (taskExecutor, flows) -> simpleJobBuilder.split(taskExecutor).add(flows));
     }
 
     @Override
-    protected Object doJoin(SplitModel model, JobFlowBuilder jobFlowBuilder) {
+    protected FlowBuilder<FlowJobBuilder> doJoin(SplitModel model, JobFlowBuilder jobFlowBuilder) {
         return this.execute(model, (taskExecutor, flows) -> jobFlowBuilder.split(taskExecutor).add(flows));
     }
 

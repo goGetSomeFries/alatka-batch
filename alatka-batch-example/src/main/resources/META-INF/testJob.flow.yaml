@@ -6,10 +6,15 @@ alatka.batch:
     steps:
       - STEP:
           name: step_test1
-#      - STEP:
-#          name: step_test2
-      - FLOW:
-          name: flow_test1
+#      - FLOW:
+#          name: flow_test1
+      - SPLIT:
+          taskExecutor: defaultTaskExecutor
+          flows:
+            - name: flow_test1
+            - name: flow_test2
+      - STEP:
+          name: step_test2
 #      - FLOW:
 #          name: flow_test2
       - STEP:
@@ -21,8 +26,3 @@ alatka.batch:
 #              to: end
 #            - when: FAILED
 #              to: failed
-#      - SPLIT:
-#          taskExecutor: defaultTaskExecutor
-#          flows:
-#            - name: flow_test1
-#            - name: flow_test2
