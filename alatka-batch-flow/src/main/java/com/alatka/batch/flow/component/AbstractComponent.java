@@ -14,15 +14,15 @@ public abstract class AbstractComponent<M extends ComponentModel> implements ICo
     protected ApplicationContext applicationContext;
 
     @Override
-    public Object join(ComponentModel model, Object builder) {
+    public Wrapper join(ComponentModel model, Object builder, Object lastOne) {
         if (builder.getClass() == JobBuilder.class) {
-            return doJoin((M) model, (JobBuilder) builder);
+            return doJoin((M) model, (JobBuilder) builder, lastOne);
         }
         if (builder.getClass() == SimpleJobBuilder.class) {
-            return doJoin((M) model, (SimpleJobBuilder) builder);
+            return doJoin((M) model, (SimpleJobBuilder) builder, lastOne);
         }
         if (builder.getClass() == JobFlowBuilder.class) {
-            return doJoin((M) model, (JobFlowBuilder) builder);
+            return doJoin((M) model, (JobFlowBuilder) builder, lastOne);
         }
         throw new IllegalArgumentException("Unsupported builder type: " + builder.getClass());
     }
@@ -52,9 +52,9 @@ public abstract class AbstractComponent<M extends ComponentModel> implements ICo
 
     protected abstract Class<M> modelClass();
 
-    protected abstract Object doJoin(M model, JobBuilder jobBuilder);
+    protected abstract Wrapper doJoin(M model, JobBuilder jobBuilder, Object lastOne);
 
-    protected abstract Object doJoin(M model, SimpleJobBuilder simpleJobBuilder);
+    protected abstract Wrapper doJoin(M model, SimpleJobBuilder simpleJobBuilder, Object lastOne);
 
-    protected abstract Object doJoin(M model, JobFlowBuilder jobFlowBuilder);
+    protected abstract Wrapper doJoin(M model, JobFlowBuilder jobFlowBuilder, Object lastOne);
 }

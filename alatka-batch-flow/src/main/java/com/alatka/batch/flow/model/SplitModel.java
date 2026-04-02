@@ -22,6 +22,11 @@ public class SplitModel extends ComponentModel {
         return flows;
     }
 
+    /**
+     * Yaml工具解析为Map类型，需手动转换为List
+     *
+     * @param flows Map<String, FlowModel>类型
+     */
     public void setFlows(Map<String, FlowModel> flows) {
         this.flows = flows.values().stream().collect(Collectors.toList());
     }

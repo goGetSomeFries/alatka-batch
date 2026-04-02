@@ -15,33 +15,33 @@ public class DecisionComponent extends AbstractComponent<DecisionModel> {
     }
 
     @Override
-    protected FlowJobBuilder doJoin(DecisionModel model, JobBuilder jobBuilder) {
+    protected Wrapper doJoin(DecisionModel model, JobBuilder jobBuilder, Object lastOne) {
         Step passthroughStep = applicationContext.getBean(FlowAutoConfiguration.STEP_PASSTHROUGH, Step.class);
         JobExecutionDecider decider = applicationContext.getBean(model.getName(), JobExecutionDecider.class);
         JobFlowBuilder builder = jobBuilder.start(passthroughStep).next(decider);
 
         model.getDecisions().forEach(innerModel -> this.apply(innerModel, builder, decider));
-        return builder.end();
+        return builder;
     }
 
     @Override
-    protected FlowJobBuilder doJoin(DecisionModel model, SimpleJobBuilder simpleJobBuilder) {
+    protected Wrapper doJoin(DecisionModel model, SimpleJobBuilder simpleJobBuilder, Object lastOne) {
         JobExecutionDecider decider = applicationContext.getBean(model.getName(), JobExecutionDecider.class);
         JobFlowBuilder builder = simpleJobBuilder.next(decider);
 
         model.getDecisions().forEach(innerModel -> this.apply(innerModel, builder, decider));
-        return builder.end();
+        return builder;
     }
 
     @Override
-    protected FlowJobBuilder doJoin(DecisionModel model, JobFlowBuilder jobFlowBuilder) {
+    protected Wrapper doJoin(DecisionModel model, JobFlowBuilder jobFlowBuilder, Object lastOne) {
         Step passthroughStep = applicationContext.getBean(FlowAutoConfiguration.STEP_PASSTHROUGH, Step.class);
         JobExecutionDecider decider = applicationContext.getBean(model.getName(), JobExecutionDecider.class);
         FlowBuilder<FlowJobBuilder> builder = jobFlowBuilder.next(decider)
                 .on(FlowAutoConfiguration.STEP_PASSTHROUGH).to(passthroughStep);
 
         model.getDecisions().forEach(innerModel -> this.apply(innerModel, builder, decider));
-        return builder.end();
+        return builder;
     }
 
     private void apply(DecisionModel.InnerModel model, FlowBuilder<FlowJobBuilder> builder, JobExecutionDecider decider) {
@@ -50,23 +50,23 @@ public class DecisionComponent extends AbstractComponent<DecisionModel> {
             DecisionModel.InnerModel.Status status = DecisionModel.InnerModel.Status.valueOf(model.getTo());
             switch (status) {
                 case end:
-                    builder.on(model.getOn()).end();
+                    builder.on(model.getWhen()).end();
                     break;
                 case failed:
-                    builder.on(model.getOn()).fail();
+                    builder.on(model.getWhen()).fail();
                     break;
                 case stopped:
-                    builder.on(model.getOn()).stop();
+                    builder.on(model.getWhen()).stop();
                     break;
             }
         } catch (IllegalArgumentException e) {
             Object bean = applicationContext.getBean(model.getTo());
             if (bean instanceof Step) {
-                builder.on(model.getOn()).to((Step) bean);
+                builder.on(model.getWhen()).to((Step) bean);
             } else if (bean instanceof Flow) {
-                builder.on(model.getOn()).to((Flow) bean);
+                builder.on(model.getWhen()).to((Flow) bean);
             } else if (bean instanceof JobExecutionDecider) {
-                builder.on(model.getOn()).to((JobExecutionDecider) bean);
+                builder.on(model.getWhen()).to((JobExecutionDecider) bean);
             } else {
                 throw new IllegalArgumentException("Unknown decision type: " + bean.getClass());
             }
