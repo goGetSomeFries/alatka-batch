@@ -5,43 +5,40 @@ import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.*;
 import org.springframework.batch.core.job.flow.Flow;
+import org.springframework.beans.DirectFieldAccessor;
+
+import java.util.List;
 
 public class FlowComponent extends AbstractComponent<FlowModel> {
 
     @Override
-    protected Wrapper doJoin(FlowModel model, JobBuilder jobBuilder, Object lastOne) {
+    protected JobFlowBuilder doJoin(FlowModel model, JobBuilder jobBuilder) {
         Flow flow = applicationContext.getBean(model.getName(), Flow.class);
-        JobFlowBuilder builder = jobBuilder.start(flow);
-        return new Wrapper(builder, flow);
+        return jobBuilder.start(flow);
     }
 
     @Override
-    protected Wrapper doJoin(FlowModel model, SimpleJobBuilder simpleJobBuilder, Object lastOne) {
-        if (lastOne == null) {
-            throw new IllegalArgumentException("lastOne must not be null");
+    protected FlowBuilder<FlowJobBuilder> doJoin(FlowModel model, SimpleJobBuilder simpleJobBuilder) {
+        // get last step
+        DirectFieldAccessor accessor = new DirectFieldAccessor(simpleJobBuilder);
+        List<Step> list = (List<Step>) accessor.getPropertyValue("steps");
+        if (list == null) {
+            throw new IllegalStateException("Steps list is null");
         }
+        Step lastStep = list.get(list.size() - 1);
 
         Flow flow = applicationContext.getBean(model.getName(), Flow.class);
-        FlowBuilder<FlowJobBuilder> builder = simpleJobBuilder.on(ExitStatus.COMPLETED.getExitCode()).to(flow)
-                .from((Step) lastOne).on("*").fail();
-        return new Wrapper(builder, flow);
+        return simpleJobBuilder
+                .on(ExitStatus.COMPLETED.getExitCode()).to(flow)
+                .from(lastStep)
+                .on("*").fail()
+                .from(flow);
     }
 
     @Override
-    protected Wrapper doJoin(FlowModel model, JobFlowBuilder jobFlowBuilder, Object lastOne) {
-        if (lastOne == null) {
-            throw new IllegalArgumentException("lastOne must not be null");
-        }
-        if (lastOne instanceof Step) {
-            jobFlowBuilder.from((Step) lastOne);
-        } else if (lastOne instanceof Flow) {
-            jobFlowBuilder.from((Flow) lastOne);
-        } else {
-            throw new IllegalArgumentException("lastOne must be Step or Flow, current: " + lastOne);
-        }
+    protected FlowBuilder<FlowJobBuilder> doJoin(FlowModel model, JobFlowBuilder jobFlowBuilder) {
         Flow flow = applicationContext.getBean(model.getName(), Flow.class);
-        FlowBuilder<FlowJobBuilder> builder = jobFlowBuilder.next(flow);
-        return new Wrapper(builder, flow);
+        return jobFlowBuilder.next(flow);
     }
 
     @Override

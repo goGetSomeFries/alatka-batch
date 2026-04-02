@@ -5,30 +5,10 @@ import org.springframework.batch.core.Job;
 
 public interface IComponent {
 
-    Wrapper join(ComponentModel model, Object builder, Object lastOne);
+    Object join(ComponentModel model, Object builder);
 
     Job build(Object builder);
 
     boolean matched(ComponentModel model);
-
-    class Wrapper {
-
-        private Object builder;
-
-        private Object lastOne;
-
-        public Wrapper(Object builder, Object lastOne) {
-            this.builder = builder;
-            this.lastOne = lastOne;
-        }
-
-        public Object getBuilder() {
-            return builder;
-        }
-
-        public Object getLastOne() {
-            return lastOne;
-        }
-    }
 
 }

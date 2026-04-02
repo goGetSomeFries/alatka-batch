@@ -71,8 +71,7 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
     private Job doBuild(RootModel rootModel) {
         JobBuilderFactory jobBuilderFactory = applicationContext.getBean(JobBuilderFactory.class);
         JobBuilder jobBuilder = jobBuilderFactory.get(rootModel.getName());
-        AtomicReference<IComponent.Wrapper> reference =
-                new AtomicReference<>(new IComponent.Wrapper(jobBuilder, null));
+        AtomicReference<Object> reference = new AtomicReference<>(jobBuilder);
 
         rootModel.getSteps().stream()
                 .flatMap(map -> map.entrySet().stream()
@@ -81,16 +80,15 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
                         .filter(component -> component.matched(model))
                         .findFirst()
                         .ifPresent(component -> {
-                            IComponent.Wrapper wrapper =
-                                    component.join(model, reference.get().getBuilder(), reference.get().getLastOne());
-                            reference.set(wrapper);
+                            Object builder = component.join(model, reference.get());
+                            reference.set(builder);
                         })
                 );
 
         IComponent iComponent = applicationContext.getBeansOfType(IComponent.class).values().stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("can not found bean of " + IComponent.class.getSimpleName()));
-        return iComponent.build(reference.get().getBuilder());
+        return iComponent.build(reference.get());
     }
 
     @Override

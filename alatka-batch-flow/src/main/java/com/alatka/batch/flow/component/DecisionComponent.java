@@ -15,7 +15,7 @@ public class DecisionComponent extends AbstractComponent<DecisionModel> {
     }
 
     @Override
-    protected Wrapper doJoin(DecisionModel model, JobBuilder jobBuilder, Object lastOne) {
+    protected JobFlowBuilder doJoin(DecisionModel model, JobBuilder jobBuilder) {
         Step passthroughStep = applicationContext.getBean(FlowAutoConfiguration.STEP_PASSTHROUGH, Step.class);
         JobExecutionDecider decider = applicationContext.getBean(model.getName(), JobExecutionDecider.class);
         JobFlowBuilder builder = jobBuilder.start(passthroughStep).next(decider);
@@ -25,7 +25,7 @@ public class DecisionComponent extends AbstractComponent<DecisionModel> {
     }
 
     @Override
-    protected Wrapper doJoin(DecisionModel model, SimpleJobBuilder simpleJobBuilder, Object lastOne) {
+    protected JobFlowBuilder doJoin(DecisionModel model, SimpleJobBuilder simpleJobBuilder) {
         JobExecutionDecider decider = applicationContext.getBean(model.getName(), JobExecutionDecider.class);
         JobFlowBuilder builder = simpleJobBuilder.next(decider);
 
@@ -34,7 +34,7 @@ public class DecisionComponent extends AbstractComponent<DecisionModel> {
     }
 
     @Override
-    protected Wrapper doJoin(DecisionModel model, JobFlowBuilder jobFlowBuilder, Object lastOne) {
+    protected FlowBuilder<FlowJobBuilder> doJoin(DecisionModel model, JobFlowBuilder jobFlowBuilder) {
         Step passthroughStep = applicationContext.getBean(FlowAutoConfiguration.STEP_PASSTHROUGH, Step.class);
         JobExecutionDecider decider = applicationContext.getBean(model.getName(), JobExecutionDecider.class);
         FlowBuilder<FlowJobBuilder> builder = jobFlowBuilder.next(decider)
