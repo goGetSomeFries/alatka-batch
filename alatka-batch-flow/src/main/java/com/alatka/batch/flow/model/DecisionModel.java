@@ -12,9 +12,11 @@ public class DecisionModel extends BeanComponentModel {
 
         private String when;
 
-        private String to;
+        private Exit exit;
 
-        public static enum Status {
+        private List<Map<RootModel.Type, Map<String, Object>>> to;
+
+        public enum Exit {
             failed, stopped, end
         }
 
@@ -26,11 +28,19 @@ public class DecisionModel extends BeanComponentModel {
             this.when = when;
         }
 
-        public String getTo() {
+        public Exit getExit() {
+            return exit;
+        }
+
+        public void setExit(Exit exit) {
+            this.exit = exit;
+        }
+
+        public List<Map<RootModel.Type, Map<String, Object>>> getTo() {
             return to;
         }
 
-        public void setTo(String to) {
+        public void setTo(List<Map<RootModel.Type, Map<String, Object>>> to) {
             this.to = to;
         }
     }

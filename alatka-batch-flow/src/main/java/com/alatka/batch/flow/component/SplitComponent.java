@@ -24,7 +24,6 @@ public class SplitComponent extends AbstractComponent<SplitModel> {
     protected FlowBuilder<FlowJobBuilder> doJoin(SplitModel model, SimpleJobBuilder simpleJobBuilder) {
         return this.execute(model, (taskExecutor, flows) -> {
             Step lastStep = this.getLastStep(simpleJobBuilder);
-            // TODO
             Flow splitFlow = new FlowBuilder<Flow>("splitFlow").split(taskExecutor).add(flows).end();
             return simpleJobBuilder
                     .on(ExitStatus.COMPLETED.getExitCode()).to(splitFlow)
