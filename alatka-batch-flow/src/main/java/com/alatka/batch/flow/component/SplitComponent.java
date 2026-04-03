@@ -2,6 +2,7 @@ package com.alatka.batch.flow.component;
 
 import com.alatka.batch.flow.FlowAutoConfiguration;
 import com.alatka.batch.flow.model.SplitModel;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.*;
 import org.springframework.batch.core.job.flow.Flow;
@@ -13,13 +14,23 @@ public class SplitComponent extends AbstractComponent<SplitModel> {
 
     @Override
     protected FlowBuilder<FlowJobBuilder> doJoin(SplitModel model, JobBuilder jobBuilder) {
-        Step passthroughStep = applicationContext.getBean(FlowAutoConfiguration.STEP_PASSTHROUGH, Step.class);
-        return this.execute(model, (taskExecutor, flows) -> jobBuilder.start(passthroughStep).split(taskExecutor).add(flows));
+        return this.execute(model, (taskExecutor, flows) -> {
+            Flow passthroughFlow = applicationContext.getBean(FlowAutoConfiguration.FLOW_PASSTHROUGH, Flow.class);
+            return jobBuilder.start(passthroughFlow).split(taskExecutor).add(flows);
+        });
     }
 
     @Override
     protected FlowBuilder<FlowJobBuilder> doJoin(SplitModel model, SimpleJobBuilder simpleJobBuilder) {
-        return this.execute(model, (taskExecutor, flows) -> simpleJobBuilder.split(taskExecutor).add(flows));
+        return this.execute(model, (taskExecutor, flows) -> {
+            Step lastStep = this.getLastStep(simpleJobBuilder);
+            // TODO
+            Flow splitFlow = new FlowBuilder<Flow>("splitFlow").split(taskExecutor).add(flows).end();
+            return simpleJobBuilder
+                    .on(ExitStatus.COMPLETED.getExitCode()).to(splitFlow)
+                    .from(lastStep).on("*").fail()
+                    .from(splitFlow);
+        });
     }
 
     @Override

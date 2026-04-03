@@ -20,7 +20,7 @@ public class DecisionComponent extends AbstractComponent<DecisionModel> {
         JobExecutionDecider decider = applicationContext.getBean(model.getName(), JobExecutionDecider.class);
         JobFlowBuilder builder = jobBuilder.start(passthroughStep).next(decider);
 
-        model.getDecisions().forEach(innerModel -> this.apply(innerModel, builder, decider));
+        model.getDecisions().forEach(innerModel -> this.execute(innerModel, builder, decider));
         return builder;
     }
 
@@ -29,7 +29,7 @@ public class DecisionComponent extends AbstractComponent<DecisionModel> {
         JobExecutionDecider decider = applicationContext.getBean(model.getName(), JobExecutionDecider.class);
         JobFlowBuilder builder = simpleJobBuilder.next(decider);
 
-        model.getDecisions().forEach(innerModel -> this.apply(innerModel, builder, decider));
+        model.getDecisions().forEach(innerModel -> this.execute(innerModel, builder, decider));
         return builder;
     }
 
@@ -40,11 +40,11 @@ public class DecisionComponent extends AbstractComponent<DecisionModel> {
         FlowBuilder<FlowJobBuilder> builder = jobFlowBuilder.next(decider)
                 .on(FlowAutoConfiguration.STEP_PASSTHROUGH).to(passthroughStep);
 
-        model.getDecisions().forEach(innerModel -> this.apply(innerModel, builder, decider));
+        model.getDecisions().forEach(innerModel -> this.execute(innerModel, builder, decider));
         return builder;
     }
 
-    private void apply(DecisionModel.InnerModel model, FlowBuilder<FlowJobBuilder> builder, JobExecutionDecider decider) {
+    private void execute(DecisionModel.InnerModel model, FlowBuilder<FlowJobBuilder> builder, JobExecutionDecider decider) {
         builder.from(decider);
         try {
             DecisionModel.InnerModel.Status status = DecisionModel.InnerModel.Status.valueOf(model.getTo());

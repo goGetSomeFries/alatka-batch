@@ -2,12 +2,16 @@ package com.alatka.batch.flow.component;
 
 import com.alatka.batch.flow.model.ComponentModel;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.builder.JobFlowBuilder;
 import org.springframework.batch.core.job.builder.SimpleJobBuilder;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
+import java.util.List;
 
 public abstract class AbstractComponent<M extends ComponentModel> implements IComponent, ApplicationContextAware {
 
@@ -48,6 +52,21 @@ public abstract class AbstractComponent<M extends ComponentModel> implements ICo
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    /**
+     * get last step from SimpleJobBuilder
+     *
+     * @param simpleJobBuilder
+     * @return
+     */
+    protected final Step getLastStep(SimpleJobBuilder simpleJobBuilder) {
+        DirectFieldAccessor accessor = new DirectFieldAccessor(simpleJobBuilder);
+        List<Step> list = (List<Step>) accessor.getPropertyValue("steps");
+        if (list == null || list.isEmpty()) {
+            throw new IllegalStateException("Steps list is null or empty");
+        }
+        return list.get(list.size() - 1);
     }
 
     protected abstract Class<M> modelClass();

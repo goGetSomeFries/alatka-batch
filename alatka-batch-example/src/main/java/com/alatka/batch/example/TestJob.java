@@ -2,20 +2,29 @@ package com.alatka.batch.example;
 
 import com.alatka.batch.flow.FlowAutoConfiguration;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.job.builder.FlowBuilder;
 import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.job.flow.JobExecutionDecider;
+import org.springframework.batch.core.launch.JobInstanceAlreadyExistsException;
+import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.task.SyncTaskExecutor;
 
 @Configuration
-public class TestJob {
+public class TestJob implements ApplicationListener<ContextRefreshedEvent> {
 
     private JobBuilderFactory jobBuilderFactory;
+
+    private JobOperator jobOperator;
 
 
     @Bean("job_test")
@@ -33,8 +42,10 @@ public class TestJob {
     }
 
     @Bean("job2")
-    public Job job2(@Qualifier(FlowAutoConfiguration.STEP_PASSTHROUGH) Step step1, Flow flow_test1, Flow flow_test2) {
-        Job job = jobBuilderFactory.get("job2").start(step1).split(new SyncTaskExecutor()).add(flow_test1, flow_test2).end().build();
+    public Job job2(@Qualifier(FlowAutoConfiguration.STEP_PASSTHROUGH) Step step1, Step step_test2, Flow flow_test1, Flow flow_test2) {
+        Flow splitFlow = new FlowBuilder<Flow>("default1").split(new SyncTaskExecutor()).add(flow_test1, flow_test2).end();
+        Job job = jobBuilderFactory.get("job2").start(step1).on("COMPLETED").to(splitFlow).from(step1).on("*").fail()
+                .from(splitFlow).next(step_test2).end().build();
         return job;
     }
 
@@ -43,5 +54,21 @@ public class TestJob {
         this.jobBuilderFactory = jobBuilderFactory;
     }
 
+    @Autowired
+    public void setJobOperator(JobOperator jobOperator) {
+        this.jobOperator = jobOperator;
+    }
 
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        try {
+            jobOperator.start("job2", "x=4");
+        } catch (NoSuchJobException e) {
+            throw new RuntimeException(e);
+        } catch (JobInstanceAlreadyExistsException e) {
+            throw new RuntimeException(e);
+        } catch (JobParametersInvalidException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
