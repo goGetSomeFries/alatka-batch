@@ -9,6 +9,7 @@ import com.alatka.batch.flow.component.StepComponent;
 import com.alatka.batch.flow.config.FlowProperties;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.FlowBuilder;
 import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.repeat.RepeatStatus;
@@ -69,6 +70,8 @@ public class FlowAutoConfiguration {
 
     public static final String STEP_PASSTHROUGH = "passthroughStep";
 
+    // TODO 路径串路问题
+    @StepScope
     @Bean(STEP_PASSTHROUGH)
     public Step passthroughStep(StepBuilderFactory stepBuilderFactory) {
         return stepBuilderFactory.get(STEP_PASSTHROUGH)
@@ -77,6 +80,7 @@ public class FlowAutoConfiguration {
 
     public static final String FLOW_PASSTHROUGH = "passthroughFlow";
 
+    // TODO 路径串路问题
     @Bean(FLOW_PASSTHROUGH)
     public Flow passtroughFlow() {
         return new FlowBuilder<Flow>(FLOW_PASSTHROUGH).start(passthroughStep(null)).end();

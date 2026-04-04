@@ -23,6 +23,7 @@ alatka.batch:
           name: defaultDecider1
           decisions:
             - when: COMPLETED
+#              exit: end
               to:
                 - STEP:
                     name: step_test4
@@ -30,3 +31,16 @@ alatka.batch:
                     name: step_test5
             - when: FAILED
               exit: failed
+            - when: STOPPED
+              to:
+                - STEP:
+                    name: step_test1
+                - DECISION:
+                    name: defaultDecider2
+                    decisions:
+                      - when: COMPLETED
+                        to:
+                          - FLOW:
+                              name: flow_test2
+                      - when: FAILED
+                        exit: failed

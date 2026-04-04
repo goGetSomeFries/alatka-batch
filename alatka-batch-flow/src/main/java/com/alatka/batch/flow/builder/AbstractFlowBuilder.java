@@ -21,6 +21,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.io.Resource;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBean, ApplicationContextAware, ApplicationListener<ContextRefreshedEvent> {
@@ -73,8 +74,17 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
         JobBuilder jobBuilder = jobBuilderFactory.get(rootModel.getName());
         AtomicReference<Object> reference = new AtomicReference<>(jobBuilder);
 
-        rootModel.getSteps().stream()
-                .flatMap(map -> map.entrySet().stream()
+        buildList(rootModel.getSteps(), reference, applicationContext);
+
+        IComponent iComponent = applicationContext.getBeansOfType(IComponent.class).values().stream()
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("can not found bean of " + IComponent.class.getSimpleName()));
+        return iComponent.build(reference.get());
+    }
+
+    public static void buildList(List<Map<RootModel.Type, Map<String, Object>>> list,
+                                 AtomicReference<Object> reference, ApplicationContext applicationContext) {
+        list.stream().flatMap(map -> map.entrySet().stream()
                         .map(entry -> JsonUtil.convertToObject(entry.getValue(), entry.getKey().getClazz())))
                 .forEach(model -> applicationContext.getBeansOfType(IComponent.class).values().stream()
                         .filter(component -> component.matched(model))
@@ -84,11 +94,6 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
                             reference.set(builder);
                         })
                 );
-
-        IComponent iComponent = applicationContext.getBeansOfType(IComponent.class).values().stream()
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("can not found bean of " + IComponent.class.getSimpleName()));
-        return iComponent.build(reference.get());
     }
 
     @Override

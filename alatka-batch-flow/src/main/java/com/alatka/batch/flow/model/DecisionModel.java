@@ -1,5 +1,6 @@
 package com.alatka.batch.flow.model;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,8 +41,8 @@ public class DecisionModel extends BeanComponentModel {
             return to;
         }
 
-        public void setTo(List<Map<RootModel.Type, Map<String, Object>>> to) {
-            this.to = to;
+        public void setTo(Map<String,Map<RootModel.Type, Map<String, Object>>> to) {
+            this.to = to.values().stream().collect(Collectors.toList());
         }
     }
 

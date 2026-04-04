@@ -1,6 +1,7 @@
 package com.alatka.batch.flow.component;
 
 import com.alatka.batch.flow.FlowAutoConfiguration;
+import com.alatka.batch.flow.builder.AbstractFlowBuilder;
 import com.alatka.batch.flow.model.BeanComponentModel;
 import com.alatka.batch.flow.model.DecisionModel;
 import com.alatka.batch.flow.model.RootModel;
@@ -12,7 +13,6 @@ import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.job.flow.JobExecutionDecider;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -24,60 +24,64 @@ public class DecisionComponent extends AbstractComponent<DecisionModel> {
     }
 
     @Override
-    protected JobFlowBuilder doJoin(DecisionModel model, JobBuilder jobBuilder) {
+    protected FlowBuilder<FlowJobBuilder> doJoin(DecisionModel model, JobBuilder jobBuilder) {
         Step passthroughStep = applicationContext.getBean(FlowAutoConfiguration.STEP_PASSTHROUGH, Step.class);
         JobExecutionDecider decider = applicationContext.getBean(model.getName(), JobExecutionDecider.class);
-        FlowBuilder.UnterminatedFlowBuilder<FlowJobBuilder> builder = jobBuilder.start(passthroughStep)
+        FlowBuilder<FlowJobBuilder> finalBuilder = jobBuilder.start(passthroughStep)
                 .on(ExitStatus.COMPLETED.getExitCode()).to(decider)
-                .from(passthroughStep).on("*").fail()
-                .from(decider);
+                .from(passthroughStep).on("*").fail();
+        FlowBuilder.UnterminatedFlowBuilder<FlowJobBuilder> builder = finalBuilder.from(decider);
 
-        model.getDecisions().forEach(innerModel -> this.execute(innerModel, builder, decider));
-        return builder;
+        model.getDecisions().forEach(innerModel -> this.execute(innerModel, builder).from(decider));
+        return finalBuilder;
     }
 
     @Override
-    protected JobFlowBuilder doJoin(DecisionModel model, SimpleJobBuilder simpleJobBuilder) {
+    protected FlowBuilder<FlowJobBuilder> doJoin(DecisionModel model, SimpleJobBuilder simpleJobBuilder) {
         Step lastStep = this.getLastStep(simpleJobBuilder);
         JobExecutionDecider decider = applicationContext.getBean(model.getName(), JobExecutionDecider.class);
 
-        FlowBuilder.UnterminatedFlowBuilder<FlowJobBuilder> builder = simpleJobBuilder
+        FlowBuilder<FlowJobBuilder> finalBuilder = simpleJobBuilder
                 .on(ExitStatus.COMPLETED.getExitCode()).to(decider)
-                .from(lastStep).on("*").fail()
-                .from(decider);
+                .from(lastStep).on("*").fail();
+        FlowBuilder.UnterminatedFlowBuilder<FlowJobBuilder> builder = finalBuilder.from(decider);
 
-        model.getDecisions().forEach(innerModel -> this.execute(innerModel, builder, decider));
-        return builder;
+        model.getDecisions().forEach(innerModel -> this.execute(innerModel, builder).from(decider));
+        return finalBuilder;
     }
 
     @Override
     protected FlowBuilder<FlowJobBuilder> doJoin(DecisionModel model, JobFlowBuilder jobFlowBuilder) {
         JobExecutionDecider decider = applicationContext.getBean(model.getName(), JobExecutionDecider.class);
-        FlowBuilder.UnterminatedFlowBuilder<FlowJobBuilder> builder = jobFlowBuilder.next(decider);
+        Step passthroughStep = applicationContext.getBean(FlowAutoConfiguration.STEP_PASSTHROUGH, Step.class);
+        FlowBuilder<FlowJobBuilder> finalBuilder = jobFlowBuilder.next(passthroughStep);
+        FlowBuilder.UnterminatedFlowBuilder<FlowJobBuilder> builder = finalBuilder.next(decider);
 
-        model.getDecisions().forEach(innerModel -> this.execute(innerModel, builder, decider));
-        return builder;
+        model.getDecisions().forEach(innerModel -> this.execute(innerModel, builder).from(decider));
+        return finalBuilder;
     }
 
-    private void execute(DecisionModel.InnerModel model, FlowBuilder.UnterminatedFlowBuilder<FlowJobBuilder> builder, JobExecutionDecider decider) {
+    private FlowBuilder<FlowJobBuilder> execute(DecisionModel.InnerModel model,
+                                                FlowBuilder.UnterminatedFlowBuilder<FlowJobBuilder> builder) {
         DecisionModel.InnerModel.Exit exit = model.getExit();
         if (exit != null) {
             switch (exit) {
                 case end:
-                    builder.on(model.getWhen()).end().from(decider);
-                    break;
+                    return builder.on(model.getWhen()).end();
                 case failed:
-                    builder.on(model.getWhen()).fail().from(decider);
-                    break;
+                    return builder.on(model.getWhen()).fail();
                 case stopped:
-                    builder.on(model.getWhen()).stop().from(decider);
-                    break;
+                    return builder.on(model.getWhen()).stop();
             }
-            return;
         }
+        return this.doExecute(model, builder);
 
+
+    }
+
+    private FlowBuilder<FlowJobBuilder> doExecute(DecisionModel.InnerModel model, FlowBuilder.UnterminatedFlowBuilder<FlowJobBuilder> builder) {
         ArrayList<Map<RootModel.Type, Map<String, Object>>> list = new ArrayList<>(model.getTo());
-        AtomicReference<Object> reference = new AtomicReference<>(builder);
+        AtomicReference<Object> reference = new AtomicReference<>();
         list.remove(0).entrySet().stream()
                 .map(entry -> JsonUtil.convertToObject(entry.getValue(), entry.getKey().getClazz()))
                 .map(BeanComponentModel.class::cast)
@@ -88,27 +92,16 @@ public class DecisionComponent extends AbstractComponent<DecisionModel> {
                     } else if (bean instanceof Flow) {
                         reference.set(builder.on(model.getWhen()).to((Flow) bean));
                     } else if (bean instanceof JobExecutionDecider) {
+                        // TODO 未解析DecisionModel
                         reference.set(builder.on(model.getWhen()).to((JobExecutionDecider) bean));
                     } else {
                         throw new IllegalArgumentException("Unknown decision type: " + bean.getClass());
                     }
                 });
 
-        this.test(list, reference);
-    }
+        AbstractFlowBuilder.buildList(list, reference, applicationContext);
 
-    private void test(List<Map<RootModel.Type, Map<String, Object>>> list, AtomicReference<Object> reference) {
-        list.stream().flatMap(map -> map.entrySet().stream()
-                        .map(entry -> JsonUtil.convertToObject(entry.getValue(), entry.getKey().getClazz())))
-                .forEach(model -> applicationContext.getBeansOfType(IComponent.class).values().stream()
-                        .filter(component -> component.matched(model))
-                        .findFirst()
-                        .ifPresent(component -> {
-                            Object builder = component.join(model, reference.get());
-                            reference.set(builder);
-                        })
-                );
+        return (FlowBuilder<FlowJobBuilder>) reference.get();
     }
-
 
 }

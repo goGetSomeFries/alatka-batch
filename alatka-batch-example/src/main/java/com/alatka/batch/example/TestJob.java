@@ -61,6 +61,7 @@ public class TestJob implements ApplicationListener<ContextRefreshedEvent> {
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
+/*
         try {
             jobOperator.start("job2", "x=4");
         } catch (NoSuchJobException e) {
@@ -70,5 +71,6 @@ public class TestJob implements ApplicationListener<ContextRefreshedEvent> {
         } catch (JobParametersInvalidException e) {
             throw new RuntimeException(e);
         }
+*/
     }
 }
