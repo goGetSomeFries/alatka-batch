@@ -1,18 +1,13 @@
 package com.alatka.batch.example;
 
-import com.alatka.batch.flow.FlowAutoConfiguration;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.job.builder.FlowBuilder;
 import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.job.flow.JobExecutionDecider;
-import org.springframework.batch.core.launch.JobInstanceAlreadyExistsException;
 import org.springframework.batch.core.launch.JobOperator;
-import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,9 +37,9 @@ public class TestJob implements ApplicationListener<ContextRefreshedEvent> {
     }
 
     @Bean("job2")
-    public Job job2(@Qualifier(FlowAutoConfiguration.STEP_PASSTHROUGH) Step step1, Step step_test2, Flow flow_test1, Flow flow_test2) {
+    public Job job2(Step step_test1, Step step_test2, Flow flow_test1, Flow flow_test2) {
         Flow splitFlow = new FlowBuilder<Flow>("default1").split(new SyncTaskExecutor()).add(flow_test1, flow_test2).end();
-        Job job = jobBuilderFactory.get("job2").start(step1).on("COMPLETED").to(splitFlow).from(step1).on("*").fail()
+        Job job = jobBuilderFactory.get("job2").start(step_test1).on("COMPLETED").to(splitFlow).from(step_test1).on("*").fail()
                 .from(splitFlow).next(step_test2).end().build();
         return job;
     }

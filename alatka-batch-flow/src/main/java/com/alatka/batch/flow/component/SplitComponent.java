@@ -1,6 +1,5 @@
 package com.alatka.batch.flow.component;
 
-import com.alatka.batch.flow.FlowAutoConfiguration;
 import com.alatka.batch.flow.model.SplitModel;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Step;
@@ -15,7 +14,9 @@ public class SplitComponent extends AbstractComponent<SplitModel> {
     @Override
     protected FlowBuilder<FlowJobBuilder> doJoin(SplitModel model, JobBuilder jobBuilder) {
         return this.execute(model, (taskExecutor, flows) -> {
-            Flow passthroughFlow = applicationContext.getBean(FlowAutoConfiguration.FLOW_PASSTHROUGH, Flow.class);
+            Step passthroughStep = this.createPassthroughStep();
+            Flow passthroughFlow = new FlowBuilder<Flow>("passthroughFlow").start(passthroughStep).end();
+
             return jobBuilder.start(passthroughFlow).split(taskExecutor).add(flows);
         });
     }
@@ -24,7 +25,6 @@ public class SplitComponent extends AbstractComponent<SplitModel> {
     protected FlowBuilder<FlowJobBuilder> doJoin(SplitModel model, SimpleJobBuilder simpleJobBuilder) {
         return this.execute(model, (taskExecutor, flows) -> {
             Step lastStep = this.getLastStep(simpleJobBuilder);
-            // TODO 命名重复问题
             Flow splitFlow = new FlowBuilder<Flow>("splitFlow").split(taskExecutor).add(flows).end();
             return simpleJobBuilder
                     .on(ExitStatus.COMPLETED.getExitCode()).to(splitFlow)
@@ -36,6 +36,14 @@ public class SplitComponent extends AbstractComponent<SplitModel> {
     @Override
     protected FlowBuilder<FlowJobBuilder> doJoin(SplitModel model, JobFlowBuilder jobFlowBuilder) {
         return this.execute(model, (taskExecutor, flows) -> jobFlowBuilder.split(taskExecutor).add(flows));
+    }
+
+    @Override
+    protected Object doJoin(SplitModel model, FlowBuilder.TransitionBuilder<FlowJobBuilder> transitionBuilder) {
+        return this.execute(model, (taskExecutor, flows) -> {
+            Step passthroughStep = this.createPassthroughStep();
+            return transitionBuilder.to(passthroughStep).split(taskExecutor).add(flows);
+        });
     }
 
     private FlowBuilder<FlowJobBuilder> execute(SplitModel model,

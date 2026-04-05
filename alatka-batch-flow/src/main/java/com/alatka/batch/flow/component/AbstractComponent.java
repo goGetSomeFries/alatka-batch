@@ -3,19 +3,22 @@ package com.alatka.batch.flow.component;
 import com.alatka.batch.flow.model.ComponentModel;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.job.builder.JobFlowBuilder;
-import org.springframework.batch.core.job.builder.SimpleJobBuilder;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.builder.*;
+import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class AbstractComponent<M extends ComponentModel> implements IComponent, ApplicationContextAware {
 
     protected ApplicationContext applicationContext;
+
+    private AtomicInteger counter = new AtomicInteger(0);
 
     @Override
     public Object join(ComponentModel model, Object builder) {
@@ -27,6 +30,9 @@ public abstract class AbstractComponent<M extends ComponentModel> implements ICo
         }
         if (builder.getClass() == JobFlowBuilder.class) {
             return doJoin((M) model, (JobFlowBuilder) builder);
+        }
+        if (builder.getClass() == FlowBuilder.TransitionBuilder.class) {
+            return doJoin((M) model, (FlowBuilder.TransitionBuilder<FlowJobBuilder>) builder);
         }
         throw new IllegalArgumentException("Unsupported builder type: " + builder.getClass());
     }
@@ -69,6 +75,13 @@ public abstract class AbstractComponent<M extends ComponentModel> implements ICo
         return list.get(list.size() - 1);
     }
 
+    protected final Step createPassthroughStep() {
+        String stepName = String.format("%s.%s.%s", this.getClass().getSimpleName(), "passthroughStep", counter.getAndIncrement());
+        StepBuilderFactory stepBuilderFactory = applicationContext.getBean(StepBuilderFactory.class);
+        return stepBuilderFactory.get(stepName)
+                .tasklet((contribution, chunkContext) -> RepeatStatus.FINISHED).build();
+    }
+
     protected abstract Class<M> modelClass();
 
     protected abstract Object doJoin(M model, JobBuilder jobBuilder);
@@ -76,4 +89,6 @@ public abstract class AbstractComponent<M extends ComponentModel> implements ICo
     protected abstract Object doJoin(M model, SimpleJobBuilder simpleJobBuilder);
 
     protected abstract Object doJoin(M model, JobFlowBuilder jobFlowBuilder);
+
+    protected abstract Object doJoin(M model, FlowBuilder.TransitionBuilder<FlowJobBuilder> transitionBuilder);
 }

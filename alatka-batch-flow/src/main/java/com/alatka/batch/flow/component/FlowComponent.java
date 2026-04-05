@@ -32,6 +32,12 @@ public class FlowComponent extends AbstractComponent<FlowModel> {
     }
 
     @Override
+    protected FlowBuilder<FlowJobBuilder> doJoin(FlowModel model, FlowBuilder.TransitionBuilder<FlowJobBuilder> transitionBuilder) {
+        Flow flow = applicationContext.getBean(model.getName(), Flow.class);
+        return transitionBuilder.to(flow);
+    }
+
+    @Override
     protected Class<FlowModel> modelClass() {
         return FlowModel.class;
     }

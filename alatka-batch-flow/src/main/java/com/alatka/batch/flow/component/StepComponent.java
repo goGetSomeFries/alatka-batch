@@ -25,6 +25,12 @@ public class StepComponent extends AbstractComponent<StepModel> {
     }
 
     @Override
+    protected FlowBuilder<FlowJobBuilder> doJoin(StepModel model, FlowBuilder.TransitionBuilder<FlowJobBuilder> transitionBuilder) {
+        Step step = applicationContext.getBean(model.getName(), Step.class);
+        return transitionBuilder.to(step);
+    }
+
+    @Override
     protected Class<StepModel> modelClass() {
         return StepModel.class;
     }
