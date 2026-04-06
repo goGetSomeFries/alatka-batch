@@ -21,5 +21,8 @@ public class FlowConfig {
         return new FlowBuilder<SimpleFlow>("flow_test2").start(step).build();
     }
 
-
+    @Bean("flow_test3")
+    public Flow testFlow3(@Qualifier("step_test3") Step step) {
+        return new FlowBuilder<SimpleFlow>("flow_test3").start(step).build();
+    }
 }

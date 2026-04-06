@@ -59,6 +59,7 @@ public class DecisionComponent extends AbstractComponent<DecisionModel> {
         JobExecutionDecider decider = applicationContext.getBean(model.getName(), JobExecutionDecider.class);
         FlowBuilder<FlowJobBuilder> finalBuilder = transitionBuilder.to(decider);
         FlowBuilder.UnterminatedFlowBuilder<FlowJobBuilder> builder = finalBuilder.from(decider);
+
         model.getDecisions().forEach(innerModel -> this.execute(innerModel, builder).from(decider));
         return finalBuilder;
     }
@@ -79,9 +80,10 @@ public class DecisionComponent extends AbstractComponent<DecisionModel> {
         return this.doExecute(model, builder);
     }
 
-    private FlowBuilder<FlowJobBuilder> doExecute(DecisionModel.InnerModel model, FlowBuilder.UnterminatedFlowBuilder<FlowJobBuilder> builder) {
+    private FlowBuilder<FlowJobBuilder> doExecute(DecisionModel.InnerModel model,
+                                                  FlowBuilder.UnterminatedFlowBuilder<FlowJobBuilder> builder) {
         AtomicReference<Object> reference = new AtomicReference<>(builder.on(model.getWhen()));
-        AbstractFlowBuilder.buildList(model.getTo(), reference, applicationContext);
+        AbstractFlowBuilder.buildComponents(model.getTo(), reference, applicationContext);
 
         return (FlowBuilder<FlowJobBuilder>) reference.get();
     }

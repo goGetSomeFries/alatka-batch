@@ -62,6 +62,4 @@ public class FlowAutoConfiguration {
         return new SplitComponent();
     }
 
-    public static final String FLOW_PASSTHROUGH = "passthroughFlow";
-
 }

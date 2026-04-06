@@ -5,18 +5,23 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.job.builder.*;
+import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.DirectFieldAccessor;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
-public abstract class AbstractComponent<M extends ComponentModel> implements IComponent, ApplicationContextAware {
+public abstract class AbstractComponent<M extends ComponentModel> implements IComponent, ApplicationContextAware, BeanNameAware {
 
     protected ApplicationContext applicationContext;
+
+    private String beanName;
 
     private AtomicInteger counter = new AtomicInteger(0);
 
@@ -60,6 +65,11 @@ public abstract class AbstractComponent<M extends ComponentModel> implements ICo
         this.applicationContext = applicationContext;
     }
 
+    @Override
+    public void setBeanName(String name) {
+        this.beanName = name;
+    }
+
     /**
      * get last step from SimpleJobBuilder
      *
@@ -76,10 +86,16 @@ public abstract class AbstractComponent<M extends ComponentModel> implements ICo
     }
 
     protected final Step createPassthroughStep() {
-        String stepName = String.format("%s.%s.%s", this.getClass().getSimpleName(), "passthroughStep", counter.getAndIncrement());
+        String stepName = String.format("%s.%s.%s", this.beanName, "passthroughStep", counter.getAndIncrement());
         StepBuilderFactory stepBuilderFactory = applicationContext.getBean(StepBuilderFactory.class);
         return stepBuilderFactory.get(stepName)
                 .tasklet((contribution, chunkContext) -> RepeatStatus.FINISHED).build();
+    }
+
+    protected final Flow createFlow(String flowName, Function<FlowBuilder<Flow>, Flow> function) {
+        String finalName = String.format("%s.%s.%s", this.beanName, flowName, counter.getAndIncrement());
+        FlowBuilder<Flow> flowBuilder = new FlowBuilder<>(finalName);
+        return function.apply(flowBuilder);
     }
 
     protected abstract Class<M> modelClass();

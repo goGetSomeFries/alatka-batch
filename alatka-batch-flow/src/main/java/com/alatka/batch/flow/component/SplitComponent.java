@@ -7,6 +7,7 @@ import org.springframework.batch.core.job.builder.*;
 import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.core.task.TaskExecutor;
 
+import java.util.Arrays;
 import java.util.function.BiFunction;
 
 public class SplitComponent extends AbstractComponent<SplitModel> {
@@ -14,10 +15,8 @@ public class SplitComponent extends AbstractComponent<SplitModel> {
     @Override
     protected FlowBuilder<FlowJobBuilder> doJoin(SplitModel model, JobBuilder jobBuilder) {
         return this.execute(model, (taskExecutor, flows) -> {
-            Step passthroughStep = this.createPassthroughStep();
-            Flow passthroughFlow = new FlowBuilder<Flow>("passthroughFlow").start(passthroughStep).end();
-
-            return jobBuilder.start(passthroughFlow).split(taskExecutor).add(flows);
+            Flow[] array = Arrays.copyOfRange(flows, 1, flows.length);
+            return jobBuilder.start(flows[0]).split(taskExecutor).add(array);
         });
     }
 
@@ -25,7 +24,8 @@ public class SplitComponent extends AbstractComponent<SplitModel> {
     protected FlowBuilder<FlowJobBuilder> doJoin(SplitModel model, SimpleJobBuilder simpleJobBuilder) {
         return this.execute(model, (taskExecutor, flows) -> {
             Step lastStep = this.getLastStep(simpleJobBuilder);
-            Flow splitFlow = new FlowBuilder<Flow>("splitFlow").split(taskExecutor).add(flows).end();
+            Flow splitFlow =
+                    this.createFlow("splitFlow", flowBuilder -> flowBuilder.split(taskExecutor).add(flows).end());
             return simpleJobBuilder
                     .on(ExitStatus.COMPLETED.getExitCode()).to(splitFlow)
                     .from(lastStep).on("*").fail()
@@ -35,14 +35,19 @@ public class SplitComponent extends AbstractComponent<SplitModel> {
 
     @Override
     protected FlowBuilder<FlowJobBuilder> doJoin(SplitModel model, JobFlowBuilder jobFlowBuilder) {
-        return this.execute(model, (taskExecutor, flows) -> jobFlowBuilder.split(taskExecutor).add(flows));
+        return this.execute(model, (taskExecutor, flows) -> {
+            Flow splitFlow =
+                    this.createFlow("splitFlow", flowBuilder -> flowBuilder.split(taskExecutor).add(flows).end());
+            return jobFlowBuilder.next(splitFlow);
+        });
     }
 
     @Override
     protected Object doJoin(SplitModel model, FlowBuilder.TransitionBuilder<FlowJobBuilder> transitionBuilder) {
         return this.execute(model, (taskExecutor, flows) -> {
-            Step passthroughStep = this.createPassthroughStep();
-            return transitionBuilder.to(passthroughStep).split(taskExecutor).add(flows);
+            Flow splitFlow =
+                    this.createFlow("splitFlow", flowBuilder -> flowBuilder.split(taskExecutor).add(flows).end());
+            return transitionBuilder.to(splitFlow);
         });
     }
 

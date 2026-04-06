@@ -74,7 +74,7 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
         JobBuilder jobBuilder = jobBuilderFactory.get(rootModel.getName());
         AtomicReference<Object> reference = new AtomicReference<>(jobBuilder);
 
-        buildList(rootModel.getSteps(), reference, applicationContext);
+        buildComponents(rootModel.getSteps(), reference, applicationContext);
 
         IComponent iComponent = applicationContext.getBeansOfType(IComponent.class).values().stream()
                 .findFirst()
@@ -82,8 +82,8 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
         return iComponent.build(reference.get());
     }
 
-    public static void buildList(List<Map<RootModel.Type, Map<String, Object>>> list,
-                                 AtomicReference<Object> reference, ApplicationContext applicationContext) {
+    public static void buildComponents(List<Map<RootModel.Type, Map<String, Object>>> list,
+                                       AtomicReference<Object> reference, ApplicationContext applicationContext) {
         list.stream().flatMap(map -> map.entrySet().stream()
                         .map(entry -> JsonUtil.convertToObject(entry.getValue(), entry.getKey().getClazz())))
                 .forEach(model -> applicationContext.getBeansOfType(IComponent.class).values().stream()
