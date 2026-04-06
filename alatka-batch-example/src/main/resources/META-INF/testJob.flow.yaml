@@ -7,39 +7,40 @@ alatka.batch:
       - STEP:
           name: step_test1
 #      - FLOW:
-#          name: flow_test3
-      - SPLIT:
-          taskExecutor: defaultTaskExecutor
-          flows:
-            - name: flow_test1
-            - name: flow_test2
-      - STEP:
-          name: step_test2
+#          name: flow_test1
+#      - SPLIT:
+#          taskExecutor: defaultTaskExecutor
+#          flows:
+#            - name: flow_test1
+#            - name: flow_test2
+#      - STEP:
+#          name: step_test2
 #      - FLOW:
 #          name: flow_test2
 #      - STEP:
 #          name: step_test3
-#      - DECISION:
-#          name: defaultDecider1
-#          decisions:
+      - DECISION:
+          name: defaultDecider1
+          decisions:
 #            - when: COMPLETED
 #              to:
-#                - STEP:
-#                    name: step_test4
+#                - SPLIT:
+#                    taskExecutor: defaultTaskExecutor
+#                    flows:
+#                      - name: flow_test1
+#                      - name: flow_test2
 #                - STEP:
 #                    name: step_test5
-#            - when: FAILED
-#              exit: failed
-#            - when: STOPPED
-#              to:
-#                - STEP:
-#                    name: step_test1
-#                - DECISION:
-#                    name: defaultDecider2
-#                    decisions:
-#                      - when: COMPLETED
-#                        to:
-#                          - FLOW:
-#                              name: flow_test2
-#                      - when: FAILED
-#                        exit: failed
+            - when: FAILED
+              exit: failed
+            - when: STOPPED
+              to:
+                - DECISION:
+                    name: defaultDecider2
+                    decisions:
+                      - when: COMPLETED
+                        to:
+                          - FLOW:
+                              name: flow_test2
+                      - when: FAILED
+                        exit: failed

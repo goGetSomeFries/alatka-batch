@@ -46,12 +46,10 @@ public class DecisionComponent extends AbstractComponent<DecisionModel> {
     @Override
     protected FlowBuilder<FlowJobBuilder> doJoin(DecisionModel model, JobFlowBuilder jobFlowBuilder) {
         JobExecutionDecider decider = applicationContext.getBean(model.getName(), JobExecutionDecider.class);
-        Step passthroughStep = this.createPassthroughStep();
-        FlowBuilder<FlowJobBuilder> finalBuilder = jobFlowBuilder.next(passthroughStep);
-        FlowBuilder.UnterminatedFlowBuilder<FlowJobBuilder> builder = finalBuilder.next(decider);
+        FlowBuilder.UnterminatedFlowBuilder<FlowJobBuilder> builder = jobFlowBuilder.next(decider);
 
         model.getDecisions().forEach(innerModel -> this.execute(innerModel, builder).from(decider));
-        return finalBuilder;
+        return jobFlowBuilder;
     }
 
     @Override
