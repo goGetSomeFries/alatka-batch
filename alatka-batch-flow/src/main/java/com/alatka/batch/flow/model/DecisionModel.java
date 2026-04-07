@@ -1,6 +1,7 @@
 package com.alatka.batch.flow.model;
 
-import java.util.Collection;
+import com.alatka.batch.infra.util.JsonUtil;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,7 +16,7 @@ public class DecisionModel extends BeanComponentModel {
 
         private Exit exit;
 
-        private List<Map<RootModel.Type, Map<String, Object>>> to;
+        private List<ComponentModel> to;
 
         public enum Exit {
             failed, stopped, end
@@ -37,12 +38,20 @@ public class DecisionModel extends BeanComponentModel {
             this.exit = exit;
         }
 
-        public List<Map<RootModel.Type, Map<String, Object>>> getTo() {
+        public List<ComponentModel> getTo() {
             return to;
         }
 
-        public void setTo(Map<String,Map<RootModel.Type, Map<String, Object>>> to) {
-            this.to = to.values().stream().collect(Collectors.toList());
+        /**
+         * Yaml工具解析为Map类型，需手动转换为List
+         *
+         * @param to Map<String, Map<String, Object>>类型
+         */
+        public void setTo(Map<String, Map<String, Object>> to) {
+            this.to = to.values().stream().map(map -> {
+                ComponentModel model = JsonUtil.convertToObject(map, ComponentModel.class);
+                return JsonUtil.convertToObject(map, model.getType().getClazz());
+            }).collect(Collectors.toList());
         }
     }
 

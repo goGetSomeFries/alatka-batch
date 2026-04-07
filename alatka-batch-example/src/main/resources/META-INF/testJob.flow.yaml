@@ -1,46 +1,45 @@
-alatka.batch:
-  flow:
-    enabled: true
-    name: testJob
-    desc: 测试job
-    steps:
-      - STEP:
-          name: step_test1
-#      - FLOW:
-#          name: flow_test1
-#      - SPLIT:
-#          taskExecutor: defaultTaskExecutor
-#          flows:
-#            - name: flow_test1
-#            - name: flow_test2
-#      - STEP:
-#          name: step_test2
-#      - FLOW:
-#          name: flow_test2
-#      - STEP:
-#          name: step_test3
-      - DECISION:
-          name: defaultDecider1
-          decisions:
-#            - when: COMPLETED
-#              to:
-#                - SPLIT:
-#                    taskExecutor: defaultTaskExecutor
-#                    flows:
-#                      - name: flow_test1
-#                      - name: flow_test2
-#                - STEP:
-#                    name: step_test5
-            - when: FAILED
-              exit: failed
-            - when: STOPPED
-              to:
-                - DECISION:
-                    name: defaultDecider2
-                    decisions:
-                      - when: COMPLETED
-                        to:
-                          - FLOW:
-                              name: flow_test2
-                      - when: FAILED
-                        exit: failed
+alatka.batch.flow:
+  enabled: true
+  name: testJob
+  desc: 测试job
+  steps:
+    - type: STEP
+      name: step_test1
+    - type: FLOW
+      name: flow_test1
+    - type: SPLIT
+      taskExecutor: defaultTaskExecutor
+      flows:
+        - type: FLOW
+          name: flow_test2
+        - type: FLOW
+          name: flow_test3
+    - type: STEP
+      name: step_test2
+    - type: DECISION
+      name: defaultDecider1
+      decisions:
+        - when: COMPLETED
+          to:
+            - type: SPLIT
+              taskExecutor: defaultTaskExecutor
+              flows:
+                - type: FLOW
+                  name: flow_test1
+                - type: FLOW
+                  name: flow_test2
+            - type: STEP
+              name: step_test5
+        - when: FAILED
+          exit: failed
+        - when: STOPPED
+          to:
+            - type: DECISION
+              name: defaultDecider2
+              decisions:
+                - when: COMPLETED
+                  to:
+                    - type: FLOW
+                      name: flow_test2
+                - when: FAILED
+                  exit: failed

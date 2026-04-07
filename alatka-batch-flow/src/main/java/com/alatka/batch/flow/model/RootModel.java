@@ -1,7 +1,10 @@
 package com.alatka.batch.flow.model;
 
+import com.alatka.batch.infra.util.JsonUtil;
+
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class RootModel {
 
@@ -11,24 +14,7 @@ public class RootModel {
 
     private String desc;
 
-    private List<Map<Type, Map<String, Object>>> steps;
-
-    public static enum Type {
-        STEP(StepModel.class),
-        FLOW(FlowModel.class),
-        DECISION(DecisionModel.class),
-        SPLIT(SplitModel.class);
-
-        private Class<? extends ComponentModel> clazz;
-
-        Type(Class<? extends ComponentModel> clazz) {
-            this.clazz = clazz;
-        }
-
-        public Class<? extends ComponentModel> getClazz() {
-            return clazz;
-        }
-    }
+    private List<ComponentModel> steps;
 
     public boolean isEnabled() {
         return enabled;
@@ -54,11 +40,14 @@ public class RootModel {
         this.desc = desc;
     }
 
-    public List<Map<Type, Map<String, Object>>> getSteps() {
+    public List<ComponentModel> getSteps() {
         return steps;
     }
 
-    public void setSteps(List<Map<Type, Map<String, Object>>> steps) {
-        this.steps = steps;
+    public void setSteps(List<Map<String, Object>> steps) {
+        this.steps = steps.stream().map(map -> {
+            ComponentModel model = JsonUtil.convertToObject(map, ComponentModel.class);
+            return JsonUtil.convertToObject(map, model.getType().getClazz());
+        }).collect(Collectors.toList());
     }
 }

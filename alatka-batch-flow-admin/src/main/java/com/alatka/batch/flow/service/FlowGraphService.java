@@ -62,8 +62,8 @@ public class FlowGraphService {
             condition.setStatus("SAVE");
             BatchFlowGraph entity = flowGraphRepository.findOne(this.condition(condition))
                     .orElseThrow(() -> new IllegalArgumentException("没有未部署的流程图"));
-            entity.setStatus("DEPLOY");
             // TODO
+            entity.setStatus("DEPLOY");
         });
     }
 

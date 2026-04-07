@@ -1,7 +1,8 @@
 package com.alatka.batch.flow.builder;
 
+import com.alatka.batch.flow.model.RootModel;
+import com.alatka.batch.infra.util.YamlUtil;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.util.StringUtils;
 
@@ -18,7 +19,7 @@ public class FileFlowBuilder extends AbstractFlowBuilder {
     private static final String[] FILE_SUFFIX = new String[]{".flow.yml", ".flow.yaml"};
 
     @Override
-    protected List<Resource> loadResources() {
+    protected List<RootModel> loadResources() {
         return Arrays.stream(FILE_SUFFIX)
                 .map(suffix -> classpath + "*" + suffix)
                 .map(locationPattern -> {
@@ -30,15 +31,17 @@ public class FileFlowBuilder extends AbstractFlowBuilder {
                     }
                 })
                 .flatMap(Stream::of)
+                .map(resource -> YamlUtil.loadYaml(resource, ROOT_NAME, RootModel.class))
                 .collect(Collectors.toList());
     }
 
     @Override
-    protected Resource loadResource(String filePath) {
+    protected RootModel loadResource(String filePath) {
         if (!StringUtils.hasLength(filePath)) {
             throw new IllegalArgumentException("File path must not be empty");
         }
-        return new ClassPathResource(filePath);
+        ClassPathResource resource = new ClassPathResource(filePath);
+        return YamlUtil.loadYaml(resource, ROOT_NAME, RootModel.class);
     }
 
     public void setClasspath(String classpath) {

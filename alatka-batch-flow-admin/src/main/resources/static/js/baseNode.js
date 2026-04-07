@@ -8,8 +8,8 @@ class BaseNode {
 
     static NODE_START = 'START';
     static NODE_END = 'END';
-    static NODE_FAILED = 'FAILED';
-    static NODE_STOPPED = 'STOPPED';
+    static NODE_FAIL = 'FAIL';
+    static NODE_STOP = 'STOP';
     static NODE_DECISION = 'DECISION';
     static NODE_SPLIT = 'SPLIT';
     static NODE_JOIN = 'JOIN';
@@ -83,8 +83,8 @@ class EndNode extends BaseNode {
         style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
         style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
         style[mxConstants.STYLE_ARCSIZE] = 25;
-        style[mxConstants.STYLE_FILLCOLOR] = '#f8d7da';
-        style[mxConstants.STYLE_STROKECOLOR] = '#dc3545';
+        style[mxConstants.STYLE_FILLCOLOR] = '#F5F5F5';
+        style[mxConstants.STYLE_STROKECOLOR] = '#666666';
         style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
         return style;
     }
@@ -96,14 +96,14 @@ class EndNode extends BaseNode {
 
 class StoppedNode extends BaseNode {
     constructor() {
-        super('Stopped', 85, 70, BaseNode.NODE_STOPPED);
+        super('Stop', 60, 60, BaseNode.NODE_STOP);
     }
 
     getStyleConfig() {
         const style = super.getStyleConfig();
-        style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_HEXAGON;
-        style[mxConstants.STYLE_PERIMETER] = mxPerimeter.HexagonPerimeter;
-        style[mxConstants.STYLE_ARCSIZE] = 15;
+        style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
+        style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
+        style[mxConstants.STYLE_ARCSIZE] = 25;
         style[mxConstants.STYLE_FILLCOLOR] = '#fff3cd';
         style[mxConstants.STYLE_STROKECOLOR] = '#ffc107';
         style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
@@ -117,7 +117,7 @@ class StoppedNode extends BaseNode {
 
 class FailedNode extends BaseNode {
     constructor() {
-        super('Failed', 60, 60, BaseNode.NODE_FAILED);
+        super('Fail', 60, 60, BaseNode.NODE_FAIL);
     }
 
     getStyleConfig() {
@@ -145,8 +145,8 @@ class DecisionNode extends BaseNode {
         const style = super.getStyleConfig();
         style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RHOMBUS;
         style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RhombusPerimeter;
-        style[mxConstants.STYLE_FILLCOLOR] = '#F5F5F5';
-        style[mxConstants.STYLE_STROKECOLOR] = '#666666';
+        style[mxConstants.STYLE_FILLCOLOR] = '#FFFFFF';
+        style[mxConstants.STYLE_STROKECOLOR] = '#343A40';
         style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
         return style;
     }
@@ -263,8 +263,8 @@ class NodeFactory {
     static NODES = {
         [BaseNode.NODE_START]: NodeFactory.createNode(BaseNode.NODE_START),
         [BaseNode.NODE_END]: NodeFactory.createNode(BaseNode.NODE_END),
-        [BaseNode.NODE_STOPPED]: NodeFactory.createNode(BaseNode.NODE_STOPPED),
-        [BaseNode.NODE_FAILED]: NodeFactory.createNode(BaseNode.NODE_FAILED),
+        [BaseNode.NODE_STOP]: NodeFactory.createNode(BaseNode.NODE_STOP),
+        [BaseNode.NODE_FAIL]: NodeFactory.createNode(BaseNode.NODE_FAIL),
         [BaseNode.NODE_DECISION]: NodeFactory.createNode(BaseNode.NODE_DECISION),
         [BaseNode.NODE_SPLIT]: NodeFactory.createNode(BaseNode.NODE_SPLIT),
         [BaseNode.NODE_JOIN]: NodeFactory.createNode(BaseNode.NODE_JOIN),
@@ -278,9 +278,9 @@ class NodeFactory {
                 return new StartNode();
             case BaseNode.NODE_END:
                 return new EndNode();
-            case BaseNode.NODE_STOPPED:
+            case BaseNode.NODE_STOP:
                 return new StoppedNode();
-            case BaseNode.NODE_FAILED:
+            case BaseNode.NODE_FAIL:
                 return new FailedNode();
             case BaseNode.NODE_STEP:
                 return new StepNode();

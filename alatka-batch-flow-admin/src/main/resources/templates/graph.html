@@ -18,6 +18,18 @@
             background-color: #f8f5ff;
         }
 
+        .btn-custom-yellow {
+            color: #ffc107 !important;
+            border-color: #ffc107 !important;
+            background-color: transparent;
+        }
+
+        .btn-custom-yellow:hover {
+            color: #ffffff !important;
+            background-color: #ffc107 !important;
+            border-color: #ffc107 !important;
+        }
+
         .btn-custom-orange {
             color: #fd7e14 !important;
             border-color: #fd7e14 !important;
@@ -60,16 +72,16 @@
                             <i class="bi bi-play-circle me-1"></i>Start
                         </button>
                         <button type="button" id="endComponent"
-                                class="btn btn-sm btn-outline-danger d-flex align-items-center">
-                            <i class="bi bi-pause-circle me-1"></i>End
+                                class="btn btn-sm btn-outline-secondary d-flex align-items-center">
+                            <i class="bi bi-check2-circle me-1"></i>End
                         </button>
                         <button type="button" id="stoppedComponent"
-                                class="btn btn-sm btn-outline-danger d-flex align-items-center">
-                            <i class="bi bi-pause-circle me-1"></i>Stopped
+                                class="btn btn-sm btn-custom-yellow d-flex align-items-center">
+                            <i class="bi bi-pause-circle me-1"></i>Stop
                         </button>
                         <button type="button" id="failedComponent"
                                 class="btn btn-sm btn-outline-danger d-flex align-items-center">
-                            <i class="bi bi-pause-circle me-1"></i>Failed
+                            <i class="bi bi-x-octagon me-1"></i>Fail
                         </button>
                     </div>
                 </div>
@@ -90,7 +102,7 @@
                     <small class="text-muted d-block mb-2 fw-bold" style="font-size: 0.7rem;">流程控制</small>
                     <div class="d-flex flex-wrap gap-2">
                         <button type="button" id="decisionComponent"
-                                class="btn btn-sm btn-outline-secondary d-flex align-items-center">
+                                class="btn btn-sm btn-outline-dark d-flex align-items-center">
                             <i class="bi bi-list-check me-1"></i>Decision
                         </button>
                         <button type="button" id="splitComponent"
@@ -146,8 +158,8 @@
             this.jobFlow = new JobFlow("graphContainer", "propertyContainer");
             this.jobFlow.bindToolbarComponent('startComponent', BaseNode.NODE_START);
             this.jobFlow.bindToolbarComponent('endComponent', BaseNode.NODE_END);
-            this.jobFlow.bindToolbarComponent('stoppedComponent', BaseNode.NODE_STOPPED);
-            this.jobFlow.bindToolbarComponent('failedComponent', BaseNode.NODE_FAILED);
+            this.jobFlow.bindToolbarComponent('stoppedComponent', BaseNode.NODE_STOP);
+            this.jobFlow.bindToolbarComponent('failedComponent', BaseNode.NODE_FAIL);
             this.jobFlow.bindToolbarComponent('decisionComponent', BaseNode.NODE_DECISION);
             this.jobFlow.bindToolbarComponent('splitComponent', BaseNode.NODE_SPLIT);
             this.jobFlow.bindToolbarComponent('joinComponent', BaseNode.NODE_JOIN);

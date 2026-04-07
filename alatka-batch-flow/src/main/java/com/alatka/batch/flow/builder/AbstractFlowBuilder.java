@@ -1,9 +1,8 @@
 package com.alatka.batch.flow.builder;
 
 import com.alatka.batch.flow.component.IComponent;
+import com.alatka.batch.flow.model.ComponentModel;
 import com.alatka.batch.flow.model.RootModel;
-import com.alatka.batch.infra.util.JsonUtil;
-import com.alatka.batch.infra.util.YamlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -18,23 +17,21 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.core.io.Resource;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBean, ApplicationContextAware, ApplicationListener<ContextRefreshedEvent> {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static final String ROOT_NAME = "alatka.batch.flow";
+    protected static final String ROOT_NAME = "alatka.batch.flow";
 
     private ApplicationContext applicationContext;
 
     @Override
     public void build() {
-        List<Resource> resources = this.loadResources();
+        List<RootModel> resources = this.loadResources();
         if (resources.isEmpty()) {
             this.logger.info("No resources found. Skipping build.");
             return;
@@ -44,16 +41,15 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
 
     @Override
     public void build(String identity) {
-        Resource resource = this.loadResource(identity);
-        this.build(resource);
+        RootModel rootModel = this.loadResource(identity);
+        this.build(rootModel);
     }
 
-    protected abstract List<Resource> loadResources();
+    protected abstract List<RootModel> loadResources();
 
-    protected abstract Resource loadResource(String identity);
+    protected abstract RootModel loadResource(String identity);
 
-    private void build(Resource resource) {
-        RootModel rootModel = YamlUtil.loadYaml(resource, ROOT_NAME, RootModel.class);
+    private void build(RootModel rootModel) {
         if (!rootModel.isEnabled()) {
             this.logger.warn("model '{}' is disabled. Skipping build...", rootModel.getName());
             return;
@@ -82,18 +78,16 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
         return iComponent.build(reference.get());
     }
 
-    public static void buildComponents(List<Map<RootModel.Type, Map<String, Object>>> list,
+    public static void buildComponents(List<? extends ComponentModel> list,
                                        AtomicReference<Object> reference, ApplicationContext applicationContext) {
-        list.stream().flatMap(map -> map.entrySet().stream()
-                        .map(entry -> JsonUtil.convertToObject(entry.getValue(), entry.getKey().getClazz())))
-                .forEach(model -> applicationContext.getBeansOfType(IComponent.class).values().stream()
-                        .filter(component -> component.matched(model))
-                        .findFirst()
-                        .ifPresent(component -> {
-                            Object builder = component.join(model, reference.get());
-                            reference.set(builder);
-                        })
-                );
+        list.forEach(model -> applicationContext.getBeansOfType(IComponent.class).values().stream()
+                .filter(component -> component.matched(model))
+                .findFirst()
+                .ifPresent(component -> {
+                    Object builder = component.join(model, reference.get());
+                    reference.set(builder);
+                })
+        );
     }
 
     @Override
