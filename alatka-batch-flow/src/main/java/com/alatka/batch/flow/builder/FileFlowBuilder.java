@@ -14,6 +14,8 @@ import java.util.stream.Stream;
 
 public class FileFlowBuilder extends AbstractFlowBuilder {
 
+    private static final String ROOT_NAME = "alatka.batch.flow";
+
     private String classpath = "classpath*:META-INF/";
 
     private static final String[] FILE_SUFFIX = new String[]{".flow.yml", ".flow.yaml"};

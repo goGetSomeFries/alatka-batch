@@ -1,15 +1,14 @@
 package com.alatka.batch.flow.builder;
 
 import com.alatka.batch.flow.model.RootModel;
-import org.springframework.core.io.ByteArrayResource;
+import com.alatka.batch.infra.util.XmlUtil;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DatabaseFlowBuilder extends AbstractFlowBuilder {
 
@@ -25,8 +24,7 @@ public class DatabaseFlowBuilder extends AbstractFlowBuilder {
                 " JOIN ALK_BATCH_FLOW F ON D.F_ID = F.F_ID AND F.F_ENABLED = 1 WHERE D.D_CURRENT = 1 AND D.D_STATUS = 'DEPLOY'";
         List<byte[]> list = this.jdbcTemplate.queryForList(sql, Collections.emptyMap(), byte[].class);
 
-//        return list.stream().filter(Objects::nonNull).map(ByteArrayResource::new).collect(Collectors.toList());
-        return null;
+        return list.stream().filter(Objects::nonNull).map(this::test).collect(Collectors.toList());
     }
 
     @Override
@@ -42,7 +40,12 @@ public class DatabaseFlowBuilder extends AbstractFlowBuilder {
         if (bytes == null) {
             throw new IllegalArgumentException("No data found for id " + id);
         }
-        ByteArrayResource byteArrayResource = new ByteArrayResource(bytes);
+        return this.test(bytes);
+    }
+
+    private RootModel test(byte[] bytes) {
+        String content = new String(bytes, StandardCharsets.UTF_8);
+        Map<String, Object> map = XmlUtil.getMap(content);
         return null;
     }
 

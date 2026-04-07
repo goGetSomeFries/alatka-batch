@@ -25,8 +25,6 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    protected static final String ROOT_NAME = "alatka.batch.flow";
-
     private ApplicationContext applicationContext;
 
     @Override
