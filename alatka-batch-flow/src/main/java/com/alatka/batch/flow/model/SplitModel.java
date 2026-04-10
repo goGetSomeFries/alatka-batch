@@ -22,6 +22,10 @@ public class SplitModel extends ComponentModel {
         return flows;
     }
 
+    public void setFlows(List<FlowModel> flows) {
+        this.flows = flows;
+    }
+
     /**
      * Yaml工具解析为Map类型，需手动转换为List
      *

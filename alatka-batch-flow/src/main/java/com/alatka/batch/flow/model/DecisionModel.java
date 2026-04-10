@@ -42,6 +42,10 @@ public class DecisionModel extends BeanComponentModel {
             return to;
         }
 
+        public void setTo(List<ComponentModel> to) {
+            this.to = to;
+        }
+
         /**
          * Yaml工具解析为Map类型，需手动转换为List
          *
@@ -57,6 +61,10 @@ public class DecisionModel extends BeanComponentModel {
 
     public List<InnerModel> getDecisions() {
         return decisions;
+    }
+
+    public void setDecisions(List<InnerModel> decisions) {
+        this.decisions = decisions;
     }
 
     /**

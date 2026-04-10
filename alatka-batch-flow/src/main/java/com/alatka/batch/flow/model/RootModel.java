@@ -44,6 +44,10 @@ public class RootModel {
         return steps;
     }
 
+    public void setOriginSteps(List<ComponentModel> steps) {
+        this.steps = steps;
+    }
+
     public void setSteps(List<Map<String, Object>> steps) {
         this.steps = steps.stream().map(map -> {
             ComponentModel model = JsonUtil.convertToObject(map, ComponentModel.class);

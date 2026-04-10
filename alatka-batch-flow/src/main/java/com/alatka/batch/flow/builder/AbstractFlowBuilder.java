@@ -25,7 +25,7 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private ApplicationContext applicationContext;
+    protected ApplicationContext applicationContext;
 
     @Override
     public void build() {

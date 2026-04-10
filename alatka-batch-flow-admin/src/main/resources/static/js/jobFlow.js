@@ -274,7 +274,8 @@ class JobFlow {
         const parent = this.graph.getDefaultParent();
         this.graph.getModel().beginUpdate();
         try {
-            const vertex = this.graph.insertVertex(parent, null, baseNode, x, y, baseNode.width, baseNode.height, baseNode.type);
+            const value = {data: baseNode.data, label: baseNode.label, type: baseNode.type};
+            const vertex = this.graph.insertVertex(parent, null, value, x, y, baseNode.width, baseNode.height, baseNode.type);
             this.graph.setSelectionCell(vertex);
             return vertex;
         } finally {
