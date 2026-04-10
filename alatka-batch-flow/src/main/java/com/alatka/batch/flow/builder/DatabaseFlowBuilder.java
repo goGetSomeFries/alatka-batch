@@ -1,8 +1,9 @@
 package com.alatka.batch.flow.builder;
 
 import com.alatka.batch.flow.model.RootModel;
-import com.alatka.batch.flow.parser.GraphContext;
 import com.alatka.batch.flow.parser.ModelParser;
+import com.alatka.batch.flow.parser.StartNodeModelParser;
+import com.alatka.batch.flow.support.GraphContext;
 import com.alatka.batch.infra.util.XmlUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -13,6 +14,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 数据库形式解析器
+ *
+ * @author whocares
+ */
 public class DatabaseFlowBuilder extends AbstractFlowBuilder {
 
     private DataSource dataSource;
@@ -48,7 +54,11 @@ public class DatabaseFlowBuilder extends AbstractFlowBuilder {
 
     public static void main(String[] args) {
         String content = "<mxGraphModel><root><mxCell id=\"0\"/><mxCell id=\"1\" parent=\"0\"/><mxCell id=\"18\" style=\"START\" vertex=\"1\" parent=\"1\"><Object label=\"Start\" type=\"START\" as=\"value\"/><mxGeometry x=\"130.00287683331612\" y=\"160.00311250109388\" width=\"70\" height=\"70\" as=\"geometry\"/></mxCell><mxCell id=\"19\" style=\"STEP\" vertex=\"1\" parent=\"1\"><Object label=\"Step\" type=\"STEP\" as=\"value\"><BaseData beanName=\"step_test1\" as=\"data\"/></Object><mxGeometry x=\"319.9987035362311\" y=\"179.9986426055923\" width=\"140\" height=\"60\" as=\"geometry\"/></mxCell><mxCell id=\"20\" style=\"END\" vertex=\"1\" parent=\"1\"><Object label=\"End\" type=\"END\" as=\"value\"/><mxGeometry x=\"1409.9976742858748\" y=\"342.6662798802236\" width=\"60\" height=\"60\" as=\"geometry\"/></mxCell><mxCell id=\"21\" edge=\"1\" parent=\"1\" source=\"18\" target=\"19\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell><mxCell id=\"25\" style=\"SPLIT\" vertex=\"1\" parent=\"1\"><Object label=\"Split\" type=\"SPLIT\" as=\"value\"/><mxGeometry x=\"339.9971607968585\" y=\"531.7258406106209\" width=\"60\" height=\"140\" as=\"geometry\"/></mxCell><mxCell id=\"27\" style=\"FLOW\" vertex=\"1\" parent=\"1\"><Object label=\"Flow\" type=\"FLOW\" as=\"value\"><BaseData beanName=\"flow_test3\" as=\"data\"/></Object><mxGeometry x=\"476.3172476655872\" y=\"690.0047663261705\" width=\"140\" height=\"60\" as=\"geometry\"/></mxCell><mxCell id=\"28\" style=\"FLOW\" vertex=\"1\" parent=\"1\"><Object label=\"Flow\" type=\"FLOW\" as=\"value\"><BaseData beanName=\"flow_test2\" as=\"data\"/></Object><mxGeometry x=\"456.3205471194602\" y=\"479.9974218274462\" width=\"140\" height=\"60\" as=\"geometry\"/></mxCell><mxCell id=\"29\" edge=\"1\" parent=\"1\" source=\"25\" target=\"28\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell><mxCell id=\"30\" edge=\"1\" parent=\"1\" source=\"25\" target=\"27\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell><mxCell id=\"31\" style=\"JOIN\" vertex=\"1\" parent=\"1\"><Object label=\"Join\" type=\"JOIN\" as=\"value\"/><mxGeometry x=\"726.3181459218979\" y=\"519.9955057616354\" width=\"60\" height=\"140\" as=\"geometry\"/></mxCell><mxCell id=\"32\" edge=\"1\" parent=\"1\" source=\"28\" target=\"31\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell><mxCell id=\"33\" edge=\"1\" parent=\"1\" source=\"27\" target=\"31\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell><mxCell id=\"34\" edge=\"1\" parent=\"1\" source=\"19\" target=\"25\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell><mxCell id=\"35\" style=\"DECISION\" vertex=\"1\" parent=\"1\"><Object label=\"Decision\" type=\"DECISION\" as=\"value\"><BaseData beanName=\"defaultDecision1\" as=\"data\"/></Object><mxGeometry x=\"639.9997141218248\" y=\"289.99403326989545\" width=\"180\" height=\"90\" as=\"geometry\"/></mxCell><mxCell id=\"36\" style=\"STEP\" vertex=\"1\" parent=\"1\"><Object label=\"Step\" type=\"STEP\" as=\"value\"><BaseData beanName=\"step_test3\" as=\"data\"/></Object><mxGeometry x=\"934.8689138578036\" y=\"229.9967103107023\" width=\"140\" height=\"60\" as=\"geometry\"/></mxCell><mxCell id=\"37\" style=\"FLOW\" vertex=\"1\" parent=\"1\"><Object label=\"Flow\" type=\"FLOW\" as=\"value\"><BaseData beanName=\"flow_test1\" as=\"data\"/></Object><mxGeometry x=\"1069.9977918010572\" y=\"380.0041485463175\" width=\"140\" height=\"60\" as=\"geometry\"/></mxCell><mxCell id=\"38\" value=\"FAILED\" edge=\"1\" parent=\"1\" source=\"35\" target=\"37\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell><mxCell id=\"39\" value=\"COMPLETED\" edge=\"1\" parent=\"1\" source=\"35\" target=\"36\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell><mxCell id=\"40\" style=\"STEP\" vertex=\"1\" parent=\"1\"><Object label=\"Step\" type=\"STEP\" as=\"value\"><BaseData beanName=\"step_test3\" as=\"data\"/></Object><mxGeometry x=\"1149.9989138578035\" y=\"239.9967103107023\" width=\"140\" height=\"60\" as=\"geometry\"/></mxCell><mxCell id=\"41\" edge=\"1\" parent=\"1\" source=\"36\" target=\"40\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell><mxCell id=\"42\" edge=\"1\" parent=\"1\" source=\"40\" target=\"20\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell><mxCell id=\"43\" edge=\"1\" parent=\"1\" source=\"31\" target=\"35\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell><mxCell id=\"44\" edge=\"1\" parent=\"1\" source=\"37\" target=\"20\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell></root></mxGraphModel>";
-        new DatabaseFlowBuilder().test(content.getBytes(StandardCharsets.UTF_8), null);
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("name", "job_test1");
+        properties.put("desc", "测试job");
+        properties.put("enabled", true);
+        new DatabaseFlowBuilder().test(content.getBytes(StandardCharsets.UTF_8), properties);
     }
 
     private RootModel test(byte[] bytes, Map<String, Object> properties) {
@@ -56,8 +66,10 @@ public class DatabaseFlowBuilder extends AbstractFlowBuilder {
         List<JsonNode> list = XmlUtil.getJsonNode(content).findValues("mxCell");
 
         GraphContext context = new GraphContext(list);
-        ModelParser.execute(context, properties);
-        return null;
+        StartNodeModelParser parser = ModelParser.Type.START.getParser();
+        RootModel rootModel = parser.parse(context, properties);
+        ModelParser.execute(context, rootModel.getSteps());
+        return rootModel;
     }
 
 

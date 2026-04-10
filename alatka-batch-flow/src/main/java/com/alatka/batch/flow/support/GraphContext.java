@@ -1,4 +1,4 @@
-package com.alatka.batch.flow.parser;
+package com.alatka.batch.flow.support;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -9,6 +9,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * 保存mxGraph.js生成的DAG
+ */
 public class GraphContext {
 
     private Map<String, List<JsonNode>> edgeMap;

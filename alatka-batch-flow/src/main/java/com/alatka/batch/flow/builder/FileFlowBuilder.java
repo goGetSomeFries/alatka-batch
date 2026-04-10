@@ -12,6 +12,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Yaml形式解析器
+ *
+ * @author whocares
+ */
 public class FileFlowBuilder extends AbstractFlowBuilder {
 
     private static final String ROOT_NAME = "alatka.batch.flow";

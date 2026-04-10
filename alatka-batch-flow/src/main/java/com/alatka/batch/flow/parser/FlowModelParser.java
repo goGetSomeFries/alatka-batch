@@ -1,6 +1,7 @@
 package com.alatka.batch.flow.parser;
 
 import com.alatka.batch.flow.model.FlowModel;
+import com.alatka.batch.flow.support.GraphContext;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class FlowModelParser extends ComponentModelParser<FlowModel> {

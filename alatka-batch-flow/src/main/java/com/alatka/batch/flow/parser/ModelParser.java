@@ -1,9 +1,18 @@
 package com.alatka.batch.flow.parser;
 
+import com.alatka.batch.flow.model.ComponentModel;
 import com.alatka.batch.flow.model.RootModel;
+import com.alatka.batch.flow.support.GraphContext;
+import com.fasterxml.jackson.databind.JsonNode;
 
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 
+/**
+ * {@link RootModel}实例解析器，用于从mxGraph.js生成的xml文件构造{@link RootModel}结构
+ *
+ * @author whocares
+ */
 public interface ModelParser {
 
     enum Type {
@@ -28,10 +37,14 @@ public interface ModelParser {
         }
     }
 
-    static void execute(GraphContext context, Map<String, Object> properties) {
-        StartNodeModelParser parser = Type.START.getParser();
-        RootModel rootModel = parser.parse(context, properties);
-        AbstractModelParser.doExecute(context, rootModel.getSteps());
+    static void execute(GraphContext context, List<? extends ComponentModel> list) {
+        JsonNode nextVertex = context.nextVertex();
+        Arrays.stream(Type.values())
+                .filter(type -> type == Type.valueOf(nextVertex.get("style").asText()))
+                .map(Type::getParser)
+                .map(AbstractModelParser.class::cast)
+                .findFirst()
+                .ifPresent(modelParser -> modelParser.parse(context, list));
+        execute(context, list);
     }
-
 }

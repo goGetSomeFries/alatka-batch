@@ -2,6 +2,7 @@ package com.alatka.batch.flow.parser;
 
 import com.alatka.batch.flow.model.ComponentModel;
 import com.alatka.batch.flow.model.DecisionModel;
+import com.alatka.batch.flow.support.GraphContext;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.ArrayList;
@@ -20,15 +21,14 @@ public class DecisionModelParser extends ComponentModelParser<DecisionModel> {
             DecisionModel.InnerModel innerModel = new DecisionModel.InnerModel();
             innerModel.setWhen(edge.get("value").asText());
             JsonNode nextVertex = context.nextVertex();
-            if (Type.valueOf(nextVertex.get("style").asText()) == Type.END
-                    || Type.valueOf(nextVertex.get("style").asText()) == Type.FAIL
-                    || Type.valueOf(nextVertex.get("style").asText()) == Type.STOP) {
-                ExitNodeParser parser = Type.valueOf(nextVertex.get("style").asText()).getParser();
+            Type type = Type.valueOf(nextVertex.get("style").asText());
+            if (type == Type.END || type == Type.FAIL || type == Type.STOP) {
+                ExitNodeParser parser = type.getParser();
                 innerModel.setExit(parser.parse(context, null));
             } else {
                 context.resetCurrentNode(edge);
                 List<ComponentModel> list = new ArrayList<>();
-                AbstractModelParser.doExecute(context, list);
+                ModelParser.execute(context, list);
                 innerModel.setTo(list);
             }
             return innerModel;

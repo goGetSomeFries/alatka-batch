@@ -43,8 +43,18 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
         this.build(rootModel);
     }
 
+    /**
+     * 加载所有{@link Job}的解析模板{@link RootModel}
+     *
+     * @return {@link RootModel}集合
+     */
     protected abstract List<RootModel> loadResources();
 
+    /**
+     * 加载指定{@link Job}的解析模板{@link RootModel}
+     *
+     * @return {@link RootModel}
+     */
     protected abstract RootModel loadResource(String identity);
 
     private void build(RootModel rootModel) {
@@ -63,6 +73,12 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
         }
     }
 
+    /**
+     * 根据{@link  RootModel}构建{@link Job}
+     *
+     * @param rootModel {@link RootModel}实例
+     * @return {@link Job}
+     */
     private Job doBuild(RootModel rootModel) {
         JobBuilderFactory jobBuilderFactory = applicationContext.getBean(JobBuilderFactory.class);
         JobBuilder jobBuilder = jobBuilderFactory.get(rootModel.getName());

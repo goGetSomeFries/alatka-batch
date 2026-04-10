@@ -1,6 +1,7 @@
 package com.alatka.batch.flow.parser;
 
 import com.alatka.batch.flow.model.RootModel;
+import com.alatka.batch.flow.support.GraphContext;
 
 import java.util.ArrayList;
 import java.util.Map;

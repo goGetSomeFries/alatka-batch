@@ -2,6 +2,7 @@ package com.alatka.batch.flow.parser;
 
 import com.alatka.batch.flow.model.ComponentModel;
 import com.alatka.batch.flow.model.DecisionModel;
+import com.alatka.batch.flow.support.GraphContext;
 
 import java.util.List;
 
