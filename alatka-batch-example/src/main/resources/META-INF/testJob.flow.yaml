@@ -14,32 +14,32 @@ alatka.batch.flow:
           name: flow_test2
         - type: FLOW
           name: flow_test3
-    - type: STEP
-      name: step_test2
-    - type: DECISION
-      name: defaultDecider1
-      decisions:
-        - when: COMPLETED
-          to:
-            - type: SPLIT
-              taskExecutor: defaultTaskExecutor
-              flows:
-                - type: FLOW
-                  name: flow_test1
-                - type: FLOW
-                  name: flow_test2
-            - type: STEP
-              name: step_test5
-        - when: FAILED
-          exit: failed
-        - when: STOPPED
-          to:
-            - type: DECISION
-              name: defaultDecider2
-              decisions:
-                - when: COMPLETED
-                  to:
-                    - type: FLOW
-                      name: flow_test2
-                - when: FAILED
-                  exit: failed
+#    - type: STEP
+#      name: step_test2
+#    - type: DECISION
+#      name: defaultDecider1
+#      decisions:
+#        - when: COMPLETED
+#          to:
+#            - type: SPLIT
+#              taskExecutor: defaultTaskExecutor
+#              flows:
+#                - type: FLOW
+#                  name: flow_test1
+#                - type: FLOW
+#                  name: flow_test2
+#            - type: STEP
+#              name: step_test5
+#        - when: FAILED
+#          exit: failed
+#        - when: STOPPED
+#          to:
+#            - type: DECISION
+#              name: defaultDecider2
+#              decisions:
+#                - when: COMPLETED
+#                  to:
+#                    - type: FLOW
+#                      name: flow_test2
+#                - when: FAILED
+#                  exit: failed

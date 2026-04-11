@@ -9,7 +9,7 @@ public class StepModelParser extends ComponentModelParser<StepModel> {
     @Override
     protected void doParse(GraphContext context, StepModel componentModel) {
         JsonNode currentVertex = context.getCurrentNode();
-        String beanName = currentVertex.get("Object").get("BaseData").get("beanName").asText();
+        String beanName = currentVertex.get("Object").get("BaseNodeData").get("beanName").asText();
         componentModel.setName(beanName);
     }
 

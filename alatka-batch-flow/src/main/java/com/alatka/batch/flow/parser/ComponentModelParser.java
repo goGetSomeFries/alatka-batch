@@ -13,7 +13,7 @@ public abstract class ComponentModelParser<T extends ComponentModel> extends Abs
     protected T parse(GraphContext context, List<ComponentModel> list) {
         JsonNode currentVertex = context.getCurrentNode();
         T componentModel = BeanUtils.instantiateClass(this.modelClass());
-        componentModel.setType(ComponentModel.Type.valueOf(currentVertex.get("type").asText()));
+        componentModel.setType(ComponentModel.Type.valueOf(currentVertex.get("style").asText()));
         list.add(componentModel);
         this.doParse(context, componentModel);
         return componentModel;

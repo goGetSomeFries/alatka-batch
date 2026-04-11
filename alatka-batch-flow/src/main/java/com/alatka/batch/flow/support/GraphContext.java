@@ -27,6 +27,7 @@ public class GraphContext {
                 .filter(node -> node.has("vertex"))
                 .collect(Collectors.toMap(node -> node.get("id").asText(), Function.identity()));
         this.startNode = list.stream()
+                .filter(node -> node.has("vertex"))
                 .filter(node -> "START".equals(node.get("style").asText()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("'START' node must be exist"));

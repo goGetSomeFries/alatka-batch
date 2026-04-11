@@ -1,6 +1,12 @@
-class BaseData {
+class BaseNodeData {
     constructor(beanName) {
         this.beanName = beanName;
+    }
+}
+
+class SplitNodeData {
+    constructor(taskExecutor) {
+        this.taskExecutor = taskExecutor;
     }
 }
 
@@ -138,7 +144,7 @@ class FailedNode extends BaseNode {
 
 class DecisionNode extends BaseNode {
     constructor() {
-        super('Decision', 180, 90, BaseNode.NODE_DECISION, new BaseData());
+        super('Decision', 180, 90, BaseNode.NODE_DECISION, new BaseNodeData());
     }
 
     getStyleConfig() {
@@ -159,7 +165,7 @@ class DecisionNode extends BaseNode {
 
 class SplitNode extends BaseNode {
     constructor() {
-        super('Split', 60, 140, BaseNode.NODE_SPLIT);
+        super('Split', 60, 140, BaseNode.NODE_SPLIT, new SplitNodeData());
     }
 
     getStyleConfig() {
@@ -212,7 +218,7 @@ class JoinNode extends BaseNode {
 
 class StepNode extends BaseNode {
     constructor() {
-        super('Step', 140, 60, BaseNode.NODE_STEP, new BaseData());
+        super('Step', 140, 60, BaseNode.NODE_STEP, new BaseNodeData());
     }
 
     getStyleConfig() {
@@ -234,7 +240,7 @@ class StepNode extends BaseNode {
 
 class FlowNode extends BaseNode {
     constructor() {
-        super('Flow', 140, 60, BaseNode.NODE_FLOW, new BaseData());
+        super('Flow', 140, 60, BaseNode.NODE_FLOW, new BaseNodeData());
     }
 
     getStyleConfig() {
@@ -258,7 +264,7 @@ class FlowNode extends BaseNode {
 
 class NodeFactory {
 
-    static CLASSES = [StartNode, EndNode, StoppedNode, FailedNode, DecisionNode, SplitNode, JoinNode, StepNode, FlowNode, BaseData];
+    static CLASSES = [StartNode, EndNode, StoppedNode, FailedNode, DecisionNode, SplitNode, JoinNode, StepNode, FlowNode, BaseNodeData];
 
     static NODES = {
         [BaseNode.NODE_START]: NodeFactory.createNode(BaseNode.NODE_START),

@@ -14,7 +14,7 @@ public class DecisionModelParser extends ComponentModelParser<DecisionModel> {
     @Override
     protected void doParse(GraphContext context, DecisionModel componentModel) {
         JsonNode currentVertex = context.getCurrentNode();
-        String beanName = currentVertex.get("Object").get("BaseData").get("beanName").asText();
+        String beanName = currentVertex.get("Object").get("BaseNodeData").get("beanName").asText();
         componentModel.setName(beanName);
 
         List<DecisionModel.InnerModel> decisions = context.nextEdges().map(edge -> {
@@ -29,11 +29,11 @@ public class DecisionModelParser extends ComponentModelParser<DecisionModel> {
                 context.resetCurrentNode(edge);
                 List<ComponentModel> list = new ArrayList<>();
                 ModelParser.execute(context, list);
-                innerModel.setTo(list);
+                innerModel.setOriginTo(list);
             }
             return innerModel;
         }).collect(Collectors.toList());
-        componentModel.setDecisions(decisions);
+        componentModel.setOriginDecisions(decisions);
     }
 
     @Override

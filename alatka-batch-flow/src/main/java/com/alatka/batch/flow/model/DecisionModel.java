@@ -42,7 +42,7 @@ public class DecisionModel extends BeanComponentModel {
             return to;
         }
 
-        public void setTo(List<ComponentModel> to) {
+        public void setOriginTo(List<ComponentModel> to) {
             this.to = to;
         }
 
@@ -63,7 +63,7 @@ public class DecisionModel extends BeanComponentModel {
         return decisions;
     }
 
-    public void setDecisions(List<InnerModel> decisions) {
+    public void setOriginDecisions(List<InnerModel> decisions) {
         this.decisions = decisions;
     }
 

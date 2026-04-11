@@ -39,12 +39,16 @@ public interface ModelParser {
 
     static void execute(GraphContext context, List<? extends ComponentModel> list) {
         JsonNode nextVertex = context.nextVertex();
+        Type type = Type.valueOf(nextVertex.get("style").asText());
         Arrays.stream(Type.values())
-                .filter(type -> type == Type.valueOf(nextVertex.get("style").asText()))
+                .filter(t -> type == t)
                 .map(Type::getParser)
                 .map(AbstractModelParser.class::cast)
                 .findFirst()
                 .ifPresent(modelParser -> modelParser.parse(context, list));
+        if (type == Type.END || type == Type.DECISION) {
+            return;
+        }
         execute(context, list);
     }
 }

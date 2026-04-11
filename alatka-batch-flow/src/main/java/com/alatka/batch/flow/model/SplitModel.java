@@ -22,7 +22,7 @@ public class SplitModel extends ComponentModel {
         return flows;
     }
 
-    public void setFlows(List<FlowModel> flows) {
+    public void setOriginFlows(List<FlowModel> flows) {
         this.flows = flows;
     }
 
