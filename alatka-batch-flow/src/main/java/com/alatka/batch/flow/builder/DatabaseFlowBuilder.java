@@ -34,7 +34,7 @@ public class DatabaseFlowBuilder extends AbstractFlowBuilder {
         String sql = QUERY_SQL + " WHERE D.D_CURRENT = 1 AND D.D_STATUS = 'DEPLOY'";
         List<Map<String, Object>> list = this.jdbcTemplate.queryForList(sql, Collections.emptyMap());
 
-        return list.stream().filter(Objects::nonNull).map(this::test).collect(Collectors.toList());
+        return list.stream().filter(Objects::nonNull).map(this::buildRootModel).collect(Collectors.toList());
     }
 
     @Override
@@ -50,7 +50,7 @@ public class DatabaseFlowBuilder extends AbstractFlowBuilder {
         if (result == null || result.get("data") == null) {
             throw new IllegalArgumentException("No data found for id " + id);
         }
-        return this.test(result);
+        return this.buildRootModel(result);
     }
 
     public static void main(String[] args) {
@@ -60,10 +60,10 @@ public class DatabaseFlowBuilder extends AbstractFlowBuilder {
         properties.put("key", "job_test1");
         properties.put("name", "测试job");
         properties.put("enabled", true);
-        new DatabaseFlowBuilder().test(properties);
+        new DatabaseFlowBuilder().buildRootModel(properties);
     }
 
-    private RootModel test(Map<String, Object> properties) {
+    private RootModel buildRootModel(Map<String, Object> properties) {
         byte[] bytes = (byte[]) properties.remove("data");
         String content = new String(bytes, StandardCharsets.UTF_8);
         JsonNode mxCellNodes = XmlUtil.getJsonNode(content).path("root").path("mxCell");
