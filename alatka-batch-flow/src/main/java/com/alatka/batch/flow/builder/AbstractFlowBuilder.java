@@ -3,12 +3,14 @@ package com.alatka.batch.flow.builder;
 import com.alatka.batch.flow.component.IComponent;
 import com.alatka.batch.flow.model.ComponentModel;
 import com.alatka.batch.flow.model.RootModel;
+import com.alatka.batch.infra.util.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.DuplicateJobException;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.support.GroupAwareJob;
 import org.springframework.batch.core.configuration.support.ReferenceJobFactory;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.beans.BeansException;
@@ -58,12 +60,14 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
     protected abstract RootModel loadResource(String identity);
 
     private void build(RootModel rootModel) {
+        Validator.validate(rootModel);
         if (!rootModel.isEnabled()) {
             this.logger.warn("model '{}' is disabled. Skipping build...", rootModel.getName());
             return;
         }
         Job job = this.doBuild(rootModel);
-        ReferenceJobFactory jobFactory = new ReferenceJobFactory(job);
+        GroupAwareJob groupAwareJob = new GroupAwareJob(rootModel.getGroup(), job);
+        ReferenceJobFactory jobFactory = new ReferenceJobFactory(groupAwareJob);
         JobRegistry jobRegistry = applicationContext.getBean(JobRegistry.class);
         try {
             jobRegistry.unregister(jobFactory.getJobName());
@@ -85,11 +89,7 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
         AtomicReference<Object> reference = new AtomicReference<>(jobBuilder);
 
         buildComponents(rootModel.getSteps(), reference, applicationContext);
-
-        IComponent iComponent = applicationContext.getBeansOfType(IComponent.class).values().stream()
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("can not found bean of " + IComponent.class.getSimpleName()));
-        return iComponent.build(reference.get());
+        return IComponent.build(reference.get());
     }
 
     public static void buildComponents(List<? extends ComponentModel> list,

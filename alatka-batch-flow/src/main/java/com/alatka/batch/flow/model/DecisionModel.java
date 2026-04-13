@@ -2,16 +2,20 @@ package com.alatka.batch.flow.model;
 
 import com.alatka.batch.infra.util.JsonUtil;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class DecisionModel extends BeanComponentModel {
 
+    @NotEmpty
     private List<InnerModel> decisions;
 
     public static class InnerModel {
 
+        @NotBlank
         private String when;
 
         private Exit exit;

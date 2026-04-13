@@ -1,7 +1,10 @@
 package com.alatka.batch.flow.model;
 
+import javax.validation.constraints.NotNull;
+
 public class ComponentModel {
 
+    @NotNull
     private Type type;
 
     public static enum Type {

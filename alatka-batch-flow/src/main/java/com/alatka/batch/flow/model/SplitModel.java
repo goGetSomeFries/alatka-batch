@@ -1,13 +1,17 @@
 package com.alatka.batch.flow.model;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SplitModel extends ComponentModel {
 
+    @NotBlank
     private String taskExecutor;
 
+    @NotEmpty
     private List<FlowModel> flows;
 
     public String getTaskExecutor() {

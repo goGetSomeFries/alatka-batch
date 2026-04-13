@@ -1,7 +1,6 @@
 package com.alatka.batch.flow.component;
 
 import com.alatka.batch.flow.model.ComponentModel;
-import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.job.builder.*;
@@ -38,19 +37,6 @@ public abstract class AbstractComponent<M extends ComponentModel> implements ICo
         }
         if (builder.getClass() == FlowBuilder.TransitionBuilder.class) {
             return doJoin((M) model, (FlowBuilder.TransitionBuilder<FlowJobBuilder>) builder);
-        }
-        throw new IllegalArgumentException("Unsupported builder type: " + builder.getClass());
-    }
-
-    @Override
-    public Job build(Object builder) {
-        if (builder.getClass() == SimpleJobBuilder.class) {
-            SimpleJobBuilder simpleJobBuilder = (SimpleJobBuilder) builder;
-            return simpleJobBuilder.build();
-        }
-        if (builder.getClass() == JobFlowBuilder.class) {
-            JobFlowBuilder jobFlowBuilder = (JobFlowBuilder) builder;
-            return jobFlowBuilder.end().build();
         }
         throw new IllegalArgumentException("Unsupported builder type: " + builder.getClass());
     }
@@ -98,6 +84,11 @@ public abstract class AbstractComponent<M extends ComponentModel> implements ICo
         return function.apply(flowBuilder);
     }
 
+    /**
+     * {@link ComponentModel} class类型
+     *
+     * @return {@link ComponentModel} class类型
+     */
     protected abstract Class<M> modelClass();
 
     protected abstract Object doJoin(M model, JobBuilder jobBuilder);

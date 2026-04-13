@@ -13,6 +13,7 @@ public class StartNodeModelParser extends AbstractModelParser<RootModel, Map<Str
         RootModel rootModel = new RootModel();
         rootModel.setName(properties.get("key").toString());
         rootModel.setDesc(properties.get("name").toString());
+        rootModel.setDesc(properties.get("group").toString());
         rootModel.setEnabled(Boolean.valueOf(properties.get("enabled").toString()));
         rootModel.setSteps(new ArrayList<>());
         return rootModel;

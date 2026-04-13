@@ -1,7 +1,10 @@
 package com.alatka.batch.flow.model;
 
+import javax.validation.constraints.NotBlank;
+
 public abstract class BeanComponentModel extends ComponentModel {
 
+    @NotBlank
     private String name;
 
     public String getName() {
