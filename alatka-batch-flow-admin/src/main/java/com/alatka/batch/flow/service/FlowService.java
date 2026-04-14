@@ -20,10 +20,10 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -74,13 +74,16 @@ public class FlowService {
         entity.setEnabled(false);
     }
 
-    public void deploy(FlowDeployReq req) {
-        flowGraphService.deploy(req.getFlowIdList());
-//        this.build(req);
+    public Map<String, String> deploy(FlowDeployReq req) {
+        Map<String, String> result = this.build(req);
+        if (result.values().stream().allMatch(r -> r.equals("success"))) {
+            flowGraphService.deploy(req.getFlowIdList());
+        }
+        return result;
     }
 
-    private void build(FlowDeployReq req) {
-        Map<String, String> resultMap = new HashMap<>(req.getUris().size());
+    private Map<String, String> build(FlowDeployReq req) {
+        Map<String, String> resultMap = new ConcurrentHashMap<>(req.getUris().size());
         CompletableFuture<Void> completableFuture = req.getUris().stream()
                 .map(uri -> uri.startsWith("http://") || uri.startsWith("https://") ? uri : "http://" + uri)
                 .map(uri -> uri.concat(req.getPath()))
@@ -88,6 +91,7 @@ public class FlowService {
                 .collect(Collectors.collectingAndThen(Collectors.toList(),
                         list -> CompletableFuture.allOf(list.toArray(new CompletableFuture[0]))));
         completableFuture.join();
+        return resultMap;
     }
 
     private CompletableFuture<Void> doBuild(String url, List<Long> flowIds, Map<String, String> resultMap) {
@@ -133,6 +137,9 @@ public class FlowService {
             }
             if (condition.getGroupKey() != null) {
                 list.add(criteriaBuilder.equal(root.get("groupKey").as(String.class), condition.getGroupKey()));
+            }
+            if (condition.getEnabled() != null) {
+                list.add(criteriaBuilder.equal(root.get("enabled").as(Boolean.class), condition.getEnabled()));
             }
             return criteriaBuilder.and(list.toArray(new Predicate[0]));
         };

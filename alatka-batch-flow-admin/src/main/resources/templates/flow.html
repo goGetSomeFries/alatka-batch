@@ -254,6 +254,7 @@
                 httpClient('/batch/flow/deploy', 'POST', formData, function (data) {
                     showSuccessToast('部署成功！');
                     $('#deployModal').modal('hide');
+                    refresh();
                 });
             }
         });

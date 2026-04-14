@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "流程")
 @RestController
@@ -56,8 +57,8 @@ public class FlowController {
 
     @Operation(summary = "部署流程")
     @PostMapping("/deploy")
-    public ResMessage<Void> deploy(@RequestBody FlowDeployReq req) {
-        return ResMessage.success(() -> flowService.deploy(req));
+    public ResMessage<Map<String, String>> deploy(@RequestBody FlowDeployReq req) {
+        return ResMessage.success(flowService.deploy(req));
     }
 
     @Autowired

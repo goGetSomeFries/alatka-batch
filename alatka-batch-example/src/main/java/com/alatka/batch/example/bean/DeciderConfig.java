@@ -11,13 +11,13 @@ public class DeciderConfig {
 
     @Bean("defaultDecider1")
     public JobExecutionDecider decider1() {
-        return (jobExecution, stepExecution) -> stepExecution.getExitStatus() == ExitStatus.COMPLETED ?
+        return (jobExecution, stepExecution) -> stepExecution.getExitStatus().equals(ExitStatus.COMPLETED) ?
                 FlowExecutionStatus.COMPLETED : FlowExecutionStatus.FAILED;
     }
 
     @Bean("defaultDecider2")
     public JobExecutionDecider decider2() {
-        return (jobExecution, stepExecution) -> stepExecution.getExitStatus() == ExitStatus.COMPLETED ?
+        return (jobExecution, stepExecution) -> stepExecution.getExitStatus().equals(ExitStatus.COMPLETED) ?
                 FlowExecutionStatus.COMPLETED : FlowExecutionStatus.FAILED;
     }
 }

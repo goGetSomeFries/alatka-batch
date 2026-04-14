@@ -26,8 +26,9 @@ public class DatabaseFlowBuilder extends AbstractFlowBuilder {
 
     private NamedParameterJdbcTemplate jdbcTemplate;
 
-    private static final String QUERY_SQL = "SELECT D.D_DATA AS data, F.F_KEY AS key, F.F_NAME AS name, F.G_KEY AS group " +
-            "FROM ALK_BATCH_FLOW_GRAPH D JOIN ALK_BATCH_FLOW F ON D.F_ID = F.F_ID AND F.F_ENABLED = 1";
+    private static final String QUERY_SQL =
+            "SELECT D.D_DATA AS data_, F.F_KEY AS name_, F.F_NAME AS desc_, F.G_KEY AS group_, F.F_ENABLED AS enabled_ " +
+                    "FROM ALK_BATCH_FLOW_GRAPH D JOIN ALK_BATCH_FLOW F ON D.F_ID = F.F_ID";
 
     @Override
     protected List<RootModel> loadResources() {
@@ -42,19 +43,19 @@ public class DatabaseFlowBuilder extends AbstractFlowBuilder {
         if (!StringUtils.hasLength(identity)) {
             throw new IllegalArgumentException("identity must not be empty");
         }
-        Long id = Long.valueOf(identity);
-        String sql = QUERY_SQL + " WHERE D.ID = :id";
+        Long flowId = Long.valueOf(identity);
+        String sql = QUERY_SQL + " WHERE F.F_ID = :flowId AND D.D_CURRENT = 1 AND D.D_STATUS = 'SAVE'";
         Map<String, Object> params = new HashMap<>();
-        params.put("id", id);
+        params.put("flowId", flowId);
         Map<String, Object> result = this.jdbcTemplate.queryForObject(sql, params, new ColumnMapRowMapper());
-        if (result == null || result.get("data") == null) {
-            throw new IllegalArgumentException("No data found for id " + id);
+        if (result == null || result.get("data_") == null) {
+            throw new IllegalArgumentException("No data found for flowId " + flowId);
         }
         return this.buildRootModel(result);
     }
 
     private RootModel buildRootModel(Map<String, Object> properties) {
-        byte[] bytes = (byte[]) properties.remove("data");
+        byte[] bytes = (byte[]) properties.remove("data_");
         String content = new String(bytes, StandardCharsets.UTF_8);
         JsonNode mxCellNodes = XmlUtil.getJsonNode(content).path("root").path("mxCell");
         List<JsonNode> list = new ArrayList<>();

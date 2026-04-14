@@ -36,13 +36,13 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
             this.logger.info("No resources found. Skipping build.");
             return;
         }
-        resources.forEach(this::build);
+        resources.forEach(this::doBuild);
     }
 
     @Override
     public void build(String identity) {
         RootModel rootModel = this.loadResource(identity);
-        this.build(rootModel);
+        this.doBuild(rootModel);
     }
 
     /**
@@ -59,13 +59,13 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
      */
     protected abstract RootModel loadResource(String identity);
 
-    private void build(RootModel rootModel) {
+    private void doBuild(RootModel rootModel) {
         Validator.validate(rootModel);
         if (!rootModel.isEnabled()) {
             this.logger.warn("model '{}' is disabled. Skipping build...", rootModel.getName());
             return;
         }
-        Job job = this.doBuild(rootModel);
+        Job job = this.buildJob(rootModel);
         GroupAwareJob groupAwareJob = new GroupAwareJob(rootModel.getGroup(), job);
         ReferenceJobFactory jobFactory = new ReferenceJobFactory(groupAwareJob);
         JobRegistry jobRegistry = applicationContext.getBean(JobRegistry.class);
@@ -83,7 +83,7 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
      * @param rootModel {@link RootModel}实例
      * @return {@link Job}
      */
-    private Job doBuild(RootModel rootModel) {
+    private Job buildJob(RootModel rootModel) {
         JobBuilderFactory jobBuilderFactory = applicationContext.getBean(JobBuilderFactory.class);
         JobBuilder jobBuilder = jobBuilderFactory.get(rootModel.getName());
         AtomicReference<Object> reference = new AtomicReference<>(jobBuilder);

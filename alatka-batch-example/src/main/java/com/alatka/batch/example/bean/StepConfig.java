@@ -56,6 +56,46 @@ public class StepConfig {
         }).build();
     }
 
+    @Bean("step_test6")
+    public Step testStep6() {
+        return stepBuilderFactory.get("step_test6").tasklet((contribution, chunkContext) -> {
+            this.logger.info("执行step_test6...");
+            return RepeatStatus.FINISHED;
+        }).build();
+    }
+
+    @Bean("step_test7")
+    public Step testStep7() {
+        return stepBuilderFactory.get("step_test7").tasklet((contribution, chunkContext) -> {
+            this.logger.info("执行step_test7...");
+            return RepeatStatus.FINISHED;
+        }).build();
+    }
+
+    @Bean("step_test8")
+    public Step testStep8() {
+        return stepBuilderFactory.get("step_test8").tasklet((contribution, chunkContext) -> {
+            this.logger.info("执行step_test8...");
+            return RepeatStatus.FINISHED;
+        }).build();
+    }
+
+    @Bean("step_test9")
+    public Step testStep9() {
+        return stepBuilderFactory.get("step_test9").tasklet((contribution, chunkContext) -> {
+            this.logger.info("执行step_test9...");
+            return RepeatStatus.FINISHED;
+        }).build();
+    }
+
+    @Bean("step_test10")
+    public Step testStep10() {
+        return stepBuilderFactory.get("step_test10").tasklet((contribution, chunkContext) -> {
+            this.logger.info("执行step_test10...");
+            return RepeatStatus.FINISHED;
+        }).build();
+    }
+
     @Autowired
     public void setStepBuilderFactory(StepBuilderFactory stepBuilderFactory) {
         this.stepBuilderFactory = stepBuilderFactory;

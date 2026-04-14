@@ -2,6 +2,7 @@ package com.alatka.batch.flow.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
@@ -13,11 +14,11 @@ public class FlowDeployReq {
     private List<String> uris;
 
     @Schema(description = "路径", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "path 不能为空")
+    @NotBlank(message = "path 不能为空")
     private String path;
 
     @Schema(description = "流程")
-    @NotEmpty(message = "path 不能为空")
+    @NotEmpty(message = "flowIdList 不能为空")
     private List<Long> flowIdList;
 
     public List<String> getUris() {

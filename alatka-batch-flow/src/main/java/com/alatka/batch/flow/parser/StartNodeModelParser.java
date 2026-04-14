@@ -11,10 +11,10 @@ public class StartNodeModelParser extends AbstractModelParser<RootModel, Map<Str
     @Override
     public RootModel parse(GraphContext context, Map<String, Object> properties) {
         RootModel rootModel = new RootModel();
-        rootModel.setName(properties.get("key").toString());
-        rootModel.setDesc(properties.get("name").toString());
-        rootModel.setDesc(properties.get("group").toString());
-        rootModel.setEnabled(Boolean.valueOf(properties.get("enabled").toString()));
+        rootModel.setName(properties.get("name_").toString());
+        rootModel.setDesc(properties.get("desc_").toString());
+        rootModel.setGroup(properties.get("group_").toString());
+        rootModel.setEnabled("1".equals(properties.get("enabled_").toString()));
         rootModel.setSteps(new ArrayList<>());
         return rootModel;
     }
