@@ -18,6 +18,14 @@ Job 中 Step Flow、Split 并行、条件决策的串联配置，自动构建完
 | alatka-batch-infra      | 提供基础功能                                              |
 | alatka-batch-example    | 示例模块，用于演示 alatka-batch-flow、alatka-batch-flow-admin |
 
+### 版本对应关系
+
+| alatka-batch | alatka-dependencies | alatka |
+|--------------|---------------------|--------|
+| 0.1.0        | 1.70.0              | 1.70.0 |
+
+### [ :point_right: 访问wiki查看更多教程](https://gitee.com/asuka2001/alatka-batch/wikis)
+
 ### github地址
 
 项目同步更新在github；如有需要， :point_right: [点击我访问](https://github.com/goGetSomeFries/alatka-batch)
