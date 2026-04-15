@@ -7,6 +7,9 @@ import com.alatka.batch.flow.component.FlowComponent;
 import com.alatka.batch.flow.component.SplitComponent;
 import com.alatka.batch.flow.component.StepComponent;
 import com.alatka.batch.flow.config.FlowProperties;
+import org.springframework.batch.core.configuration.JobRegistry;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -16,10 +19,19 @@ import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
 
+@EnableBatchProcessing
 @Configuration
 @EnableConfigurationProperties(FlowProperties.class)
 @ConditionalOnProperty(value = "alatka.batch.flow.enabled", havingValue = "true", matchIfMissing = true)
 public class FlowAutoConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean
+    public JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor(JobRegistry jobRegistry) {
+        JobRegistryBeanPostProcessor postProcessor = new JobRegistryBeanPostProcessor();
+        postProcessor.setJobRegistry(jobRegistry);
+        return postProcessor;
+    }
 
     @Bean
     @ConditionalOnMissingBean(FileFlowBuilder.class)
