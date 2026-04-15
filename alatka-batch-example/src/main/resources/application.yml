@@ -8,10 +8,10 @@ spring:
   jpa:
     properties:
       hibernate:
-        dialect: org.sqlite.hibernate.dialect.SQLiteDialect
+        dialect: org.hibernate.community.dialect.SQLiteDialect
   batch:
     jdbc:
-      initialize-schema: never
+      initialize-schema: NEVER
     job:
       enabled: false
 server:

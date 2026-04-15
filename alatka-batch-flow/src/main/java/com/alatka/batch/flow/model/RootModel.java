@@ -1,9 +1,9 @@
 package com.alatka.batch.flow.model;
 
 import com.alatka.batch.infra.util.JsonUtil;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

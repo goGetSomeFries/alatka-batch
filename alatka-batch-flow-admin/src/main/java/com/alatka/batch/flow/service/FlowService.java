@@ -8,6 +8,7 @@ import com.alatka.batch.flow.model.FlowPageReq;
 import com.alatka.batch.flow.model.FlowReq;
 import com.alatka.batch.flow.model.FlowRes;
 import com.alatka.batch.flow.repository.FlowRepository;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

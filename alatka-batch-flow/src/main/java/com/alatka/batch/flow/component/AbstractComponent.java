@@ -2,15 +2,17 @@ package com.alatka.batch.flow.component;
 
 import com.alatka.batch.flow.model.ComponentModel;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.job.builder.*;
 import org.springframework.batch.core.job.flow.Flow;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -73,9 +75,10 @@ public abstract class AbstractComponent<M extends ComponentModel> implements ICo
 
     protected final Step createPassthroughStep() {
         String stepName = String.format("%s.%s.%s", this.beanName, "passthroughStep", counter.getAndIncrement());
-        StepBuilderFactory stepBuilderFactory = applicationContext.getBean(StepBuilderFactory.class);
-        return stepBuilderFactory.get(stepName)
-                .tasklet((contribution, chunkContext) -> RepeatStatus.FINISHED).build();
+        JobRepository jobRepository = applicationContext.getBean(JobRepository.class);
+        PlatformTransactionManager transactionManager = applicationContext.getBean(PlatformTransactionManager.class);
+        return new StepBuilder(stepName, jobRepository)
+                .tasklet((contribution, chunkContext) -> RepeatStatus.FINISHED, transactionManager).build();
     }
 
     protected final Flow createFlow(String flowName, Function<FlowBuilder<Flow>, Flow> function) {

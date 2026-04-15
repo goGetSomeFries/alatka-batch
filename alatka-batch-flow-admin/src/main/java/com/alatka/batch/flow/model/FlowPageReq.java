@@ -3,8 +3,6 @@ package com.alatka.batch.flow.model;
 import com.alatka.batch.infra.model.PageReqMessage;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.validation.constraints.NotNull;
-
 @Schema(description = "流程请求")
 public class FlowPageReq extends PageReqMessage {
 

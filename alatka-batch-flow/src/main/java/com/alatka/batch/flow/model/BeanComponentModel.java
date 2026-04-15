@@ -1,6 +1,6 @@
 package com.alatka.batch.flow.model;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 public abstract class BeanComponentModel extends ComponentModel {
 

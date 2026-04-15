@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 @Tag(name = "示例接口")
@@ -33,10 +34,10 @@ public class ExampleController {
     @Operation(summary = "执行job")
     @PostMapping("/execute/{jobName}")
     public void execute(@PathVariable String jobName, @RequestBody Map<String, String> params) {
-        String parameters = params.entrySet().stream().map(entry -> entry.getKey().concat("=").concat(entry.getValue()))
-                .collect(Collectors.joining(","));
+        Properties properties = new Properties();
+        properties.putAll(params);
         try {
-            jobOperator.start(jobName, parameters);
+            jobOperator.start(jobName, properties);
         } catch (NoSuchJobException | JobInstanceAlreadyExistsException | JobParametersInvalidException e) {
             throw new RuntimeException(e);
         }

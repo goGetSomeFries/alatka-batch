@@ -1,6 +1,6 @@
 package com.alatka.batch.flow.model;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 public class ComponentModel {
 

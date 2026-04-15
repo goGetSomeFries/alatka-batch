@@ -6,6 +6,7 @@ import com.alatka.batch.flow.model.FlowGroupPageReq;
 import com.alatka.batch.flow.model.FlowGroupReq;
 import com.alatka.batch.flow.model.FlowGroupRes;
 import com.alatka.batch.flow.repository.FlowGroupRepository;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.Predicate;
 import java.util.*;
 import java.util.stream.Collectors;
 

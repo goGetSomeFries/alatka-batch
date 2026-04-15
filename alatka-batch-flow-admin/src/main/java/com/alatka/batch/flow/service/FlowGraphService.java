@@ -5,13 +5,13 @@ import com.alatka.batch.flow.entity.BatchFlowGraph;
 import com.alatka.batch.flow.model.FlowGraphHistory;
 import com.alatka.batch.flow.model.FlowGraphReq;
 import com.alatka.batch.flow.repository.FlowGraphRepository;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.Predicate;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;

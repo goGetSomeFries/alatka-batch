@@ -9,10 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.DuplicateJobException;
 import org.springframework.batch.core.configuration.JobRegistry;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.support.GroupAwareJob;
 import org.springframework.batch.core.configuration.support.ReferenceJobFactory;
 import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -84,8 +84,8 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
      * @return {@link Job}
      */
     private Job buildJob(RootModel rootModel) {
-        JobBuilderFactory jobBuilderFactory = applicationContext.getBean(JobBuilderFactory.class);
-        JobBuilder jobBuilder = jobBuilderFactory.get(rootModel.getName());
+        JobRepository jobRepository = applicationContext.getBean(JobRepository.class);
+        JobBuilder jobBuilder = new JobBuilder(rootModel.getName(), jobRepository);
         AtomicReference<Object> reference = new AtomicReference<>(jobBuilder);
 
         buildComponents(rootModel.getSteps(), reference, applicationContext);
