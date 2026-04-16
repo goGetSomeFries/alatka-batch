@@ -57,7 +57,7 @@ public class FlowController {
 
     @Operation(summary = "部署流程")
     @PostMapping("/deploy")
-    public ResMessage<Map<String, String>> deploy(@RequestBody FlowDeployReq req) {
+    public ResMessage<Map<String, String>> deploy(@Valid @RequestBody FlowDeployReq req) {
         return ResMessage.success(flowService.deploy(req));
     }
 

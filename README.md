@@ -22,7 +22,11 @@ Job 中 Step Flow、Split 并行、条件决策的串联配置，自动构建完
 
 | alatka-batch | alatka-dependencies | alatka |
 |--------------|---------------------|--------|
+| 0.2.0        | 1.71.0              | 1.71.0 |
 | 0.1.0        | 1.70.0              | 1.70.0 |
+
+`alatka-batch`、`alatka-dependencies`、`alatka`
+相关制品已上传至阿里云仓库，如需下载可进行如下配置：[ :point_right: maven相关配置](https://gitee.com/asuka2001/alatka-batch/wikis/%E5%85%AB%E3%80%81maven%E7%9B%B8%E5%85%B3%E9%85%8D%E7%BD%AE)
 
 ### [ :point_right: 访问wiki查看更多教程](https://gitee.com/asuka2001/alatka-batch/wikis)
 
