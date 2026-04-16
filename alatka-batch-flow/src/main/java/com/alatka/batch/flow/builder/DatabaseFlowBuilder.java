@@ -7,6 +7,7 @@ import com.alatka.batch.flow.support.GraphContext;
 import com.alatka.batch.infra.util.XmlUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.util.StringUtils;
 
@@ -28,14 +29,23 @@ public class DatabaseFlowBuilder extends AbstractFlowBuilder {
 
     private static final String QUERY_SQL =
             "SELECT D.D_DATA AS data_, F.F_KEY AS name_, F.F_NAME AS desc_, F.G_KEY AS group_, F.F_ENABLED AS enabled_ " +
-                    "FROM ALK_BATCH_FLOW_GRAPH D JOIN ALK_BATCH_FLOW F ON D.F_ID = F.F_ID";
+                    "FROM ALK_BATCH_FLOW_GRAPH D JOIN ALK_BATCH_FLOW F ON D.F_ID = F.F_ID AND F.F_ENABLED = 1";
 
     @Override
     protected List<RootModel> loadResources() {
-        String sql = QUERY_SQL + " WHERE D.D_CURRENT = 1 AND D.D_STATUS = 'DEPLOY'";
-        List<Map<String, Object>> list = this.jdbcTemplate.queryForList(sql, Collections.emptyMap());
+        String currentSql = "SELECT D_ID AS id_, D_PREVIOUS_ID AS previousId_, D_STATUS AS status_ FROM ALK_BATCH_FLOW_GRAPH WHERE D_CURRENT = 1";
+        List<Map<String, Object>> list = this.jdbcTemplate.queryForList(currentSql, Collections.emptyMap());
+        List<Long> ids = list.stream()
+                .map(map -> "DEPLOY".equals(map.get("status_")) ? map.get("id_") : map.get("previousId_"))
+                .filter(Objects::nonNull)
+                .map(Object::toString)
+                .map(Long::valueOf)
+                .collect(Collectors.toList());
 
-        return list.stream().filter(Objects::nonNull).map(this::buildRootModel).collect(Collectors.toList());
+        String sql = QUERY_SQL + " WHERE D_ID in (:ids)";
+        List<Map<String, Object>> result = this.jdbcTemplate.queryForList(sql, new MapSqlParameterSource("ids", ids));
+
+        return result.stream().map(this::buildRootModel).collect(Collectors.toList());
     }
 
     @Override
@@ -67,7 +77,6 @@ public class DatabaseFlowBuilder extends AbstractFlowBuilder {
         ModelParser.execute(context, rootModel.getSteps());
         return rootModel;
     }
-
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;

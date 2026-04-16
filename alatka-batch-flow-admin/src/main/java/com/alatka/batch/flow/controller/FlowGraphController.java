@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Tag(name = "流程图")
@@ -21,7 +22,7 @@ public class FlowGraphController {
 
     @Operation(summary = "保存流程图")
     @PostMapping("/save")
-    public ResMessage<Void> save(@RequestBody FlowGraphReq req) {
+    public ResMessage<Void> save(@Valid @RequestBody FlowGraphReq req) {
         return ResMessage.success(() -> flowGraphService.save(req));
     }
 
