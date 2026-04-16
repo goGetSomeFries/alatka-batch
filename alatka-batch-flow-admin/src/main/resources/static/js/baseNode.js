@@ -116,6 +116,10 @@ class StoppedNode extends BaseNode {
         return style;
     }
 
+    isValidTargetConnection(graph, source, target) {
+        return super.isValidTargetConnection(graph, source, target) && source.value.type === BaseNode.NODE_DECISION;
+    }
+
     isCellConnectable(graph, cell) {
         return false;
     }
@@ -135,6 +139,10 @@ class FailedNode extends BaseNode {
         style[mxConstants.STYLE_STROKECOLOR] = '#dc3545';
         style[mxConstants.STYLE_FONTCOLOR] = style[mxConstants.STYLE_STROKECOLOR];
         return style;
+    }
+
+    isValidTargetConnection(graph, source, target) {
+        return super.isValidTargetConnection(graph, source, target) && source.value.type === BaseNode.NODE_DECISION;
     }
 
     isCellConnectable(graph, cell) {
