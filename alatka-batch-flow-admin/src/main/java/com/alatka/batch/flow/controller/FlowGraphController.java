@@ -7,6 +7,7 @@ import com.alatka.batch.infra.model.ResMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ public class FlowGraphController {
 
     @Operation(summary = "保存流程图")
     @PostMapping("/save")
-    public ResMessage<Void> save(@RequestBody FlowGraphReq req) {
+    public ResMessage<Void> save(@Valid @RequestBody FlowGraphReq req) {
         return ResMessage.success(() -> flowGraphService.save(req));
     }
 
