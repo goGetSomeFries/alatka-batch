@@ -28,7 +28,7 @@ public class FlowRes {
     @Schema(description = "是否可用", requiredMode = Schema.RequiredMode.REQUIRED)
     private Boolean enabled;
 
-    @Schema(description = "流程组关键字")
+    @Schema(description = "流程组关键字", requiredMode = Schema.RequiredMode.REQUIRED)
     private String groupKey;
 
     public Long getId() {
