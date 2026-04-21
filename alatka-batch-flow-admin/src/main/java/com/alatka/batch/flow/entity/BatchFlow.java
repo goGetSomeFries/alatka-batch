@@ -31,6 +31,9 @@ public class BatchFlow {
     @Column(name = "F_NAME")
     private String name;
 
+    @Column(name = "F_LISTENERS")
+    private String listeners;
+
     @Column(name = "F_ENABLED")
     private Boolean enabled;
 
@@ -75,6 +78,14 @@ public class BatchFlow {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(String listeners) {
+        this.listeners = listeners;
     }
 
     public Boolean getEnabled() {

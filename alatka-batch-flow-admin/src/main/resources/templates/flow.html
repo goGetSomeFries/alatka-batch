@@ -104,6 +104,7 @@
             <th data-field="updateAt" data-sortable="true">更新日期</th>
             <th data-field="key" data-sortable="true">关键字</th>
             <th data-field="name">名称</th>
+            <th data-field="listeners" data-formatter="listenersFormatter">监听</th>
             <th data-field="groupKey" data-formatter="groupKeyFormatter">流程组名称</th>
             <th data-field="enabled" data-formatter="enabledFormatter">是否可用</th>
         </tr>
@@ -115,7 +116,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">编辑流程组</h5>
+                <h5 class="modal-title">编辑流程</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -128,6 +129,14 @@
                     <div class="mb-3">
                         <label for="editName" class="form-label">名称</label>
                         <input type="text" class="form-control" id="editName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editListeners" class="form-label">监听</label>
+                        <textarea class="form-control" rows="2" id="editListeners" name="listeners"
+                                  aria-describedby="editListenersDesc" required></textarea>
+                        <div id="editListenersDesc" class="form-text">
+                            多个JobExecutionListener逗号分割
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="editGroupKey" class="form-label">流程组名称</label>
@@ -383,6 +392,18 @@
             $(`#history-node-${id}`).remove();
             showSuccessToast("删除成功！");
         });
+    }
+
+    function listenersFormatter(arg) {
+        if (!arg) {
+            return '';
+        }
+        const tags = arg.split(',');
+        let html = '';
+        tags.forEach(function (tag) {
+            html += '<span class="badge bg-primary">' + tag + '</span> ';
+        });
+        return html;
     }
 
 </script>
