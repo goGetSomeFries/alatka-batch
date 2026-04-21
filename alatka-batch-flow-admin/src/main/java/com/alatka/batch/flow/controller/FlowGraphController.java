@@ -37,6 +37,7 @@ public class FlowGraphController {
 
     @Operation(summary = "查询流程图数据")
     @Parameter(name = "flowId", description = "流程ID", required = true)
+    @Parameter(name = "id", description = "ID")
     @GetMapping("/getData")
     public ResMessage<String> getData(@RequestParam Long flowId, @RequestParam(required = false) Long id) {
         return ResMessage.success(flowGraphService.queryData(flowId, id));

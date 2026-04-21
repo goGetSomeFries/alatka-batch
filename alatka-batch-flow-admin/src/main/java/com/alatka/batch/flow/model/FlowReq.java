@@ -19,11 +19,15 @@ public class FlowReq {
     @NotEmpty(message = "name 不能为空")
     private String name;
 
+    @Schema(description = "监听名称")
+    private String listeners;
+
     @Schema(description = "是否可用", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "enabled 不能为空")
     private Boolean enabled;
 
-    @Schema(description = "流程组关键字")
+    @Schema(description = "流程组关键字", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotEmpty(message = "groupKey 不能为空")
     private String groupKey;
 
     public Long getId() {
@@ -48,6 +52,14 @@ public class FlowReq {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(String listeners) {
+        this.listeners = listeners;
     }
 
     public Boolean getEnabled() {
