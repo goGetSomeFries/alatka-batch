@@ -17,7 +17,7 @@ public class FlowDeployReq {
     @NotBlank(message = "path 不能为空")
     private String path;
 
-    @Schema(description = "流程")
+    @Schema(description = "流程", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotEmpty(message = "flowIdList 不能为空")
     private List<Long> flowIdList;
 
