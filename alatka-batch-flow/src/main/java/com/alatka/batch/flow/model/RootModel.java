@@ -20,6 +20,8 @@ public class RootModel {
 
     private String group;
 
+    private List<String> listeners;
+
     @NotEmpty
     private List<ComponentModel> steps;
 
@@ -53,6 +55,14 @@ public class RootModel {
 
     public void setGroup(String group) {
         this.group = group;
+    }
+
+    public List<String> getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(List<String> listeners) {
+        this.listeners = listeners;
     }
 
     public List<ComponentModel> getSteps() {

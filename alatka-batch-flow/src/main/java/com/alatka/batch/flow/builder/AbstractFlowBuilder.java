@@ -7,10 +7,12 @@ import com.alatka.batch.infra.util.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.configuration.DuplicateJobException;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.support.GroupAwareJob;
 import org.springframework.batch.core.configuration.support.ReferenceJobFactory;
+import org.springframework.batch.core.job.AbstractJob;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.BeansException;
@@ -89,7 +91,23 @@ public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBe
         AtomicReference<Object> reference = new AtomicReference<>(jobBuilder);
 
         buildComponents(rootModel.getSteps(), reference, applicationContext);
-        return IComponent.build(reference.get());
+        Job job = IComponent.build(reference.get());
+        this.postJob(rootModel, (AbstractJob) job);
+        return job;
+    }
+
+    private void postJob(RootModel model, AbstractJob job) {
+        if (model.getListeners() != null && !model.getListeners().isEmpty()) {
+            JobExecutionListener[] listeners = model.getListeners().stream()
+                    .map(applicationContext::getBean)
+                    .map(bean -> {
+                        if (bean instanceof JobExecutionListener) {
+                            return JobExecutionListener.class.cast(bean);
+                        }
+                        throw new IllegalArgumentException("listener [" + bean.getClass().getName() + "] is not a JobExecutionListener");
+                    }).toArray(JobExecutionListener[]::new);
+            job.setJobExecutionListeners(listeners);
+        }
     }
 
     public static void buildComponents(List<? extends ComponentModel> list,

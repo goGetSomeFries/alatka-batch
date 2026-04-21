@@ -25,6 +25,9 @@ public class FlowRes {
     @Schema(description = "名称", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;
 
+    @Schema(description = "监听名称")
+    private String listeners;
+
     @Schema(description = "是否可用", requiredMode = Schema.RequiredMode.REQUIRED)
     private Boolean enabled;
 
@@ -69,6 +72,14 @@ public class FlowRes {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(String listeners) {
+        this.listeners = listeners;
     }
 
     public Boolean getEnabled() {

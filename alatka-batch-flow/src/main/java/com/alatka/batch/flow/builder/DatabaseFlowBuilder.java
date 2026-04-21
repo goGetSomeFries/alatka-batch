@@ -28,7 +28,7 @@ public class DatabaseFlowBuilder extends AbstractFlowBuilder {
     private NamedParameterJdbcTemplate jdbcTemplate;
 
     private static final String QUERY_SQL =
-            "SELECT D.D_DATA AS data_, F.F_KEY AS name_, F.F_NAME AS desc_, F.G_KEY AS group_, F.F_ENABLED AS enabled_ " +
+            "SELECT D.D_DATA AS data_, F.F_KEY AS name_, F.F_NAME AS desc_, F.G_KEY AS group_, F.F_LISTENERS AS listeners_, F.F_ENABLED AS enabled_ " +
                     "FROM ALK_BATCH_FLOW_GRAPH D JOIN ALK_BATCH_FLOW F ON D.F_ID = F.F_ID AND F.F_ENABLED = 1";
 
     @Override

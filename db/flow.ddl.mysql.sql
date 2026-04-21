@@ -17,6 +17,7 @@ CREATE TABLE `ALK_BATCH_FLOW`
     `F_UPDATE_AT` datetime COMMENT '更新日期',
     `F_KEY`       varchar(50)  NOT NULL COMMENT '关键字',
     `F_NAME`      varchar(100) NOT NULL COMMENT '名称',
+    `F_LISTENERS` varchar(1000) COMMENT '监听名称',
     `F_ENABLED`   tinyint(1)   NOT NULL COMMENT '是否可用',
     `G_KEY`       varchar(50) COMMENT '流程组关键字',
     PRIMARY KEY (`F_ID`),
