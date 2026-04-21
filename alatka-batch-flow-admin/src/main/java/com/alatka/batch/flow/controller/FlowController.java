@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +46,7 @@ public class FlowController {
 
     @Operation(summary = "分页查询流程")
     @GetMapping("/page")
-    public PageResMessage<FlowRes> queryPage(@Valid FlowPageReq pageReqMessage) {
+    public PageResMessage<FlowRes> queryPage(@Valid @ParameterObject FlowPageReq pageReqMessage) {
         return PageResMessage.success(flowService.queryPage(pageReqMessage));
     }
 
