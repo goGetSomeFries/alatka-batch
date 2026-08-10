@@ -17,6 +17,8 @@
     <modules>
         <module>alatka-batch-flow</module>
         <module>alatka-batch-flow-admin</module>
+        <module>alatka-batch-param</module>
+        <module>alatka-batch-distributed</module>
         <module>alatka-batch-example</module>
         <module>alatka-batch-infra</module>
     </modules>
