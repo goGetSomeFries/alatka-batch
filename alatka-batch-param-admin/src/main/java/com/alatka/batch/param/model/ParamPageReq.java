@@ -12,7 +12,7 @@ public class ParamPageReq extends PageReqMessage {
     @Schema(description = "参数键")
     private String key;
 
-    @Schema(description = "参数值")
+    @Schema(description = "参数描述")
     private String desc;
 
     @Schema(description = "参数类型")

@@ -22,7 +22,6 @@
         <module>alatka-batch-distributed</module>
         <module>alatka-batch-example</module>
         <module>alatka-batch-infra</module>
-        <module>alatka-batch-param-infra</module>
     </modules>
 
     <properties>

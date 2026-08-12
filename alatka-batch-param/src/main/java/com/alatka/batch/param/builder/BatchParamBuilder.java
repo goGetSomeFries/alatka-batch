@@ -27,8 +27,12 @@ public class BatchParamBuilder {
 
         return paramRepository.findAll(finalSpec)
                 .stream()
-                .map(entity -> entity.getKey().concat("=").concat(entity.getValue()))
+                .map(entity -> entity.getKey().concat("=").concat(this.doBuild(entity.getValue())))
                 .collect(Collectors.joining(","));
+    }
+
+    private String doBuild(String value) {
+        return null;
     }
 
     @Autowired

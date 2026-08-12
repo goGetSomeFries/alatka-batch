@@ -16,12 +16,12 @@
             <artifactId>alatka-batch-infra</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.alatka.batch.param</groupId>
-            <artifactId>alatka-batch-param-infra</artifactId>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.batch</groupId>
-            <artifactId>spring-batch-core</artifactId>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
         </dependency>
     </dependencies>
 </project>

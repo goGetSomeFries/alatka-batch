@@ -15,6 +15,10 @@
             <artifactId>alatka-batch-flow-admin</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.alatka.batch.param</groupId>
+            <artifactId>alatka-batch-param-admin</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.alatka.batch.flow</groupId>
             <artifactId>alatka-batch-flow</artifactId>
         </dependency>

@@ -1,5 +1,6 @@
 package com.alatka.batch.flow;
 
+import com.alatka.batch.infra.support.DefaultAuditorAware;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -16,7 +17,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @EnableJpaRepositories
-@EnableJpaAuditing
 @EntityScan
 @ComponentScan(basePackages = {"com.alatka.batch.flow", "com.alatka.batch.infra"})
 @Configuration
@@ -70,5 +70,18 @@ public class FlowAdminAutoConfiguration {
         taskExecutor.setThreadNamePrefix(threadNamePrefix);
         taskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         return taskExecutor;
+    }
+
+
+    @Configuration
+    @ConditionalOnMissingBean(name = "jpaAuditingHandler")
+    @EnableJpaAuditing(auditorAwareRef = DefaultAuditorAware.BEAN_NAME)
+    public static class FlowAdminJpaAutoConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = DefaultAuditorAware.BEAN_NAME)
+        public DefaultAuditorAware defaultAuditorAware() {
+            return new DefaultAuditorAware();
+        }
     }
 }
