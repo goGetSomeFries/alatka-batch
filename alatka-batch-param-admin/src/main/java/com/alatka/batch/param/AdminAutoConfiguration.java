@@ -13,7 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @Configuration
 @EntityScan
 @EnableJpaRepositories
-public class ParamAdminAutoConfiguration {
+public class AdminAutoConfiguration {
 
     @Configuration
     @ConditionalOnMissingBean(name = "jpaAuditingHandler")

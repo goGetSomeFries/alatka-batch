@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.alatka.batch.flow.FlowAdminAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.alatka.batch.flow.AdminAutoConfiguration
