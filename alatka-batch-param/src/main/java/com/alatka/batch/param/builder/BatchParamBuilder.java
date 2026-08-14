@@ -4,9 +4,11 @@ import com.alatka.batch.param.entity.BatchParam;
 import com.alatka.batch.param.repository.ParamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
+@Component
 public class BatchParamBuilder {
 
     private ParamRepository paramRepository;

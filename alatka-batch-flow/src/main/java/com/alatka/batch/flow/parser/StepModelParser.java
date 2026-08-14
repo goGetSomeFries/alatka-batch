@@ -1,6 +1,6 @@
 package com.alatka.batch.flow.parser;
 
-import com.alatka.batch.flow.model.StepModel;
+import com.alatka.batch.flow.admin.model.StepModel;
 import com.alatka.batch.flow.support.GraphContext;
 import com.fasterxml.jackson.databind.JsonNode;
 

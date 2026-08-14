@@ -1,6 +1,6 @@
 package com.alatka.batch.flow.builder;
 
-import com.alatka.batch.flow.model.RootModel;
+import com.alatka.batch.flow.admin.model.RootModel;
 import com.alatka.batch.infra.util.YamlUtil;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.ResourcePatternUtils;

@@ -1,6 +1,6 @@
 package com.alatka.batch.flow.parser;
 
-import com.alatka.batch.flow.model.ComponentModel;
+import com.alatka.batch.flow.admin.model.ComponentModel;
 import com.alatka.batch.flow.support.GraphContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.BeanUtils;

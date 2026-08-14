@@ -1,7 +1,7 @@
 package com.alatka.batch.flow.component;
 
 import com.alatka.batch.flow.builder.AbstractFlowBuilder;
-import com.alatka.batch.flow.model.DecisionModel;
+import com.alatka.batch.flow.admin.model.DecisionModel;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.*;

@@ -1,6 +1,6 @@
 package com.alatka.batch.flow.parser;
 
-import com.alatka.batch.flow.model.DecisionModel;
+import com.alatka.batch.flow.admin.model.DecisionModel;
 
 public class EndNodeParser extends ExitNodeParser {
 
