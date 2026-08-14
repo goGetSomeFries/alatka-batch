@@ -66,7 +66,11 @@
         </button>
         <button type="button" class="btn btn-sm btn-outline-secondary" id="graphButton"
                 onclick="redirectToGraph()">
-            <i class="bi bi-pencil-square"></i> 设计流程图
+            <i class="bi bi-palette"></i> 设计流程图
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-dark" id="paramButton"
+                onclick="redirectToParam()">
+            <i class="bi bi-sliders"></i> 参数维护
         </button>
         <button type="button" class="btn btn-sm btn-outline-info" id="addButton"
                 onclick="showEditModal('/batch/flow/create', true)">
@@ -293,7 +297,17 @@
             return;
         }
         const row = selections[0];
-        window.location.href = `graph?flowId=${row.id}`;
+        window.location.href = `/batch/flow/graph?flowId=${row.id}`;
+    }
+
+    function redirectToParam() {
+        const selections = $('#dataTable').bootstrapTable('getSelections');
+        if (selections.length !== 1) {
+            showWarningToast("请选择一条记录");
+            return;
+        }
+        const row = selections[0];
+        window.location.href = `/batch/param?type=job&name=${row.key}`;
     }
 
     function showDeployModal() {
@@ -353,7 +367,7 @@
                     <div class="fw-bold small ${item.current ? 'text-primary' : 'text-dark'}">${item.status}</div>
                     <div class="text-muted" style="font-size: 0.7rem;">${item.updateAt || item.createAt}</div>
                     <div class="d-flex justify-content-center align-items-center mt-2 gap-1">
-                        <a href="graph?flowId=${flowId}&id=${item.id}" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size: 0.65rem;">查看</a>
+                        <a href="/batch/flow/graph?flowId=${flowId}&id=${item.id}" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size: 0.65rem;">查看</a>
                         <button class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size: 0.65rem;" onclick="deleteGraph('${item.id}')">
                            <i class="fa fa-trash-o"></i>删除
                         </button>
