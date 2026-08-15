@@ -34,7 +34,7 @@ public class BatchParamBuilder {
     }
 
     private String doBuild(String value) {
-        return null;
+        return value;
     }
 
     @Autowired

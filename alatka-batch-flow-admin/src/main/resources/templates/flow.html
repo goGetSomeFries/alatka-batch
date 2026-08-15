@@ -306,8 +306,13 @@
             showWarningToast("请选择一条记录");
             return;
         }
-        const row = selections[0];
-        window.location.href = `/batch/param?type=job&name=${row.key}`;
+        httpClient('/batch/param/exist', 'HEAD', null, function (data) {
+        }, function (msg) {
+            const row = selections[0];
+            window.location.href = `/batch/param?type=job&name=${row.key}`;
+        }, function () {
+            showWarningToast("请求路径不存在，确认后端是否配置alatka-batch-param-admin.jar");
+        });
     }
 
     function showDeployModal() {

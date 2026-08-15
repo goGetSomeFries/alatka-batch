@@ -1,5 +1,7 @@
 function httpClient(url, methodType, data, success, error = function (msg) {
     showErrorToast(`接口响应失败: ${msg}`);
+}, error404 = function () {
+    showErrorToast(`接口或页面不存在 (404): ${url}`);
 }) {
     $.ajax({
         url: url,
@@ -7,14 +9,18 @@ function httpClient(url, methodType, data, success, error = function (msg) {
         contentType: 'application/json',
         data: data && JSON.stringify(data),
         success: function (response) {
-            if (response.code === "0000") {
+            if (response && response.code === "0000") {
                 success(response.data);
             } else {
-                error(response.msg);
+                error(response? response.msg : '');
             }
         },
         error: function (xhr) {
-            showErrorToast(`接口请求失败: ${xhr.responseJSON?.message || '未知错误'}`);
+            if (xhr.status === 404) {
+                error404();
+            } else {
+                showErrorToast(`接口请求失败: ${xhr.responseJSON?.message || '未知错误'}`);
+            }
         }
     });
 }
