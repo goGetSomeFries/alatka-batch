@@ -1,6 +1,6 @@
 package com.alatka.batch.flow.component;
 
-import com.alatka.batch.flow.admin.model.SplitModel;
+import com.alatka.batch.flow.model.SplitModel;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.*;

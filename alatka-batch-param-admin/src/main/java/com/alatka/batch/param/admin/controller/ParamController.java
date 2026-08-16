@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Tag(name = "参数")
 @RestController
@@ -45,6 +46,12 @@ public class ParamController {
     @GetMapping("/page")
     public PageResMessage<ParamRes> queryPage(@Valid @ParameterObject ParamPageReq pageReqMessage) {
         return PageResMessage.success(paramService.queryPage(pageReqMessage));
+    }
+
+    @Operation(summary = "查询列表")
+    @GetMapping("/list")
+    public ResMessage<List<ParamRes>> queryList(@RequestParam String jobName, @RequestParam String groupKey) {
+        return ResMessage.success(paramService.getList(jobName, groupKey));
     }
 
     @Autowired

@@ -1,6 +1,6 @@
 package com.alatka.batch.flow.builder;
 
-import com.alatka.batch.flow.admin.model.RootModel;
+import com.alatka.batch.flow.model.RootModel;
 import com.alatka.batch.flow.parser.ModelParser;
 import com.alatka.batch.flow.parser.StartNodeModelParser;
 import com.alatka.batch.flow.support.GraphContext;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  *
  * @author whocares
  */
-public class DatabaseFlowBuilder extends AbstractFlowBuilder {
+public class DatabaseBatchFlowBuilder extends AbstractBatchFlowBuilder {
 
     private DataSource dataSource;
 

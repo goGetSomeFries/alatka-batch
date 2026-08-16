@@ -1,9 +1,10 @@
 package com.alatka.batch.param.admin.service;
 
-import com.alatka.batch.param.entity.BatchParam;
 import com.alatka.batch.param.admin.model.ParamPageReq;
 import com.alatka.batch.param.admin.model.ParamReq;
 import com.alatka.batch.param.admin.model.ParamRes;
+import com.alatka.batch.param.builder.BatchParamBuilder;
+import com.alatka.batch.param.entity.BatchParam;
 import com.alatka.batch.param.repository.ParamRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class ParamService {
 
     private ParamRepository paramRepository;
+
+    private BatchParamBuilder batchParamBuilder;
 
     public Long create(ParamReq req) {
         BatchParam entity = new BatchParam();
@@ -64,6 +68,15 @@ public class ParamService {
                 });
     }
 
+    public List<ParamRes> getList(String jobName, String groupKey) {
+        return batchParamBuilder.getList(jobName, groupKey).stream()
+                .map(entity -> {
+                    ParamRes res = new ParamRes();
+                    BeanUtils.copyProperties(entity, res);
+                    return res;
+                }).collect(Collectors.toList());
+    }
+
     private Specification<BatchParam> condition(BatchParam condition) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> list = new ArrayList<>();
@@ -92,5 +105,10 @@ public class ParamService {
     @Autowired
     public void setParamRepository(ParamRepository paramRepository) {
         this.paramRepository = paramRepository;
+    }
+
+    @Autowired
+    public void setBatchParamBuilder(BatchParamBuilder batchParamBuilder) {
+        this.batchParamBuilder = batchParamBuilder;
     }
 }

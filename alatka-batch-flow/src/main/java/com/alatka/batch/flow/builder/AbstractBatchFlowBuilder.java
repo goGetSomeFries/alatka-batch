@@ -1,8 +1,8 @@
 package com.alatka.batch.flow.builder;
 
 import com.alatka.batch.flow.component.IComponent;
-import com.alatka.batch.flow.admin.model.ComponentModel;
-import com.alatka.batch.flow.admin.model.RootModel;
+import com.alatka.batch.flow.model.ComponentModel;
+import com.alatka.batch.flow.model.RootModel;
 import com.alatka.batch.infra.util.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBean, ApplicationContextAware, ApplicationListener<ContextRefreshedEvent> {
+public abstract class AbstractBatchFlowBuilder implements BatchFlowBuilder, InitializingBean, ApplicationContextAware, ApplicationListener<ContextRefreshedEvent> {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 

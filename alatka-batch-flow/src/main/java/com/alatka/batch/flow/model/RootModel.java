@@ -1,4 +1,4 @@
-package com.alatka.batch.flow.admin.model;
+package com.alatka.batch.flow.model;
 
 import com.alatka.batch.infra.util.JsonUtil;
 

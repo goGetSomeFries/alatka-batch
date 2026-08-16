@@ -1,8 +1,8 @@
 package com.alatka.batch.flow.parser;
 
-import com.alatka.batch.flow.admin.model.ComponentModel;
-import com.alatka.batch.flow.admin.model.FlowModel;
-import com.alatka.batch.flow.admin.model.SplitModel;
+import com.alatka.batch.flow.model.ComponentModel;
+import com.alatka.batch.flow.model.FlowModel;
+import com.alatka.batch.flow.model.SplitModel;
 import com.alatka.batch.flow.support.GraphContext;
 import com.fasterxml.jackson.databind.JsonNode;
 

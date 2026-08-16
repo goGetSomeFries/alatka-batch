@@ -1,6 +1,6 @@
 package com.alatka.batch.flow.builder;
 
-import com.alatka.batch.flow.admin.model.RootModel;
+import com.alatka.batch.flow.model.RootModel;
 import com.alatka.batch.infra.util.YamlUtil;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.ResourcePatternUtils;
@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  *
  * @author whocares
  */
-public class FileFlowBuilder extends AbstractFlowBuilder {
+public class FileBatchFlowBuilder extends AbstractBatchFlowBuilder {
 
     private static final String ROOT_NAME = "alatka.batch.flow";
 

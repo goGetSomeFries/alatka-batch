@@ -1,6 +1,6 @@
 package com.alatka.batch.flow.component;
 
-import com.alatka.batch.flow.admin.model.ComponentModel;
+import com.alatka.batch.flow.model.ComponentModel;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.job.builder.*;

@@ -1,7 +1,7 @@
 package com.alatka.batch.flow.component;
 
-import com.alatka.batch.flow.builder.AbstractFlowBuilder;
-import com.alatka.batch.flow.admin.model.DecisionModel;
+import com.alatka.batch.flow.builder.AbstractBatchFlowBuilder;
+import com.alatka.batch.flow.model.DecisionModel;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.*;
@@ -81,7 +81,7 @@ public class DecisionComponent extends AbstractComponent<DecisionModel> {
     private FlowBuilder<FlowJobBuilder> doExecute(DecisionModel.InnerModel model,
                                                   FlowBuilder.UnterminatedFlowBuilder<FlowJobBuilder> builder) {
         AtomicReference<Object> reference = new AtomicReference<>(builder.on(model.getWhen()));
-        AbstractFlowBuilder.buildComponents(model.getTo(), reference, applicationContext);
+        AbstractBatchFlowBuilder.buildComponents(model.getTo(), reference, applicationContext);
 
         return (FlowBuilder<FlowJobBuilder>) reference.get();
     }

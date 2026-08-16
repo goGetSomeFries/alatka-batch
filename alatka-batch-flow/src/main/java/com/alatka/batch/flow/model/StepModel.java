@@ -1,4 +1,4 @@
-package com.alatka.batch.flow.admin.model;
+package com.alatka.batch.flow.model;
 
 public class StepModel extends BeanComponentModel {
 }
