@@ -11,12 +11,14 @@ Job 中 Step Flow、Split 并行、条件决策的串联配置，自动构建完
 
 ### 项目结构
 
-| 模块                      | 描述                                                  |
-|-------------------------|-----------------------------------------------------|
-| alatka-batch-flow       | 流程核心模块，包括job解析，加载等功能                                |
-| alatka-batch-flow-admin | 后台管理端，提供job流程维护、设计等功能                               |
-| alatka-batch-infra      | 提供基础功能                                              |
-| alatka-batch-example    | 示例模块，用于演示 alatka-batch-flow、alatka-batch-flow-admin |
+| 模块                       | 描述                                                                                              |
+|--------------------------|-------------------------------------------------------------------------------------------------|
+| alatka-batch-param       | Spring Batch Job参数动态生成                                                                          |
+| alatka-batch-param-admin | 后台管理端，Job参数维护功能                                                                                 |
+| alatka-batch-flow        | 流程核心模块，包括Job解析，加载等功能                                                                            |
+| alatka-batch-flow-admin  | 后台管理端，提供Job流程维护、设计等功能                                                                           |
+| alatka-batch-infra       | 提供基础功能                                                                                          |
+| alatka-batch-example     | 示例模块，用于演示 alatka-batch-param、alatka-batch-param-admin、alatka-batch-flow、alatka-batch-flow-admin |
 
 ### 版本对应关系
 
