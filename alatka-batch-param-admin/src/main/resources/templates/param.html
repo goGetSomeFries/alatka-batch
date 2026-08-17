@@ -197,8 +197,10 @@
         const type = urlParams.get('type');
         if (type) {
             const name = urlParams.get('name');
+            const key = urlParams.get('key');
             $("#type").val(type).addClass('is-readonly');
             $("#name").val(name).addClass('is-readonly');
+            $("#key").val(key);
         }
     }
 

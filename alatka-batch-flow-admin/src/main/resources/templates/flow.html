@@ -358,9 +358,9 @@
 
         return `<div class="p-3 text-center text-muted small">
                     <div class="p-3 bg-light rounded shadow-sm" style="width: 0; min-width: 100%; overflow: hidden;">
-                        <div id="${paramContainerId}" class="d-flex flex-wrap pb-2 pt-2 mb-2 bg-light p-3 rounded-3 border border-secondary border-opacity-25">
+                        <div id="${paramContainerId}" class="d-flex flex-wrap pb-0 pt-2 mb-2 bg-white p-3 rounded-3 border border-secondary border-opacity-25">
                         </div>
-                        <div id="${graphContainerId}" class="d-flex flex-nowrap position-relative overflow-x-auto pb-4 pt-2 bg-white p-3 rounded-3 border border-secondary border-opacity-25" style="scrollbar-width: thin;">
+                        <div id="${graphContainerId}" class="d-flex flex-nowrap position-relative overflow-x-auto pb-4 pt-2 bg-light p-3 rounded-3 border border-secondary border-opacity-25" style="scrollbar-width: thin;">
                         </div>
                     </div>
                 </div>`;
@@ -370,7 +370,8 @@
         httpClient(`/batch/param/list?groupKey=${groupKey}&jobName=${jobName}`, 'GET', null, function (list) {
             let html = '';
             list.forEach(function (param) {
-                html += `<span class="me-1 mb-2 badge ${param.type === 'job' ? 'bg-success' : 'bg-secondary'}">${param.key} = ${param.value}</span>`;
+                const href = `/batch/param?type=${param.type}&key=${param.key}&name=${param.type === 'job' ? jobName : groupKey}`;
+                html += `<a href="${href}" class="me-1 mb-2 badge text-decoration-none ${param.type === 'job' ? 'bg-success' : 'bg-secondary'}">${param.key} = ${param.value}</a>`;
             });
             html = html === '' ? `<span class="mb-2 badge bg-warning">未配置参数</span>` : html;
             callback(html);
