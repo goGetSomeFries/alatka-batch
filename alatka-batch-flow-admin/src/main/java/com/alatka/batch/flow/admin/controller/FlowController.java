@@ -1,10 +1,10 @@
-package com.alatka.batch.flow.controller;
+package com.alatka.batch.flow.admin.controller;
 
-import com.alatka.batch.flow.model.FlowDeployReq;
-import com.alatka.batch.flow.model.FlowPageReq;
-import com.alatka.batch.flow.model.FlowReq;
-import com.alatka.batch.flow.model.FlowRes;
-import com.alatka.batch.flow.service.FlowService;
+import com.alatka.batch.flow.admin.model.FlowDeployReq;
+import com.alatka.batch.flow.admin.model.FlowPageReq;
+import com.alatka.batch.flow.admin.model.FlowReq;
+import com.alatka.batch.flow.admin.model.FlowRes;
+import com.alatka.batch.flow.admin.service.FlowService;
 import com.alatka.batch.infra.model.PageResMessage;
 import com.alatka.batch.infra.model.ResMessage;
 import io.swagger.v3.oas.annotations.Operation;

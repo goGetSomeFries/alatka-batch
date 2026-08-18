@@ -1,12 +1,12 @@
-package com.alatka.batch.flow.model;
+package com.alatka.batch.flow.admin.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-@Schema(description = "流程请求")
-public class FlowReq {
+@Schema(description = "流程组请求")
+public class FlowGroupReq {
 
     @Schema(description = "主键")
     private Long id;
@@ -19,16 +19,9 @@ public class FlowReq {
     @NotEmpty(message = "name 不能为空")
     private String name;
 
-    @Schema(description = "监听名称")
-    private String listeners;
-
     @Schema(description = "是否可用", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "enabled 不能为空")
     private Boolean enabled;
-
-    @Schema(description = "流程组关键字", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "groupKey 不能为空")
-    private String groupKey;
 
     public Long getId() {
         return id;
@@ -54,27 +47,11 @@ public class FlowReq {
         this.name = name;
     }
 
-    public String getListeners() {
-        return listeners;
-    }
-
-    public void setListeners(String listeners) {
-        this.listeners = listeners;
-    }
-
     public Boolean getEnabled() {
         return enabled;
     }
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public String getGroupKey() {
-        return groupKey;
-    }
-
-    public void setGroupKey(String groupKey) {
-        this.groupKey = groupKey;
     }
 }

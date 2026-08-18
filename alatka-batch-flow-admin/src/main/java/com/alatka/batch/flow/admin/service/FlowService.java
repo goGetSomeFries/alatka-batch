@@ -1,13 +1,13 @@
-package com.alatka.batch.flow.service;
+package com.alatka.batch.flow.admin.service;
 
 
-import com.alatka.batch.flow.FlowAdminAutoConfiguration;
-import com.alatka.batch.flow.entity.BatchFlow;
-import com.alatka.batch.flow.model.FlowDeployReq;
-import com.alatka.batch.flow.model.FlowPageReq;
-import com.alatka.batch.flow.model.FlowReq;
-import com.alatka.batch.flow.model.FlowRes;
-import com.alatka.batch.flow.repository.FlowRepository;
+import com.alatka.batch.flow.admin.AdminAutoConfiguration;
+import com.alatka.batch.flow.admin.entity.BatchFlow;
+import com.alatka.batch.flow.admin.model.FlowDeployReq;
+import com.alatka.batch.flow.admin.model.FlowPageReq;
+import com.alatka.batch.flow.admin.model.FlowReq;
+import com.alatka.batch.flow.admin.model.FlowRes;
+import com.alatka.batch.flow.admin.repository.FlowRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -156,13 +156,13 @@ public class FlowService {
     }
 
     @Autowired
-    @Qualifier(FlowAdminAutoConfiguration.REST_TEMPLATE_NAME)
+    @Qualifier(AdminAutoConfiguration.REST_TEMPLATE_NAME)
     public void setRestTemplate(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
     @Autowired
-    @Qualifier(FlowAdminAutoConfiguration.TASK_EXECUTOR_NAME)
+    @Qualifier(AdminAutoConfiguration.TASK_EXECUTOR_NAME)
     public void setTaskExecutor(TaskExecutor taskExecutor) {
         this.taskExecutor = taskExecutor;
     }

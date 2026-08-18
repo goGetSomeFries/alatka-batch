@@ -1,4 +1,4 @@
-package com.alatka.batch.flow.model;
+package com.alatka.batch.flow.admin.model;
 
 import com.alatka.batch.infra.model.PageReqMessage;
 import io.swagger.v3.oas.annotations.media.Schema;

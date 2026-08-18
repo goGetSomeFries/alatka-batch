@@ -1,8 +1,8 @@
-package com.alatka.batch.flow.controller;
+package com.alatka.batch.flow.admin.controller;
 
-import com.alatka.batch.flow.model.FlowGraphHistory;
-import com.alatka.batch.flow.model.FlowGraphReq;
-import com.alatka.batch.flow.service.FlowGraphService;
+import com.alatka.batch.flow.admin.model.FlowGraphHistory;
+import com.alatka.batch.flow.admin.model.FlowGraphReq;
+import com.alatka.batch.flow.admin.service.FlowGraphService;
 import com.alatka.batch.infra.model.ResMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

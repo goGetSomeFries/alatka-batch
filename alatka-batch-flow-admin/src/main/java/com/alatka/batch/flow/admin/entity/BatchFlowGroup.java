@@ -1,4 +1,4 @@
-package com.alatka.batch.flow.entity;
+package com.alatka.batch.flow.admin.entity;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
