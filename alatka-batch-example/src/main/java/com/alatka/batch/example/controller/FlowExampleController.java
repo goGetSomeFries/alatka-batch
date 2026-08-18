@@ -1,6 +1,6 @@
 package com.alatka.batch.example.controller;
 
-import com.alatka.batch.flow.builder.FlowBuilder;
+import com.alatka.batch.flow.builder.BatchFlowBuilder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.batch.core.JobParametersInvalidException;
@@ -15,19 +15,19 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-@Tag(name = "示例接口")
+@Tag(name = "流程示例接口")
 @RestController
-@RequestMapping("/batch/example")
-public class ExampleController {
+@RequestMapping("/batch/example/flow")
+public class FlowExampleController {
 
-    private FlowBuilder flowBuilder;
+    private BatchFlowBuilder batchFlowBuilder;
 
     private JobOperator jobOperator;
 
     @Operation(summary = "构建流程")
     @PostMapping("/build")
     public String build(@RequestBody List<Long> flowIds) {
-        flowIds.stream().map(String::valueOf).forEach(flowBuilder::build);
+        flowIds.stream().map(String::valueOf).forEach(batchFlowBuilder::build);
         return "ok";
     }
 
@@ -44,8 +44,8 @@ public class ExampleController {
     }
 
     @Autowired
-    public void setFlowBuilder(FlowBuilder flowBuilder) {
-        this.flowBuilder = flowBuilder;
+    public void setBatchFlowBuilder(BatchFlowBuilder batchFlowBuilder) {
+        this.batchFlowBuilder = batchFlowBuilder;
     }
 
     @Autowired

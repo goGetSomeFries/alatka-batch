@@ -1,7 +1,7 @@
 package com.alatka.batch.flow;
 
-import com.alatka.batch.flow.builder.DatabaseFlowBuilder;
-import com.alatka.batch.flow.builder.FileFlowBuilder;
+import com.alatka.batch.flow.builder.DatabaseBatchFlowBuilder;
+import com.alatka.batch.flow.builder.FileBatchFlowBuilder;
 import com.alatka.batch.flow.component.DecisionComponent;
 import com.alatka.batch.flow.component.FlowComponent;
 import com.alatka.batch.flow.component.SplitComponent;
@@ -23,7 +23,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableConfigurationProperties(FlowProperties.class)
 @ConditionalOnProperty(value = "alatka.batch.flow.enabled", havingValue = "true", matchIfMissing = true)
-public class FlowAutoConfiguration {
+public class AutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
@@ -34,10 +34,10 @@ public class FlowAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(FileFlowBuilder.class)
+    @ConditionalOnMissingBean(FileBatchFlowBuilder.class)
     @ConditionalOnProperty(value = "alatka.batch.flow.type", havingValue = "yaml", matchIfMissing = true)
-    public FileFlowBuilder fileFlowBuilder(FlowProperties properties) {
-        FileFlowBuilder builder = new FileFlowBuilder();
+    public FileBatchFlowBuilder fileFlowBuilder(FlowProperties properties) {
+        FileBatchFlowBuilder builder = new FileBatchFlowBuilder();
         String classpath = properties.getClasspath();
         if (StringUtils.hasText(classpath)) {
             builder.setClasspath(classpath);
@@ -46,10 +46,10 @@ public class FlowAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(DatabaseFlowBuilder.class)
+    @ConditionalOnMissingBean(DatabaseBatchFlowBuilder.class)
     @ConditionalOnProperty(value = "alatka.batch.flow.type", havingValue = "database")
-    public DatabaseFlowBuilder databaseFlowBuilder(DataSource dataSource) {
-        DatabaseFlowBuilder builder = new DatabaseFlowBuilder();
+    public DatabaseBatchFlowBuilder databaseFlowBuilder(DataSource dataSource) {
+        DatabaseBatchFlowBuilder builder = new DatabaseBatchFlowBuilder();
         builder.setDataSource(dataSource);
         return builder;
     }

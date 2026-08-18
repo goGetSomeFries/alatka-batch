@@ -6,7 +6,7 @@ import org.springframework.batch.core.configuration.JobRegistry;
 /**
  * {@link Job}构造器，动态构建并注册到{@link JobRegistry}中
  */
-public interface FlowBuilder {
+public interface BatchFlowBuilder {
 
     /**
      * 构建所有{@link Job}

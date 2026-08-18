@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DatabaseFlowBuilderTest {
+public class DatabaseBatchFlowBuilderTest {
 
     @Test
     public void test01() {

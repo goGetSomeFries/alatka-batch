@@ -25,7 +25,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public abstract class AbstractFlowBuilder implements FlowBuilder, InitializingBean, ApplicationContextAware, ApplicationListener<ContextRefreshedEvent> {
+public abstract class AbstractBatchFlowBuilder implements BatchFlowBuilder, InitializingBean, ApplicationContextAware, ApplicationListener<ContextRefreshedEvent> {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
