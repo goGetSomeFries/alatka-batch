@@ -1,10 +1,10 @@
-package com.alatka.batch.flow.service;
+package com.alatka.batch.flow.admin.service;
 
 
-import com.alatka.batch.flow.entity.BatchFlowGraph;
-import com.alatka.batch.flow.model.FlowGraphHistory;
-import com.alatka.batch.flow.model.FlowGraphReq;
-import com.alatka.batch.flow.repository.FlowGraphRepository;
+import com.alatka.batch.flow.admin.entity.BatchFlowGraph;
+import com.alatka.batch.flow.admin.model.FlowGraphHistory;
+import com.alatka.batch.flow.admin.model.FlowGraphReq;
+import com.alatka.batch.flow.admin.repository.FlowGraphRepository;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

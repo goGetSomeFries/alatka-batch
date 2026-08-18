@@ -1,12 +1,12 @@
-package com.alatka.batch.flow.model;
+package com.alatka.batch.flow.admin.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
 
-@Schema(description = "流程响应")
-public class FlowRes {
+@Schema(description = "流程组响应")
+public class FlowGroupRes {
 
     @Schema(description = "主键", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long id;
@@ -25,14 +25,8 @@ public class FlowRes {
     @Schema(description = "名称", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;
 
-    @Schema(description = "监听名称")
-    private String listeners;
-
     @Schema(description = "是否可用", requiredMode = Schema.RequiredMode.REQUIRED)
     private Boolean enabled;
-
-    @Schema(description = "流程组关键字", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String groupKey;
 
     public Long getId() {
         return id;
@@ -74,27 +68,11 @@ public class FlowRes {
         this.name = name;
     }
 
-    public String getListeners() {
-        return listeners;
-    }
-
-    public void setListeners(String listeners) {
-        this.listeners = listeners;
-    }
-
     public Boolean getEnabled() {
         return enabled;
     }
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public String getGroupKey() {
-        return groupKey;
-    }
-
-    public void setGroupKey(String groupKey) {
-        this.groupKey = groupKey;
     }
 }

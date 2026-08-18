@@ -1,10 +1,10 @@
-package com.alatka.batch.flow.model;
+package com.alatka.batch.flow.admin.model;
 
 import com.alatka.batch.infra.model.PageReqMessage;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(description = "流程请求")
-public class FlowPageReq extends PageReqMessage {
+@Schema(description = "流程组请求")
+public class FlowGroupPageReq extends PageReqMessage {
 
     @Schema(description = "关键字")
     private String key;
@@ -14,9 +14,6 @@ public class FlowPageReq extends PageReqMessage {
 
     @Schema(description = "是否可用")
     private Boolean enabled;
-
-    @Schema(description = "流程组关键字")
-    private String groupKey;
 
     public String getKey() {
         return key;
@@ -40,13 +37,5 @@ public class FlowPageReq extends PageReqMessage {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public String getGroupKey() {
-        return groupKey;
-    }
-
-    public void setGroupKey(String groupKey) {
-        this.groupKey = groupKey;
     }
 }

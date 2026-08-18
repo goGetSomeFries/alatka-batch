@@ -1,11 +1,11 @@
-package com.alatka.batch.flow.service;
+package com.alatka.batch.flow.admin.service;
 
 
-import com.alatka.batch.flow.entity.BatchFlowGroup;
-import com.alatka.batch.flow.model.FlowGroupPageReq;
-import com.alatka.batch.flow.model.FlowGroupReq;
-import com.alatka.batch.flow.model.FlowGroupRes;
-import com.alatka.batch.flow.repository.FlowGroupRepository;
+import com.alatka.batch.flow.admin.entity.BatchFlowGroup;
+import com.alatka.batch.flow.admin.model.FlowGroupPageReq;
+import com.alatka.batch.flow.admin.model.FlowGroupReq;
+import com.alatka.batch.flow.admin.model.FlowGroupRes;
+import com.alatka.batch.flow.admin.repository.FlowGroupRepository;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

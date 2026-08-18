@@ -1,6 +1,6 @@
-package com.alatka.batch.flow.repository;
+package com.alatka.batch.flow.admin.repository;
 
-import com.alatka.batch.flow.entity.BatchFlowGraph;
+import com.alatka.batch.flow.admin.entity.BatchFlowGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
