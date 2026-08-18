@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  *
  * @author whocares
  */
-public class FileFlowBuilder extends AbstractFlowBuilder {
+public class FileBatchFlowBuilder extends AbstractBatchFlowBuilder {
 
     private static final String ROOT_NAME = "alatka.batch.flow";
 

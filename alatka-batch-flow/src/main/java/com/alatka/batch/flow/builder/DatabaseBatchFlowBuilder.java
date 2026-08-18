@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  *
  * @author whocares
  */
-public class DatabaseFlowBuilder extends AbstractFlowBuilder {
+public class DatabaseBatchFlowBuilder extends AbstractBatchFlowBuilder {
 
     private DataSource dataSource;
 
