@@ -60,13 +60,17 @@
         </div>
     </div>
     <div class="col-12 text-end mb-3">
-        <button type="button" class="btn btn-sm btn-outline-primary me-5" id="deployButton"
-                onclick="showDeployModal()">
-            <i class="bi bi-rocket"></i> 部署
+        <button type="button" class="btn btn-sm btn-outline-dark me-3" id="paramButton"
+                onclick="redirectToParam()">
+            <i class="bi bi-sliders"></i> 参数维护
         </button>
-        <button type="button" class="btn btn-sm btn-outline-secondary" id="graphButton"
+        <button type="button" class="btn btn-sm btn-outline-primary" id="deployButton"
+                onclick="showDeployModal()">
+            <i class="bi bi-rocket"></i> 部署流程图
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-secondary me-3" id="graphButton"
                 onclick="redirectToGraph()">
-            <i class="bi bi-pencil-square"></i> 设计流程图
+            <i class="bi bi-palette"></i> 设计流程图
         </button>
         <button type="button" class="btn btn-sm btn-outline-info" id="addButton"
                 onclick="showEditModal('/batch/flow/create', true)">
@@ -105,7 +109,7 @@
             <th data-field="key" data-sortable="true">关键字</th>
             <th data-field="name">名称</th>
             <th data-field="listeners" data-formatter="listenersFormatter">监听</th>
-            <th data-field="groupKey" data-formatter="groupKeyFormatter">流程组名称</th>
+            <th data-field="groupKey" data-formatter="groupKeyFormatter">流程组</th>
             <th data-field="enabled" data-formatter="enabledFormatter">是否可用</th>
         </tr>
         </thead>
@@ -296,6 +300,21 @@
         window.location.href = `/batch/flow/graph?flowId=${row.id}`;
     }
 
+    function redirectToParam() {
+        const selections = $('#dataTable').bootstrapTable('getSelections');
+        if (selections.length !== 1) {
+            showWarningToast("请选择一条记录");
+            return;
+        }
+        httpClient('/batch/param/exist', 'HEAD', null, function (data) {
+        }, function (msg) {
+            const row = selections[0];
+            window.location.href = `/batch/param?type=job&name=${row.key}`;
+        }, function () {
+            showWarningToast("请求路径不存在，确认后端是否配置alatka-batch-param-admin.jar");
+        });
+    }
+
     function showDeployModal() {
         httpClient('/batch/flow/undeploy', 'GET', null, function (list) {
             if (list.length === 0) {
@@ -323,18 +342,44 @@
     }
 
     function detailFormatter(index, row) {
-        const containerId = `history-detail-${row.id}`;
-
+        const graphContainerId = `history-detail-${row.id}`;
         initGraphHistory(row.id, null, (html) => {
-            $(`#${containerId}`).html(html);
+            $(`#${graphContainerId}`).html(html);
+        });
+
+        const paramContainerId = `param-detail-${row.id}`;
+        initParamList(row.key, row.groupKey, (html) => {
+            if (html === 'NONE') {
+                $(`#${paramContainerId}`).remove();
+            } else {
+                $(`#${paramContainerId}`).html(html);
+            }
         });
 
         return `<div class="p-3 text-center text-muted small">
                     <div class="p-3 bg-light rounded shadow-sm" style="width: 0; min-width: 100%; overflow: hidden;">
-                        <div id="${containerId}" class="d-flex flex-nowrap position-relative overflow-x-auto pb-4 pt-2" style="scrollbar-width: thin;">
+                        <div id="${paramContainerId}" class="d-flex flex-wrap pb-0 pt-2 mb-2 bg-white p-3 rounded-3 border border-secondary border-opacity-25">
+                        </div>
+                        <div id="${graphContainerId}" class="d-flex flex-nowrap position-relative overflow-x-auto pb-4 pt-2 bg-light p-3 rounded-3 border border-secondary border-opacity-25" style="scrollbar-width: thin;">
                         </div>
                     </div>
                 </div>`;
+    }
+
+    function initParamList(jobName, groupKey, callback) {
+        httpClient(`/batch/param/list?groupKey=${groupKey}&jobName=${jobName}`, 'GET', null, function (list) {
+            let html = '';
+            list.forEach(function (param) {
+                const href = `/batch/param?type=${param.type}&key=${param.key}&name=${param.type === 'job' ? jobName : groupKey}`;
+                html += `<a href="${href}" class="me-1 mb-2 badge text-decoration-none ${param.type === 'job' ? 'bg-success' : 'bg-secondary'}">${param.key} = ${param.value}</a>`;
+            });
+            html = html === '' ? `<span class="mb-2 badge bg-warning">未配置参数</span>` : html;
+            callback(html);
+        }, function (msg) {
+            showErrorToast(`接口响应失败: ${msg}`);
+        }, function () {
+            callback('NONE');
+        });
     }
 
     function initGraphHistory(flowId, previousId, callback) {

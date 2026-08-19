@@ -11,23 +11,26 @@ Job 中 Step Flow、Split 并行、条件决策的串联配置，自动构建完
 
 ### 项目结构
 
-| 模块                      | 描述                                                  |
-|-------------------------|-----------------------------------------------------|
-| alatka-batch-flow       | 流程核心模块，包括job解析，加载等功能                                |
-| alatka-batch-flow-admin | 后台管理端，提供job流程维护、设计等功能                               |
-| alatka-batch-infra      | 提供基础功能                                              |
-| alatka-batch-example    | 示例模块，用于演示 alatka-batch-flow、alatka-batch-flow-admin |
+| 模块                       | 描述                                                                                              |
+|--------------------------|-------------------------------------------------------------------------------------------------|
+| alatka-batch-param       | Spring Batch Job参数动态生成                                                                          |
+| alatka-batch-param-admin | 后台管理端，Job参数维护功能                                                                                 |
+| alatka-batch-flow        | 流程核心模块，包括job解析，加载等功能                                                                            |
+| alatka-batch-flow-admin  | 后台管理端，提供job流程维护、设计等功能                                                                           |
+| alatka-batch-infra       | 提供基础功能                                                                                          |
+| alatka-batch-example     | 示例模块，用于演示 alatka-batch-param、alatka-batch-param-admin、alatka-batch-flow、alatka-batch-flow-admin |
 
 `alatka-batch`、`alatka-dependencies`、`alatka`
 相关制品已上传至阿里云仓库，如需下载可进行如下配置：[ :point_right: maven相关配置](https://gitee.com/asuka2001/alatka-batch/wikis/%E5%85%AB%E3%80%81maven%E7%9B%B8%E5%85%B3%E9%85%8D%E7%BD%AE)
 
 ### 版本对应关系
 
-| alatka-batch | alatka-dependencies | alatka       |
-|--------------|---------------------|--------------|
-| 0.3.0-jdk17  | 1.72.0-jdk17        | 1.72.0-jdk17 |
-| 0.2.0-jdk17  | 1.71.0-jdk17        | 1.71.0-jdk17 |
-| 0.1.0-jdk17  | 1.70.0-jdk17        | 1.70.0-jdk17 |
+| alatka-batch | alatka-dependencies       | alatka                    |
+|--------------|---------------------------|---------------------------|
+| 0.4.0-jdk17  | 1.75.0-jdk17              | 1.75.0-jdk17              |
+| 0.3.0-jdk17  | 1.72.0-jdk17-1.74.0-jdk17 | 1.72.0-jdk17-1.74.0-jdk17 |
+| 0.2.0-jdk17  | 1.71.0-jdk17              | 1.71.0-jdk17              |
+| 0.1.0-jdk17  | 1.70.0-jdk17              | 1.70.0-jdk17              |
 
 ### [ :point_right: 访问wiki查看更多教程](https://gitee.com/asuka2001/alatka-batch/wikis)
 
