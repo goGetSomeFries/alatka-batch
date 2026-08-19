@@ -11,6 +11,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-api</artifactId>
+            <version>1.40.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.alatka.batch.flow</groupId>
             <artifactId>alatka-batch-flow-admin</artifactId>
         </dependency>
