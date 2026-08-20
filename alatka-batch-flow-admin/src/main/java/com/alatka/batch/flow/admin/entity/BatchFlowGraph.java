@@ -1,6 +1,8 @@
 package com.alatka.batch.flow.admin.entity;
 
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -17,9 +19,17 @@ public class BatchFlowGraph {
     @Column(name = "D_ID")
     private Long id;
 
+    @CreatedBy
+    @Column(name = "D_CREATE_BY", updatable = false)
+    private String createBy;
+
     @CreatedDate
     @Column(name = "D_CREATE_AT", updatable = false)
     private LocalDateTime createAt;
+
+    @LastModifiedBy
+    @Column(name = "D_UPDATE_BY", insertable = false)
+    private String updateBy;
 
     @LastModifiedDate
     @Column(name = "D_UPDATE_AT", insertable = false)
@@ -48,12 +58,28 @@ public class BatchFlowGraph {
         this.id = id;
     }
 
+    public String getCreateBy() {
+        return createBy;
+    }
+
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
+    }
+
     public LocalDateTime getCreateAt() {
         return createAt;
     }
 
     public void setCreateAt(LocalDateTime createAt) {
         this.createAt = createAt;
+    }
+
+    public String getUpdateBy() {
+        return updateBy;
+    }
+
+    public void setUpdateBy(String updateBy) {
+        this.updateBy = updateBy;
     }
 
     public LocalDateTime getUpdateAt() {
