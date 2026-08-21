@@ -104,7 +104,9 @@
         <tr>
             <th data-radio="true"></th>
             <th data-field="id">ID</th>
+            <th data-field="createBy">创建人</th>
             <th data-field="createAt" data-sortable="true">创建日期</th>
+            <th data-field="updateBy">更新人</th>
             <th data-field="updateAt" data-sortable="true">更新日期</th>
             <th data-field="key" data-sortable="true">关键字</th>
             <th data-field="name">名称</th>
@@ -397,6 +399,7 @@
                     </div>
                     <div class="fw-bold small ${item.current ? 'text-primary' : 'text-dark'}">${item.status}</div>
                     <div class="text-muted" style="font-size: 0.7rem;">${item.updateAt || item.createAt}</div>
+                    <div class="text-muted" style="font-size: 0.7rem;">${item.updateBy || item.createBy}</div>
                     <div class="d-flex justify-content-center align-items-center mt-2 gap-1">
                         <a href="/batch/flow/graph?flowId=${flowId}&id=${item.id}" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size: 0.65rem;">查看</a>
                         <button class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size: 0.65rem;" onclick="deleteGraph('${item.id}')">
