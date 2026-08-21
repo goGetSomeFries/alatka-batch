@@ -6,7 +6,7 @@
     <parent>
         <artifactId>alatka</artifactId>
         <groupId>com.alatka</groupId>
-        <version>1.75.0-jdk17</version>
+        <version>1.76.0-jdk17</version>
     </parent>
 
     <groupId>com.alatka.batch</groupId>
@@ -24,7 +24,7 @@
     </modules>
 
     <properties>
-        <revision>0.4.0-jdk17</revision>
+        <revision>0.5.0-jdk17</revision>
     </properties>
 
     <dependencyManagement>

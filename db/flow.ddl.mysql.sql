@@ -1,7 +1,9 @@
 CREATE TABLE `ALK_BATCH_FLOW_GROUP`
 (
     `G_ID`        int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `G_CREATE_BY` varchar(50)  NOT NULL COMMENT '创建人',
     `G_CREATE_AT` datetime     NOT NULL COMMENT '创建日期',
+    `G_UPDATE_BY` varchar(50) COMMENT '更新人',
     `G_UPDATE_AT` datetime COMMENT '更新日期',
     `G_KEY`       varchar(50)  NOT NULL COMMENT '关键字',
     `G_NAME`      varchar(100) NOT NULL COMMENT '名称',
@@ -13,7 +15,9 @@ CREATE TABLE `ALK_BATCH_FLOW_GROUP`
 CREATE TABLE `ALK_BATCH_FLOW`
 (
     `F_ID`        int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `F_CREATE_BY` varchar(50)  NOT NULL COMMENT '创建人',
     `F_CREATE_AT` datetime     NOT NULL COMMENT '创建日期',
+    `F_UPDATE_BY` varchar(50) COMMENT '更新人',
     `F_UPDATE_AT` datetime COMMENT '更新日期',
     `F_KEY`       varchar(50)  NOT NULL COMMENT '关键字',
     `F_NAME`      varchar(100) NOT NULL COMMENT '名称',
@@ -27,8 +31,10 @@ CREATE TABLE `ALK_BATCH_FLOW`
 CREATE TABLE `ALK_BATCH_FLOW_GRAPH`
 (
     `D_ID`          int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `D_CREATE_AT`   datetime    NOT NULL COMMENT '创建日期',
-    `D_UPDATE_AT`   datetime COMMENT '更新日期',
+    `D_CREATE_BY` varchar(50)  NOT NULL COMMENT '创建人',
+    `D_CREATE_AT` datetime     NOT NULL COMMENT '创建日期',
+    `D_UPDATE_BY` varchar(50) COMMENT '更新人',
+    `D_UPDATE_AT` datetime COMMENT '更新日期',
     `D_DATA`        blob        NOT NULL COMMENT '图数据',
     `D_PREVIOUS_ID` int unsigned          COMMENT '上一部署状态主键',
     `D_STATUS`      varchar(20) NOT NULL COMMENT '状态',
