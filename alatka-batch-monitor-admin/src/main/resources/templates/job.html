@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>alatka-batch-monitor-admin</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.min.css}"/>
+</head>
+<body>
+<div class="container mt-4">
+    <div class="card mb-3">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Job Execution 查询</h5>
+            <button class="btn btn-sm btn-outline-secondary"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#cardCollapse"
+                    aria-expanded="true"
+                    aria-controls="cardCollapse">
+                <i class="bi bi-arrows-angle-contract"></i>
+            </button>
+        </div>
+        <div class="card-body collapse show" id="cardCollapse">
+            <form id="searchForm" class="row g-3">
+                <div class="col-md-4">
+                    <label for="jobName" class="form-label">jobName</label>
+                    <input type="text" class="form-control" id="jobName" name="jobName" placeholder="输入 jobName">
+                </div>
+                <div class="col-md-4">
+                    <label for="createTimeLeft" class="form-label">createTimeLeft</label>
+                    <input type="text" class="form-control" id="createTimeLeft" name="createTimeLeft"
+                           placeholder="输入 jobName">
+                </div>
+                <div class="col-md-4">
+                    <label for="createTimeRight" class="form-label">createTimeRight</label>
+                    <input type="text" class="form-control" id="createTimeRight" name="createTimeRight"
+                           placeholder="输入 jobName">
+                </div>
+                <div class="col-md-3">
+                    <label for="status" class="form-label">status</label>
+                    <select class="form-select alk-select-status" id="status" name="status">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="exitCode" class="form-label">exitCode</label>
+                    <input type="text" class="form-control" id="exitCode" name="exitCode" placeholder="输入 exitCode">
+                </div>
+                <div class="col-md-6">
+                    <label for="exitMessage" class="form-label">exitMessage</label>
+                    <input type="text" class="form-control" id="exitMessage" name="exitMessage"
+                           placeholder="输入 exitMessage">
+                </div>
+                <div class="col-12 text-center">
+                    <button type="button" class="btn btn-secondary me-2" id="resetButton">
+                        <i class="bi bi-arrow-counterclockwise"></i> 重置
+                    </button>
+                    <button type="button" class="btn btn-primary" id="searchButton">
+                        <i class="bi bi-search"></i> 查询
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-12 text-end mb-3">
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="fallbackButton"
+                onclick="showBuildModal('/message/build', 'fallback')">
+            <i class="bi bi-arrow-left"></i> 回退
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-primary me-5" id="deployButton"
+                onclick="showBuildModal('/message/build', 'deploy')">
+            <i class="bi bi-rocket"></i> 部署
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-info" id="addButton"
+                onclick="showEditModal('/message/create', true)">
+            <i class="bi bi-plus-lg"></i> 新增
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-warning" id="editButton"
+                onclick="showEditModal('/message/update', false)">
+            <i class="bi bi-pencil-square"></i> 更新
+        </button>
+        <button type="button" class="btn btn-sm btn-danger" id="deleteButton"
+                onclick="showDeleteModal('/message/delete')">
+            <i class="bi bi-trash"></i> 删除
+        </button>
+    </div>
+
+    <table id="dataTable"
+           data-toggle="table"
+           data-method="get"
+           data-url="/batch/monitor/job/page"
+           data-sort-name="jobExecutionId"
+           data-sort-order="desc"
+           data-striped="true"
+           data-pagination="true"
+           data-pagination-loop="false"
+           data-side-pagination="server"
+           data-click-to-select="true"
+           data-maintain-selected="true">
+        <thead>
+        <tr>
+            <th data-radio="true"></th>
+            <th data-field="jobExecutionId" data-sortable="true">jobExecutionId</th>
+            <th data-field="version">version</th>
+            <th data-field="jobInstanceId">jobInstanceId</th>
+            <th data-field="createTime" data-sortable="true">createTime</th>
+            <th data-field="startTime" data-sortable="true">startTime</th>
+            <th data-field="endTime" data-sortable="true">endTime</th>
+            <th data-field="status" data-formatter="statusFormatter">status</th>
+            <th data-field="exitCode" data-formatter="statusFormatter">exitCode</th>
+            <th data-field="exitMessage">exitMessage</th>
+            <th data-field="lastUpdated" data-sortable="true">lastUpdated</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/interactjs/dist/interact.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/js/infra.js}"></script>
+<script th:src="@{/js/table.js}"></script>
+<script>
+    initTable();
+    initTableRowEvent();
+    initStatusSelect();
+
+    function initTableRowEvent() {
+        $('#dataTable').on('dbl-click-row.bs.table', function (event, row, $element) {
+            redirectToFieldPage(row.jobExecutionId);
+        });
+    }
+
+    function refresh() {
+        $('#dataTable').bootstrapTable('refreshOptions', {
+            pageNumber: 1,
+            sortOrder: "desc",
+            sortName: "jobExecutionId"
+        });
+    }
+
+    function initStatusSelect() {
+        httpClient('/batch/monitor/job/status/list', 'GET', null, function (data) {
+            data.forEach((value) => {
+                $('.alk-select-status').append($('<option>', {value: value, text: value}));
+            });
+        });
+    }
+
+    function statusFormatter(arg) {
+        if (!arg) {
+            return '';
+        }
+        let bg = mapping(arg);
+        return `<span class="badge ${bg}">${arg}</span>`;
+    }
+
+    function mapping(code) {
+        switch (code) {
+            case 'COMPLETED':
+                return 'bg-success';
+            case 'FAILED':
+                return 'bg-danger';
+            default:
+                return 'bg-primary';
+        }
+    }
+</script>
+</body>
+</html>

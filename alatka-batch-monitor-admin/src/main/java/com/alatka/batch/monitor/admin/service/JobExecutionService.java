@@ -7,6 +7,7 @@ import com.alatka.batch.monitor.admin.model.JobExecutionRes;
 import com.alatka.batch.monitor.admin.repository.JobExecutionRepository;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import org.springframework.batch.core.BatchStatus;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -31,6 +34,10 @@ public class JobExecutionService {
                     BeanUtils.copyProperties(entity, res);
                     return res;
                 });
+    }
+
+    public List<String> statusList() {
+        return Arrays.stream(BatchStatus.values()).map(Enum::name).collect(Collectors.toList());
     }
 
     private Specification<JobExecution> condition(JobExecutionPageReq condition) {

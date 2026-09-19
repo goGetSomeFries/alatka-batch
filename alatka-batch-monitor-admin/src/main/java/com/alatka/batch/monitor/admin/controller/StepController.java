@@ -21,7 +21,7 @@ public class StepController {
     private StepExecutionService stepExecutionService;
 
     @Operation(summary = "分页查询 Step Execution")
-    @GetMapping("/execution/page")
+    @GetMapping("/page")
     public PageResMessage<StepExecutionRes> queryExecutionPage(@Valid @ParameterObject StepExecutionPageReq pageReqMessage) {
         return PageResMessage.success(stepExecutionService.queryPage(pageReqMessage));
     }

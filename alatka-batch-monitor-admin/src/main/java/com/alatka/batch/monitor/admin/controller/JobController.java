@@ -29,7 +29,7 @@ public class JobController {
     private JobExecutionParamsService jobExecutionParamsService;
 
     @Operation(summary = "分页查询 Job Execution")
-    @GetMapping("/execution/page")
+    @GetMapping("/page")
     public PageResMessage<JobExecutionRes> queryExecutionPage(@Valid @ParameterObject JobExecutionPageReq pageReqMessage) {
         return PageResMessage.success(jobExecutionService.queryPage(pageReqMessage));
     }
@@ -38,6 +38,12 @@ public class JobController {
     @GetMapping("/params/list")
     public ResMessage<List<JobExecutionParamsRes>> queryExecutionParams(@RequestParam Long jobExecutionId) {
         return ResMessage.success(jobExecutionParamsService.queryList(jobExecutionId));
+    }
+
+    @Operation(summary = "查询 status")
+    @GetMapping("/status/list")
+    public ResMessage<List<String>> statusList() {
+        return ResMessage.success(jobExecutionService.statusList());
     }
 
     @Autowired

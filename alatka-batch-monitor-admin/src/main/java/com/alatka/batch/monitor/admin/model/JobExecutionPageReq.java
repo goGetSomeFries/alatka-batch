@@ -3,6 +3,8 @@ package com.alatka.batch.monitor.admin.model;
 import com.alatka.batch.infra.model.PageReqMessage;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
@@ -11,6 +13,7 @@ import java.time.LocalDateTime;
 public class JobExecutionPageReq extends PageReqMessage {
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotEmpty(message = "jobName 不能为空")
     private String jobName;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
