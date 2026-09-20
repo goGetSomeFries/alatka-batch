@@ -61,6 +61,10 @@
         </dependency>
         <dependency>
             <groupId>org.webjars.npm</groupId>
+            <artifactId>flatpickr</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
             <artifactId>tom-select</artifactId>
         </dependency>
     </dependencies>

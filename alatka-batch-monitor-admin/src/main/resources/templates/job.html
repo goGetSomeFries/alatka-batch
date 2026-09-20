@@ -6,7 +6,9 @@
     <title>alatka-batch-monitor-admin</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/tom-select/dist/css/tom-select.bootstrap5.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/flatpickr/dist/flatpickr.min.css}"/>
 </head>
 <body>
 <div class="container mt-4">
@@ -29,14 +31,9 @@
                     <input type="text" class="form-control" id="jobName" name="jobName" placeholder="输入 jobName">
                 </div>
                 <div class="col-md-4">
-                    <label for="createTimeLeft" class="form-label">createTimeLeft</label>
-                    <input type="text" class="form-control" id="createTimeLeft" name="createTimeLeft"
-                           placeholder="输入 jobName">
-                </div>
-                <div class="col-md-4">
-                    <label for="createTimeRight" class="form-label">createTimeRight</label>
-                    <input type="text" class="form-control" id="createTimeRight" name="createTimeRight"
-                           placeholder="输入 jobName">
+                    <label for="createTimeRange" class="form-label">createTime</label>
+                    <input type="text" class="form-control bg-white" id="createTimeRange" name="createTimeRange"
+                           placeholder="选择时间" readonly>
                 </div>
                 <div class="col-md-3">
                     <label for="status" class="form-label">status</label>
@@ -96,12 +93,13 @@
            data-striped="true"
            data-pagination="true"
            data-pagination-loop="false"
+           data-detail-view="true"
+           data-detail-formatter="detailFormatter"
            data-side-pagination="server"
            data-click-to-select="true"
            data-maintain-selected="true">
         <thead>
         <tr>
-            <th data-radio="true"></th>
             <th data-field="jobExecutionId" data-sortable="true">jobExecutionId</th>
             <th data-field="version">version</th>
             <th data-field="jobInstanceId">jobInstanceId</th>
@@ -122,11 +120,15 @@
 <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/webjars/flatpickr/dist/flatpickr.min.js}"></script>
+<script th:src="@{/webjars/flatpickr/dist/l10n/zh.js}"></script>
+<script th:src="@{/webjars/tom-select/dist/js/tom-select.complete.min.js}"></script>
 <script th:src="@{/js/infra.js}"></script>
 <script th:src="@{/js/table.js}"></script>
 <script>
     initTable();
     initTableRowEvent();
+    initFlatPickr();
     initStatusSelect();
 
     function initTableRowEvent() {
@@ -143,11 +145,90 @@
         });
     }
 
+    function initFlatPickr() {
+        const fp = flatpickr("#createTimeRange", {
+            locale: {
+                ...flatpickr.l10ns.zh,
+                rangeSeparator: '~'
+            },
+            mode: "range",
+            enableTime: true,
+            enableSeconds: true,
+            time_24hr: true,
+            dateFormat: "Y-m-d H:i:S",
+            defaultHour: 0,
+            defaultMinute: 0,
+            onClose: function (selectedDates, dateStr, instance) {
+                if (selectedDates.length === 1) {
+                    let startTime = new Date(selectedDates[0]);
+                    let endTime = new Date();
+                    instance.setDate([startTime, endTime], false);
+                }
+            }
+        });
+    }
+
     function initStatusSelect() {
+        let tomSelect = new TomSelect('#status', {
+            plugins: ['remove_button'],
+            maxItems: null,
+            render: {
+                option: function (data, escape) {
+                    return `<div>${data.badgeHtml}</div>`;
+                },
+                item: function (data, escape) {
+                    return `<div>${data.badgeHtml}</div>`;
+                }
+            }
+        });
         httpClient('/batch/monitor/job/status/list', 'GET', null, function (data) {
             data.forEach((value) => {
-                $('.alk-select-status').append($('<option>', {value: value, text: value}));
+                tomSelect.addOption({
+                    value: value,
+                    text: value,
+                    badgeHtml: statusFormatter(value)
+                });
             });
+        });
+    }
+
+    function detailFormatter(index, row) {
+        const stepsContainerId = `steps-execution-${row.jobExecutionId}`;
+        initGraphHistory(row.jobExecutionId, null, (html) => {
+            $(`#${stepsContainerId}`).html(html);
+        });
+
+        const paramContainerId = `param-detail-${row.jobExecutionId}`;
+        initParamList(row.jobExecutionId, (html) => {
+            if (html === 'NONE') {
+                $(`#${paramContainerId}`).remove();
+            } else {
+                $(`#${paramContainerId}`).html(html);
+            }
+        });
+
+        return `<div class="p-3 text-center text-muted small">
+                    <div class="p-3 bg-light rounded shadow-sm" style="width: 0; min-width: 100%; overflow: hidden;">
+                        <div id="${paramContainerId}" class="d-flex flex-wrap pb-0 pt-2 mb-2 bg-white p-3 rounded-3 border border-secondary border-opacity-25">
+                        </div>
+                        <div id="${stepsContainerId}" class="d-flex flex-nowrap position-relative overflow-x-auto pb-4 pt-2 bg-light p-3 rounded-3 border border-secondary border-opacity-25" style="scrollbar-width: thin;">
+                        </div>
+                    </div>
+                </div>`;
+    }
+
+    function initParamList(jobExecutionId, callback) {
+        httpClient(`/batch/monitor/job/params/list?jobExecutionId=${jobExecutionId}`, 'GET', null, function (list) {
+            let html = '';
+            list.forEach(function (param) {
+                html += `<span class="me-1 mb-2 badge ${param.identifying === 'Y' ? 'bg-primary' : 'bg-secondary'}">${param.parameterName} = ${param.parameterValue}</span>`;
+            });
+            html = html === '' ? `<span class="mb-2 badge bg-warning">未配置参数</span>` : html;
+            callback(html);
+        }, function (msg) {
+            showErrorToast(`接口响应失败: ${msg}`);
+        }, function () {
+            callback('NONE');
         });
     }
 
@@ -165,8 +246,13 @@
                 return 'bg-success';
             case 'FAILED':
                 return 'bg-danger';
-            default:
+            case 'UNKNOWN':
+                return 'bg-warning';
+            case 'STARTING':
+            case 'STARTED':
                 return 'bg-primary';
+            default:
+                return 'bg-secondary';
         }
     }
 </script>

@@ -12,11 +12,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Tag(name = "Spring Batch Job")
@@ -28,9 +28,22 @@ public class JobController {
 
     private JobExecutionParamsService jobExecutionParamsService;
 
+    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    @InitBinder({"jobExecutionPageReq"})
+    public void initOrderBinder(WebDataBinder binder) {
+        binder.setDisallowedFields("createTimeLeft");
+        binder.setDisallowedFields("createTimeRight");
+    }
+
     @Operation(summary = "分页查询 Job Execution")
     @GetMapping("/page")
     public PageResMessage<JobExecutionRes> queryExecutionPage(@Valid @ParameterObject JobExecutionPageReq pageReqMessage) {
+        if (pageReqMessage.getCreateTimeRange() != null) {
+            String[] createTimeRange = pageReqMessage.getCreateTimeRange().split("~");
+            pageReqMessage.setCreateTimeLeft(LocalDateTime.parse(createTimeRange[0], dateTimeFormatter));
+            pageReqMessage.setCreateTimeRight(LocalDateTime.parse(createTimeRange[1], dateTimeFormatter));
+        }
         return PageResMessage.success(jobExecutionService.queryPage(pageReqMessage));
     }
 

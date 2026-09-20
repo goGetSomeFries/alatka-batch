@@ -49,7 +49,7 @@ public class JobExecutionService {
             list.add(criteriaBuilder.equal(jobInstanceRoot.get("jobName").as(String.class), condition.getJobName()));
 
             if (condition.getStatus() != null) {
-                list.add(criteriaBuilder.equal(root.get("status").as(String.class), condition.getStatus()));
+                list.add(root.get("status").as(String.class).in(condition.getStatus()));
             }
             if (condition.getExitCode() != null) {
                 list.add(criteriaBuilder.equal(root.get("exitCode").as(String.class), condition.getExitCode()));

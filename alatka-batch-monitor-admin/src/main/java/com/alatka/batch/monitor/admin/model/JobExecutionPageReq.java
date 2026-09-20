@@ -1,13 +1,11 @@
 package com.alatka.batch.monitor.admin.model;
 
 import com.alatka.batch.infra.model.PageReqMessage;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Schema(description = "Job Execution 分页请求")
 public class JobExecutionPageReq extends PageReqMessage {
@@ -16,15 +14,15 @@ public class JobExecutionPageReq extends PageReqMessage {
     @NotEmpty(message = "jobName 不能为空")
     private String jobName;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Schema(hidden = true)
     private LocalDateTime createTimeLeft;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Schema(hidden = true)
     private LocalDateTime createTimeRight;
 
-    private String status;
+    private String createTimeRange;
+
+    private List<String> status;
 
     private String exitCode;
 
@@ -54,11 +52,19 @@ public class JobExecutionPageReq extends PageReqMessage {
         this.createTimeRight = createTimeRight;
     }
 
-    public String getStatus() {
+    public String getCreateTimeRange() {
+        return createTimeRange;
+    }
+
+    public void setCreateTimeRange(String createTimeRange) {
+        this.createTimeRange = createTimeRange;
+    }
+
+    public List<String> getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(List<String> status) {
         this.status = status;
     }
 
