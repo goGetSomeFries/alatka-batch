@@ -15,7 +15,7 @@
 <div class="container mt-4">
     <div class="card mb-3">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Job Execution 查询</h5>
+            <h5 class="mb-0">Step Execution 查询</h5>
             <button class="btn btn-sm btn-outline-secondary"
                     type="button"
                     data-bs-toggle="collapse"
@@ -27,9 +27,10 @@
         </div>
         <div class="card-body collapse show" id="cardCollapse">
             <form id="searchForm" class="row g-3">
+                <input type="hidden" name="jobExecutionId" id="jobExecutionId">
                 <div class="col-md-4">
-                    <label for="jobName" class="form-label">jobName</label>
-                    <input type="text" class="form-control" id="jobName" name="jobName" placeholder="输入 jobName">
+                    <label for="stepName" class="form-label">stepName</label>
+                    <input type="text" class="form-control" id="stepName" name="stepName" placeholder="输入 stepName">
                 </div>
                 <div class="col-md-4">
                     <label for="createTimeRange" class="form-label">createTime</label>
@@ -71,8 +72,8 @@
     <table id="dataTable"
            data-toggle="table"
            data-method="get"
-           data-url="/batch/monitor/job/page"
-           data-sort-name="jobExecutionId"
+           data-url="/batch/monitor/step/page"
+           data-sort-name="stepExecutionId"
            data-sort-order="desc"
            data-striped="true"
            data-pagination="true"
@@ -84,9 +85,9 @@
            data-maintain-selected="true">
         <thead>
         <tr>
-            <th data-field="jobExecutionId" data-sortable="true">jobExecutionId</th>
+            <th data-field="stepExecutionId" data-sortable="true">stepExecutionId</th>
             <th data-field="version">version</th>
-            <th data-field="jobInstanceId">jobInstanceId</th>
+            <th data-field="stepName">stepName</th>
             <th data-field="createTime" data-sortable="true">createTime</th>
             <th data-field="startTime" data-sortable="true">startTime</th>
             <th data-field="endTime" data-sortable="true">endTime</th>
@@ -113,33 +114,27 @@
 <script>
     preLoad();
     initTable();
-    initTableRowEvent();
     initFlatPickr('#createTimeRange');
     initFlatPickr('#endTimeRange');
     initStatusSelect();
 
     function preLoad() {
         const urlParams = new URLSearchParams(window.location.search);
-        const jobName = urlParams.get('jobName');
-        if (jobName) {
-            $("#jobName").val(jobName).addClass('is-readonly');
+        const jobExecutionId = urlParams.get('jobExecutionId');
+        if (!jobExecutionId) {
+            showErrorToast('jobExecutionId 未设置');
+            return;
         }
-    }
-
-    function initTableRowEvent() {
-        $('#dataTable').on('dbl-click-row.bs.table', function (event, row, $element) {
-            window.location.href = `/batch/monitor/step?jobExecutionId=${row.jobExecutionId}`;
-        });
+        $("#jobExecutionId").val(jobExecutionId);
     }
 
     function refresh() {
         $('#dataTable').bootstrapTable('refreshOptions', {
             pageNumber: 1,
             sortOrder: "desc",
-            sortName: "jobExecutionId"
+            sortName: "stepExecutionId"
         });
     }
-
 
     function detailFormatter(index, row) {
         const stepsContainerId = `steps-execution-${row.jobExecutionId}`;

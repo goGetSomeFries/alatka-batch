@@ -29,6 +29,7 @@ public class StepExecution {
     private Integer rollbackCount;
     private String exitCode;
     private String exitMessage;
+    private LocalDateTime lastUpdated;
 
     public Long getStepExecutionId() {
         return stepExecutionId;
@@ -172,5 +173,13 @@ public class StepExecution {
 
     public void setExitMessage(String exitMessage) {
         this.exitMessage = exitMessage;
+    }
+
+    public LocalDateTime getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(LocalDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 }

@@ -1,6 +1,28 @@
 function initTable() {
     $("#resetButton").click(function () {
-        $("#searchForm")[0].reset();
+        $("#resetButton").off('click').on('click', function () {
+            const $searchForm = $("#searchForm");
+            const cache = {};
+
+            $searchForm.find(".is-readonly").each(function () {
+                const key = this.name || this.id;
+                cache[key] = $(this).val();
+            });
+
+            $searchForm[0].reset();
+            $searchForm.find('select').each(function () {
+                if (this.tomselect) {
+                    this.tomselect.clear();
+                }
+            });
+
+            $searchForm.find(".is-readonly").each(function () {
+                const key = this.name || this.id;
+                if (cache[key] !== undefined) {
+                    $(this).val(cache[key]);
+                }
+            });
+        });
     })
 
     $("#searchButton").click(function () {

@@ -60,6 +60,9 @@ public class JobExecutionService {
             if (condition.getCreateTimeLeft() != null && condition.getCreateTimeRight() != null) {
                 list.add(criteriaBuilder.between(root.get("createTime").as(LocalDateTime.class), condition.getCreateTimeLeft(), condition.getCreateTimeRight()));
             }
+            if (condition.getEndTimeLeft() != null && condition.getEndTimeRight() != null) {
+                list.add(criteriaBuilder.between(root.get("endTime").as(LocalDateTime.class), condition.getEndTimeLeft(), condition.getEndTimeRight()));
+            }
 
             return criteriaBuilder.and(list.toArray(new Predicate[0]));
         };

@@ -1,5 +1,6 @@
 package com.alatka.batch.monitor.admin.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
@@ -19,10 +20,13 @@ public class StepExecutionRes {
     private Long jobExecutionId;
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
     private String status;
@@ -46,6 +50,9 @@ public class StepExecutionRes {
     private String exitCode;
 
     private String exitMessage;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime lastUpdated;
 
     public Long getStepExecutionId() {
         return stepExecutionId;
@@ -189,5 +196,13 @@ public class StepExecutionRes {
 
     public void setExitMessage(String exitMessage) {
         this.exitMessage = exitMessage;
+    }
+
+    public LocalDateTime getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(LocalDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 }

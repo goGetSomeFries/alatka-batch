@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +23,7 @@ public class StepExecutionService {
     private StepExecutionRepository stepExecutionRepository;
 
     public Page<StepExecutionRes> queryPage(StepExecutionPageReq pageReq) {
-        StepExecution condition = new StepExecution();
-        BeanUtils.copyProperties(pageReq, condition);
-        return this.stepExecutionRepository.findAll(this.condition(condition), pageReq.build())
+        return this.stepExecutionRepository.findAll(this.condition(pageReq), pageReq.build())
                 .map(entity -> {
                     StepExecutionRes res = new StepExecutionRes();
                     BeanUtils.copyProperties(entity, res);
@@ -32,7 +31,7 @@ public class StepExecutionService {
                 });
     }
 
-    private Specification<StepExecution> condition(StepExecution condition) {
+    private Specification<StepExecution> condition(StepExecutionPageReq condition) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> list = new ArrayList<>();
 
@@ -48,6 +47,12 @@ public class StepExecutionService {
             }
             if (condition.getExitMessage() != null) {
                 list.add(criteriaBuilder.like(root.get("exitMessage").as(String.class), "%" + condition.getExitMessage() + "%"));
+            }
+            if (condition.getCreateTimeLeft() != null && condition.getCreateTimeRight() != null) {
+                list.add(criteriaBuilder.between(root.get("createTime").as(LocalDateTime.class), condition.getCreateTimeLeft(), condition.getCreateTimeRight()));
+            }
+            if (condition.getEndTimeLeft() != null && condition.getEndTimeRight() != null) {
+                list.add(criteriaBuilder.between(root.get("endTime").as(LocalDateTime.class), condition.getEndTimeLeft(), condition.getEndTimeRight()));
             }
 
             return criteriaBuilder.and(list.toArray(new Predicate[0]));

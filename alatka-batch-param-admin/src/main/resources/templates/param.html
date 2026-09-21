@@ -3,18 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>alatka-batch-flow-admin</title>
+    <title>alatka-batch-param-admin</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.min.css}"/>
-    <style>
-        .is-readonly {
-            background-color: var(--bs-secondary-bg, #e9ecef);
-            opacity: 1;
-            cursor: default;
-            pointer-events: none;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/infra.css}">
 </head>
 <body>
 <div class="container mt-4">
@@ -41,11 +34,11 @@
                     <input type="text" class="form-control" id="key" name="key" placeholder="输入参数键">
                 </div>
                 <div class="col-md-6">
-                    <label for="key" class="form-label">描述</label>
+                    <label for="desc" class="form-label">描述</label>
                     <input type="text" class="form-control" id="desc" name="desc" placeholder="输入描述">
                 </div>
                 <div class="col-md-3">
-                    <label for="enabled" class="form-label">类型</label>
+                    <label for="type" class="form-label">类型</label>
                     <select class="form-select" id="type" name="type">
                         <option value="">全部</option>
                         <option value="global">global</option>
@@ -204,30 +197,8 @@
         }
     }
 
-    function postLoad() {
-        $("#resetButton").off('click').on('click', function () {
-            const $searchForm = $("#searchForm");
-            const cache = {};
-
-            $searchForm.find(".is-readonly").each(function () {
-                const key = this.name || this.id;
-                cache[key] = $(this).val();
-            });
-
-            $searchForm[0].reset();
-
-            $searchForm.find(".is-readonly").each(function () {
-                const key = this.name || this.id;
-                if (cache[key] !== undefined) {
-                    $(this).val(cache[key]);
-                }
-            });
-        });
-    }
-
     preLoad();
     initTable();
-    postLoad();
 </script>
 </body>
 </html>

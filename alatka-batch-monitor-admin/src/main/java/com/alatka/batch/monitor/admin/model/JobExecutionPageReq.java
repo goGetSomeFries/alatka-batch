@@ -22,6 +22,14 @@ public class JobExecutionPageReq extends PageReqMessage {
 
     private String createTimeRange;
 
+    @Schema(hidden = true)
+    private LocalDateTime endTimeLeft;
+
+    @Schema(hidden = true)
+    private LocalDateTime endTimeRight;
+
+    private String endTimeRange;
+
     private List<String> status;
 
     private String exitCode;
@@ -58,6 +66,30 @@ public class JobExecutionPageReq extends PageReqMessage {
 
     public void setCreateTimeRange(String createTimeRange) {
         this.createTimeRange = createTimeRange;
+    }
+
+    public LocalDateTime getEndTimeLeft() {
+        return endTimeLeft;
+    }
+
+    public void setEndTimeLeft(LocalDateTime endTimeLeft) {
+        this.endTimeLeft = endTimeLeft;
+    }
+
+    public LocalDateTime getEndTimeRight() {
+        return endTimeRight;
+    }
+
+    public void setEndTimeRight(LocalDateTime endTimeRight) {
+        this.endTimeRight = endTimeRight;
+    }
+
+    public String getEndTimeRange() {
+        return endTimeRange;
+    }
+
+    public void setEndTimeRange(String endTimeRange) {
+        this.endTimeRange = endTimeRange;
     }
 
     public List<String> getStatus() {

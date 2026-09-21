@@ -34,6 +34,8 @@ public class JobController {
     public void initOrderBinder(WebDataBinder binder) {
         binder.setDisallowedFields("createTimeLeft");
         binder.setDisallowedFields("createTimeRight");
+        binder.setDisallowedFields("endTimeLeft");
+        binder.setDisallowedFields("endTimeRight");
     }
 
     @Operation(summary = "分页查询 Job Execution")
@@ -43,6 +45,11 @@ public class JobController {
             String[] createTimeRange = pageReqMessage.getCreateTimeRange().split("~");
             pageReqMessage.setCreateTimeLeft(LocalDateTime.parse(createTimeRange[0], dateTimeFormatter));
             pageReqMessage.setCreateTimeRight(LocalDateTime.parse(createTimeRange[1], dateTimeFormatter));
+        }
+        if (pageReqMessage.getEndTimeRange() != null) {
+            String[] endTimeRange = pageReqMessage.getEndTimeRange().split("~");
+            pageReqMessage.setEndTimeLeft(LocalDateTime.parse(endTimeRange[0], dateTimeFormatter));
+            pageReqMessage.setEndTimeRight(LocalDateTime.parse(endTimeRange[1], dateTimeFormatter));
         }
         return PageResMessage.success(jobExecutionService.queryPage(pageReqMessage));
     }
