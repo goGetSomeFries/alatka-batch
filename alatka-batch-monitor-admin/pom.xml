@@ -67,5 +67,9 @@
             <groupId>org.webjars.npm</groupId>
             <artifactId>tom-select</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>highlightjs</artifactId>
+        </dependency>
     </dependencies>
 </project>

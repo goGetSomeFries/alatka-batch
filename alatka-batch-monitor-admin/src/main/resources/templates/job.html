@@ -8,6 +8,7 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/tom-select/dist/css/tom-select.bootstrap5.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/highlightjs/styles/vs.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/flatpickr/dist/flatpickr.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/infra.css}">
 </head>
@@ -78,6 +79,7 @@
            data-pagination="true"
            data-pagination-loop="false"
            data-detail-view="true"
+           data-detail-view-by-click="true"
            data-detail-formatter="detailFormatter"
            data-side-pagination="server"
            data-click-to-select="true"
@@ -92,15 +94,31 @@
             <th data-field="endTime" data-sortable="true">endTime</th>
             <th data-field="status" data-formatter="statusFormatter">status</th>
             <th data-field="exitCode" data-formatter="statusFormatter">exitCode</th>
-            <th data-field="exitMessage">exitMessage</th>
+            <th data-field="exitMessage" data-formatter="exitMessageFormatter">exitMessage</th>
             <th data-field="lastUpdated" data-sortable="true">lastUpdated</th>
         </tr>
         </thead>
     </table>
 </div>
 
+<div class="modal fade" id="exitMessageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">异常信息</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <pre class="ms-1 me-auto"><code class="language-java"></code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
 <script th:src="@{/webjars/interactjs/dist/interact.min.js}"></script>
+<script th:src="@{/webjars/highlightjs/highlight.min.js}"></script>
+<script th:src="@{/webjars/highlightjs/languages/java.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
@@ -139,7 +157,6 @@
             sortName: "jobExecutionId"
         });
     }
-
 
     function detailFormatter(index, row) {
         const stepsContainerId = `steps-execution-${row.jobExecutionId}`;

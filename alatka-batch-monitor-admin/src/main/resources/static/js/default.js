@@ -45,6 +45,19 @@ function initStatusSelect() {
     });
 }
 
+function exitMessageFormatter(message) {
+    if (!message) {
+        return "";
+    }
+    let shortMessage = message.length > 30 && message.substring(0, 30);
+    return `<a href="javascript:void(0)" class="text-danger text-decoration-none" onclick="exitMessageFunction('${message}')">${shortMessage}...</a>`;
+}
+
+function exitMessageFunction(value) {
+    $('#exitMessageModal code').text(value);
+    $('#exitMessageModal').modal('show');
+}
+
 function statusFormatter(arg) {
     if (!arg) {
         return '';

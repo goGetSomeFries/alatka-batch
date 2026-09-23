@@ -79,6 +79,7 @@
            data-pagination="true"
            data-pagination-loop="false"
            data-detail-view="true"
+           data-detail-view-by-click="true"
            data-detail-formatter="detailFormatter"
            data-side-pagination="server"
            data-click-to-select="true"
@@ -93,11 +94,25 @@
             <th data-field="endTime" data-sortable="true">endTime</th>
             <th data-field="status" data-formatter="statusFormatter">status</th>
             <th data-field="exitCode" data-formatter="statusFormatter">exitCode</th>
-            <th data-field="exitMessage">exitMessage</th>
+            <th data-field="exitMessage" data-formatter="exitMessageFormatter">exitMessage</th>
             <th data-field="lastUpdated" data-sortable="true">lastUpdated</th>
         </tr>
         </thead>
     </table>
+</div>
+
+<div class="modal fade" id="exitMessageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">异常信息</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <pre class="ms-1 me-auto"><code class="language-java"></code></pre>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
@@ -137,43 +152,58 @@
     }
 
     function detailFormatter(index, row) {
-        const stepsContainerId = `steps-execution-${row.jobExecutionId}`;
-        initGraphHistory(row.jobExecutionId, null, (html) => {
-            $(`#${stepsContainerId}`).html(html);
-        });
-
-        const paramContainerId = `param-detail-${row.jobExecutionId}`;
-        initParamList(row.jobExecutionId, (html) => {
-            if (html === 'NONE') {
-                $(`#${paramContainerId}`).remove();
-            } else {
-                $(`#${paramContainerId}`).html(html);
-            }
-        });
-
-        return `<div class="p-3 text-center text-muted small">
-                    <div class="p-3 bg-light rounded shadow-sm" style="width: 0; min-width: 100%; overflow: hidden;">
-                        <div id="${paramContainerId}" class="d-flex flex-wrap pb-0 pt-2 mb-2 bg-white p-3 rounded-3 border border-secondary border-opacity-25">
-                        </div>
-                        <div id="${stepsContainerId}" class="d-flex flex-nowrap position-relative overflow-x-auto pb-4 pt-2 bg-light p-3 rounded-3 border border-secondary border-opacity-25" style="scrollbar-width: thin;">
-                        </div>
-                    </div>
-                </div>`;
-    }
-
-    function initParamList(jobExecutionId, callback) {
-        httpClient(`/batch/monitor/job/params/list?jobExecutionId=${jobExecutionId}`, 'GET', null, function (list) {
-            let html = '';
-            list.forEach(function (param) {
-                html += `<span class="me-1 mb-2 badge ${param.identifying === 'Y' ? 'bg-primary' : 'bg-secondary'}">${param.parameterName} = ${param.parameterValue}</span>`;
-            });
-            html = html === '' ? `<span class="mb-2 badge bg-warning">未配置参数</span>` : html;
-            callback(html);
-        }, function (msg) {
-            showErrorToast(`接口响应失败: ${msg}`);
-        }, function () {
-            callback('NONE');
-        });
+        return `
+        <div class="row ms-3 mt-3 mb-3 me-3">
+            <div class="col-md-6 mb-3">
+                <div class="d-flex align-items-center">
+                    <label for="commitCount" class="form-label text-nowrap me-2">commitCount: </label>
+                    <input type="text" class="form-control" id="commitCount" name="commitCount" value="${row.commitCount}" disabled>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="d-flex align-items-center">
+                    <label for="rollbackCount" class="form-label text-nowrap me-2">rollbackCount: </label>
+                    <input type="text" class="form-control" id="rollbackCount" name="rollbackCount" value="${row.rollbackCount}" disabled>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="d-flex align-items-center">
+                    <label for="readCount" class="form-label text-nowrap me-2">readCount: </label>
+                    <input type="text" class="form-control" id="readCount" name="readCount" value="${row.readCount}" disabled>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="d-flex align-items-center">
+                    <label for="filterCount" class="form-label text-nowrap me-2">filterCount: </label>
+                    <input type="text" class="form-control" id="filterCount" name="filterCount" value="${row.filterCount}" disabled>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="d-flex align-items-center">
+                    <label for="writeCount" class="form-label text-nowrap me-2">writeCount: </label>
+                    <input type="text" class="form-control" id="writeCount" name="writeCount" value="${row.writeCount}" disabled>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex align-items-center">
+                    <label for="readSkipCount" class="form-label text-nowrap me-2">readSkipCount: </label>
+                    <input type="text" class="form-control" id="readSkipCount" name="readSkipCount" value="${row.readSkipCount}" disabled>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex align-items-center">
+                    <label for="processSkipCount" class="form-label text-nowrap me-2">processSkipCount: </label>
+                    <input type="text" class="form-control" id="processSkipCount" name="processSkipCount" value="${row.processSkipCount}" disabled>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex align-items-center">
+                    <label for="writeSkipCount" class="form-label text-nowrap me-2">writeSkipCount: </label>
+                    <input type="text" class="form-control" id="writeSkipCount" name="writeSkipCount" value="${row.writeSkipCount}" disabled>
+                </div>
+            </div>
+        </div>
+        `;
     }
 
 </script>
