@@ -9,6 +9,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,7 @@ public class JobExecutionParamsService {
         condition.setJobExecutionId(jobExecutionId);
 
         return this.jobExecutionParamsRepository.findAll(Example.of(condition)).stream()
+                .sorted(Comparator.comparing(JobExecutionParams::getParameterName))
                 .map(entity -> {
                     JobExecutionParamsRes res = new JobExecutionParamsRes();
                     BeanUtils.copyProperties(entity, res);

@@ -143,6 +143,11 @@
             return;
         }
         $("#jobExecutionId").val(jobExecutionId);
+
+        const stepName = urlParams.get('stepName');
+        if (stepName) {
+            $('#stepName').val(stepName);
+        }
     }
 
     function refresh() {

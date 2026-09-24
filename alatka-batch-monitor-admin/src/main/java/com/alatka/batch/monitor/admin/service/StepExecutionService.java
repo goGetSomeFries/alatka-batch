@@ -1,6 +1,8 @@
 package com.alatka.batch.monitor.admin.service;
 
 import com.alatka.batch.monitor.admin.entity.StepExecution;
+import com.alatka.batch.monitor.admin.model.StepExecutionListReq;
+import com.alatka.batch.monitor.admin.model.StepExecutionListRes;
 import com.alatka.batch.monitor.admin.model.StepExecutionPageReq;
 import com.alatka.batch.monitor.admin.model.StepExecutionRes;
 import com.alatka.batch.monitor.admin.repository.StepExecutionRepository;
@@ -29,6 +31,21 @@ public class StepExecutionService {
                     BeanUtils.copyProperties(entity, res);
                     return res;
                 });
+    }
+
+    public StepExecutionListRes queryStepExecutionList(StepExecutionListReq req) {
+        StepExecutionPageReq pageReq = new StepExecutionPageReq();
+        pageReq.setJobExecutionId(req.getJobExecutionId());
+        pageReq.setPageNo(req.getIndex());
+        pageReq.setPageSize(1);
+        pageReq.setOrderBy("stepExecutionId");
+        pageReq.setDirection("desc");
+
+        Page<StepExecutionRes> page = this.queryPage(pageReq);
+        StepExecutionListRes res = new StepExecutionListRes();
+        res.setList(page.getContent());
+        res.setHasNext(page.hasNext());
+        return res;
     }
 
     private Specification<StepExecution> condition(StepExecutionPageReq condition) {

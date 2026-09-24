@@ -1,6 +1,9 @@
 package com.alatka.batch.monitor.admin.controller;
 
 import com.alatka.batch.infra.model.PageResMessage;
+import com.alatka.batch.infra.model.ResMessage;
+import com.alatka.batch.monitor.admin.model.StepExecutionListReq;
+import com.alatka.batch.monitor.admin.model.StepExecutionListRes;
 import com.alatka.batch.monitor.admin.model.StepExecutionPageReq;
 import com.alatka.batch.monitor.admin.model.StepExecutionRes;
 import com.alatka.batch.monitor.admin.service.StepExecutionService;
@@ -49,6 +52,12 @@ public class StepController {
             pageReqMessage.setEndTimeRight(LocalDateTime.parse(endTimeRange[1], dateTimeFormatter));
         }
         return PageResMessage.success(stepExecutionService.queryPage(pageReqMessage));
+    }
+
+    @Operation(summary = "查询 Step Execution")
+    @GetMapping("/list")
+    public ResMessage<StepExecutionListRes> queryStepExecutionList(@Valid @ParameterObject StepExecutionListReq reqMessage) {
+        return ResMessage.success(stepExecutionService.queryStepExecutionList(reqMessage));
     }
 
     @Autowired
