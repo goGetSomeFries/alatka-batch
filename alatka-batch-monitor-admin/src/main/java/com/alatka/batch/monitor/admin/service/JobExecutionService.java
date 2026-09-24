@@ -51,6 +51,9 @@ public class JobExecutionService {
             if (condition.getStatus() != null) {
                 list.add(root.get("status").as(String.class).in(condition.getStatus()));
             }
+            if (condition.getJobExecutionId() != null) {
+                list.add(criteriaBuilder.equal(root.get("jobExecutionId").as(Long.class), condition.getJobExecutionId()));
+            }
             if (condition.getExitCode() != null) {
                 list.add(criteriaBuilder.equal(root.get("exitCode").as(String.class), condition.getExitCode()));
             }

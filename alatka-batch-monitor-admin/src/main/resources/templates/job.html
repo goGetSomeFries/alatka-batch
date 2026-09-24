@@ -28,6 +28,7 @@
         </div>
         <div class="card-body collapse show" id="cardCollapse">
             <form id="searchForm" class="row g-3">
+                <input type="hidden" name="jobExecutionId" id="jobExecutionId">
                 <div class="col-md-4">
                     <label for="jobName" class="form-label">jobName</label>
                     <input type="text" class="form-control" id="jobName" name="jobName" placeholder="输入 jobName">
@@ -83,12 +84,13 @@
            data-detail-formatter="detailFormatter"
            data-side-pagination="server"
            data-click-to-select="true"
+           data-show-columns="true"
            data-maintain-selected="true">
         <thead>
         <tr>
-            <th data-field="jobExecutionId" data-sortable="true">jobExecutionId</th>
-            <th data-field="version">version</th>
-            <th data-field="jobInstanceId">jobInstanceId</th>
+            <th data-field="jobExecutionId" data-visible="false" data-sortable="true">jobExecutionId</th>
+            <th data-field="version" data-visible="false">version</th>
+            <th data-field="jobInstanceId" data-visible="false">jobInstanceId</th>
             <th data-field="createTime" data-sortable="true">createTime</th>
             <th data-field="startTime" data-sortable="true">startTime</th>
             <th data-field="endTime" data-sortable="true">endTime</th>
@@ -102,7 +104,7 @@
 </div>
 
 <div class="modal fade" id="exitMessageModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">异常信息</h5>
@@ -138,10 +140,12 @@
 
     function preLoad() {
         const urlParams = new URLSearchParams(window.location.search);
+
         const jobName = urlParams.get('jobName');
-        if (jobName) {
-            $("#jobName").val(jobName).addClass('is-readonly');
-        }
+        jobName && $("#jobName").val(jobName).addClass('is-readonly');
+
+        const jobExecutionId = urlParams.get('jobExecutionId');
+        jobExecutionId && $("#jobExecutionId").val(jobExecutionId);
     }
 
     function initTableRowEvent() {

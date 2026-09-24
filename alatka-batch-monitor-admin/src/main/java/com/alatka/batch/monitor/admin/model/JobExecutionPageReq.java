@@ -10,6 +10,8 @@ import java.util.List;
 @Schema(description = "Job Execution 分页请求")
 public class JobExecutionPageReq extends PageReqMessage {
 
+    private Long jobExecutionId;
+
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     @NotEmpty(message = "jobName 不能为空")
     private String jobName;
@@ -35,6 +37,14 @@ public class JobExecutionPageReq extends PageReqMessage {
     private String exitCode;
 
     private String exitMessage;
+
+    public Long getJobExecutionId() {
+        return jobExecutionId;
+    }
+
+    public void setJobExecutionId(Long jobExecutionId) {
+        this.jobExecutionId = jobExecutionId;
+    }
 
     public String getJobName() {
         return jobName;

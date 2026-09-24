@@ -49,11 +49,19 @@ function exitMessageFormatter(message) {
     if (!message) {
         return "";
     }
-    let shortMessage = message.length > 30 && message.substring(0, 30);
-    return `<a href="javascript:void(0)" class="text-danger text-decoration-none" onclick="exitMessageFunction('${message}')">${shortMessage}...</a>`;
+    let displayMessage = message.length > 80 ? message.substring(0, 80) + "..." : message;
+    const $link = $('<a></a>')
+        .attr('href', 'javascript:void(0)')
+        .addClass('text-danger text-decoration-none')
+        .attr('data-content', message)
+        .attr('onclick', 'exitMessageFunction(this)')
+        .text(displayMessage);
+
+    return $link[0].outerHTML;
 }
 
-function exitMessageFunction(value) {
+function exitMessageFunction(element) {
+    const value = $(element).attr('data-content');
     $('#exitMessageModal code').text(value);
     $('#exitMessageModal').modal('show');
 }

@@ -31,8 +31,13 @@ public class StepConfig {
     @Bean("step_test2")
     public Step testStep2() {
         return new StepBuilder("step_test2", jobRepository).tasklet((contribution, chunkContext) -> {
-            this.logger.info("执行step_test2...");
-            return RepeatStatus.FINISHED;
+            try {
+                this.logger.info("执行step_test2...");
+                throw new IllegalArgumentException("inner exception");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+//            return RepeatStatus.FINISHED;
         }, transactionManager).build();
     }
 
