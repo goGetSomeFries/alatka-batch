@@ -37,7 +37,7 @@ public class StepExecutionService {
         StepExecutionPageReq pageReq = new StepExecutionPageReq();
         pageReq.setJobExecutionId(req.getJobExecutionId());
         pageReq.setPageNo(req.getIndex());
-        pageReq.setPageSize(1);
+        pageReq.setPageSize(5);
         pageReq.setOrderBy("stepExecutionId");
         pageReq.setDirection("desc");
 
