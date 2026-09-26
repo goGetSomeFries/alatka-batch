@@ -1,12 +1,13 @@
 package com.alatka.batch.monitor.admin.service;
 
+import com.alatka.batch.monitor.admin.entity.JobExecutionParams;
 import com.alatka.batch.monitor.admin.entity.StepExecution;
-import com.alatka.batch.monitor.admin.model.StepExecutionListReq;
-import com.alatka.batch.monitor.admin.model.StepExecutionListRes;
-import com.alatka.batch.monitor.admin.model.StepExecutionPageReq;
-import com.alatka.batch.monitor.admin.model.StepExecutionRes;
+import com.alatka.batch.monitor.admin.model.*;
 import com.alatka.batch.monitor.admin.repository.StepExecutionRepository;
 import jakarta.persistence.criteria.Predicate;
+import org.springframework.batch.core.Step;
+import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.step.job.JobStep;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,12 +18,37 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
 public class StepExecutionService {
 
     private StepExecutionRepository stepExecutionRepository;
+
+    private JobExecutionParamsService jobExecutionParamsService;
+
+    private JobExplorer jobExplorer;
+
+    public SubJobExecutionRes getSubJobExecution(Long jobExecutionId, Long stepExecutionId) {
+        org.springframework.batch.core.StepExecution stepExecution = jobExplorer.getStepExecution(jobExecutionId, stepExecutionId);
+        if (stepExecution == null) {
+            throw new IllegalArgumentException("StepExecution Not Found");
+        }
+
+        SubJobExecutionRes res = new SubJobExecutionRes();
+        if (stepExecution.getExecutionContext().getString(Step.STEP_TYPE_KEY).equals(JobStep.class.getName())) {
+            JobExecutionParams jobExecutionParams =
+                    Optional.ofNullable(this.jobExecutionParamsService.queryByKV("", stepExecutionId.toString())) // TODO
+                            .orElseThrow(() -> new IllegalArgumentException("确认是否配置 BeanPostProcessor"));
+            Long subJobExecutionId = jobExecutionParams.getJobExecutionId();
+            String jobName = jobExplorer.getJobExecution(subJobExecutionId).getJobInstance().getJobName();
+            res.setExisted(true);
+            res.setJobName(jobName);
+            res.setJobExecutionId(subJobExecutionId);
+        }
+        return res;
+    }
 
     public Page<StepExecutionRes> queryPage(StepExecutionPageReq pageReq) {
         return this.stepExecutionRepository.findAll(this.condition(pageReq), pageReq.build())
@@ -79,5 +105,15 @@ public class StepExecutionService {
     @Autowired
     public void setStepExecutionRepository(StepExecutionRepository stepExecutionRepository) {
         this.stepExecutionRepository = stepExecutionRepository;
+    }
+
+    @Autowired
+    public void setJobExecutionParamsService(JobExecutionParamsService jobExecutionParamsService) {
+        this.jobExecutionParamsService = jobExecutionParamsService;
+    }
+
+    @Autowired
+    public void setJobExplorer(JobExplorer jobExplorer) {
+        this.jobExplorer = jobExplorer;
     }
 }

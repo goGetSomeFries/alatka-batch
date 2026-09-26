@@ -131,6 +131,7 @@
 <script>
     preLoad();
     initTable();
+    initTableRowEvent();
     initFlatPickr('#createTimeRange');
     initFlatPickr('#endTimeRange');
     initStatusSelect();
@@ -148,6 +149,18 @@
         if (stepName) {
             $('#stepName').val(stepName);
         }
+    }
+
+    function initTableRowEvent() {
+        $('#dataTable').on('dbl-click-row.bs.table', function (event, row, $element) {
+            httpClient(`/batch/monitor/step/subJobExecution?jobExecutionId=${row.jobExecutionId}&stepExecutionId]${row.stepExecutionId}`, 'GET', null, function (res) {
+                if (res.isExisted) {
+                    window.location.href = `/batch/monitor/job?JobName=${res.jobName}&jobExecutionId=${res.jobExecutionId}`;
+                } else {
+                    showWarningToast(`${row.stepName} 不存在子 Job`);
+                }
+            });
+        });
     }
 
     function refresh() {

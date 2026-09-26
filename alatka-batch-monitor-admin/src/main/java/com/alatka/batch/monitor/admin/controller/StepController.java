@@ -2,21 +2,16 @@ package com.alatka.batch.monitor.admin.controller;
 
 import com.alatka.batch.infra.model.PageResMessage;
 import com.alatka.batch.infra.model.ResMessage;
-import com.alatka.batch.monitor.admin.model.StepExecutionListReq;
-import com.alatka.batch.monitor.admin.model.StepExecutionListRes;
-import com.alatka.batch.monitor.admin.model.StepExecutionPageReq;
-import com.alatka.batch.monitor.admin.model.StepExecutionRes;
+import com.alatka.batch.monitor.admin.model.*;
 import com.alatka.batch.monitor.admin.service.StepExecutionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -58,6 +53,14 @@ public class StepController {
     @GetMapping("/list")
     public ResMessage<StepExecutionListRes> queryStepExecutionList(@Valid @ParameterObject StepExecutionListReq reqMessage) {
         return ResMessage.success(stepExecutionService.queryStepExecutionList(reqMessage));
+    }
+
+    @Operation(summary = "查询 Sub Job Execution")
+    @Parameter(name = "jobExecutionId", description = "jobExecutionId", required = true)
+    @Parameter(name = "stepExecutionId", description = "stepExecutionId", required = true)
+    @GetMapping("/subJobExecution")
+    public ResMessage<SubJobExecutionRes> getSubJobExecution(@RequestParam Long jobExecutionId, @RequestParam Long stepExecutionId) {
+        return ResMessage.success(stepExecutionService.getSubJobExecution(jobExecutionId, stepExecutionId));
     }
 
     @Autowired

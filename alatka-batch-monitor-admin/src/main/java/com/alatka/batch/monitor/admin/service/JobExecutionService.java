@@ -44,10 +44,11 @@ public class JobExecutionService {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> list = new ArrayList<>();
 
-            Root<JobInstance> jobInstanceRoot = query.from(JobInstance.class);
-            list.add(criteriaBuilder.equal(root.get("jobInstanceId"), jobInstanceRoot.get("jobInstanceId")));
-            list.add(criteriaBuilder.equal(jobInstanceRoot.get("jobName").as(String.class), condition.getJobName()));
-
+            if (condition.getJobName() != null) {
+                Root<JobInstance> jobInstanceRoot = query.from(JobInstance.class);
+                list.add(criteriaBuilder.equal(root.get("jobInstanceId"), jobInstanceRoot.get("jobInstanceId")));
+                list.add(criteriaBuilder.equal(jobInstanceRoot.get("jobName").as(String.class), condition.getJobName()));
+            }
             if (condition.getStatus() != null) {
                 list.add(root.get("status").as(String.class).in(condition.getStatus()));
             }

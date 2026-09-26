@@ -2,7 +2,6 @@ package com.alatka.batch.monitor.admin.model;
 
 import com.alatka.batch.infra.model.PageReqMessage;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotEmpty;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,8 +11,6 @@ public class JobExecutionPageReq extends PageReqMessage {
 
     private Long jobExecutionId;
 
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "jobName 不能为空")
     private String jobName;
 
     @Schema(hidden = true)

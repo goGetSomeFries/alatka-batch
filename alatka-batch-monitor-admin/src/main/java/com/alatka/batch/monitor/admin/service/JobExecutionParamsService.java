@@ -32,6 +32,14 @@ public class JobExecutionParamsService {
                 }).collect(Collectors.toList());
     }
 
+    public JobExecutionParams queryByKV(String parameterName, String parameterValue) {
+        JobExecutionParams condition = new JobExecutionParams();
+        condition.setParameterName(parameterName);
+        condition.setParameterValue(parameterValue);
+
+        return this.jobExecutionParamsRepository.findOne(Example.of(condition)).orElse(null);
+    }
+
     @Autowired
     public void setJobExecutionParamsRepository(JobExecutionParamsRepository jobExecutionParamsRepository) {
         this.jobExecutionParamsRepository = jobExecutionParamsRepository;
