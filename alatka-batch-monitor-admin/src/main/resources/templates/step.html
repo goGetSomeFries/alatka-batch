@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>alatka-batch-monitor-admin</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/tom-select/dist/css/tom-select.bootstrap5.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/flatpickr/dist/flatpickr.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/infra.css}">
+</head>
+<body>
+<div class="container mt-4">
+    <div class="card mb-3">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Step Execution 查询</h5>
+            <button class="btn btn-sm btn-outline-secondary"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#cardCollapse"
+                    aria-expanded="true"
+                    aria-controls="cardCollapse">
+                <i class="bi bi-arrows-angle-contract"></i>
+            </button>
+        </div>
+        <div class="card-body collapse show" id="cardCollapse">
+            <form id="searchForm" class="row g-3">
+                <input type="hidden" name="jobExecutionId" id="jobExecutionId">
+                <div class="col-md-4">
+                    <label for="stepName" class="form-label">stepName</label>
+                    <input type="text" class="form-control" id="stepName" name="stepName" placeholder="输入 stepName">
+                </div>
+                <div class="col-md-4">
+                    <label for="createTimeRange" class="form-label">createTime</label>
+                    <input type="text" class="form-control bg-white" id="createTimeRange" name="createTimeRange"
+                           placeholder="选择时间" readonly>
+                </div>
+                <div class="col-md-4">
+                    <label for="endTimeRange" class="form-label">endTime</label>
+                    <input type="text" class="form-control bg-white" id="endTimeRange" name="endTimeRange"
+                           placeholder="选择时间" readonly>
+                </div>
+                <div class="col-md-3">
+                    <label for="status" class="form-label">status</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="exitCode" class="form-label">exitCode</label>
+                    <select class="form-select" id="exitCode" name="exitCode">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="exitMessage" class="form-label">exitMessage</label>
+                    <input type="text" class="form-control" id="exitMessage" name="exitMessage"
+                           placeholder="输入 exitMessage">
+                </div>
+                <div class="col-12 text-center">
+                    <button type="button" class="btn btn-secondary me-2" id="resetButton">
+                        <i class="bi bi-arrow-counterclockwise"></i> 重置
+                    </button>
+                    <button type="button" class="btn btn-primary" id="searchButton">
+                        <i class="bi bi-search"></i> 查询
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <table id="dataTable"
+           data-toggle="table"
+           data-method="get"
+           data-url="/batch/monitor/step/page"
+           data-sort-name="stepExecutionId"
+           data-sort-order="desc"
+           data-striped="true"
+           data-pagination="true"
+           data-pagination-loop="false"
+           data-detail-view="true"
+           data-detail-view-by-click="true"
+           data-detail-formatter="detailFormatter"
+           data-side-pagination="server"
+           data-click-to-select="true"
+           data-show-columns="true"
+           data-maintain-selected="true">
+        <thead>
+        <tr>
+            <th data-field="stepExecutionId" data-visible="false" data-sortable="true">stepExecutionId</th>
+            <th data-field="version" data-visible="false">version</th>
+            <th data-field="stepName">stepName</th>
+            <th data-field="jobExecutionId" data-visible="false">jobExecutionId</th>
+            <th data-field="createTime" data-sortable="true">createTime</th>
+            <th data-field="startTime" data-sortable="true">startTime</th>
+            <th data-field="endTime" data-sortable="true">endTime</th>
+            <th data-field="status" data-formatter="statusFormatter">status</th>
+            <th data-field="exitCode" data-formatter="statusFormatter">exitCode</th>
+            <th data-field="exitMessage" data-formatter="exitMessageFormatter">exitMessage</th>
+            <th data-field="lastUpdated" data-sortable="true">lastUpdated</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+
+<div class="modal fade" id="exitMessageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">异常信息</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <pre class="ms-1 me-auto"><code class="language-java"></code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/interactjs/dist/interact.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/webjars/flatpickr/dist/flatpickr.min.js}"></script>
+<script th:src="@{/webjars/flatpickr/dist/l10n/zh.js}"></script>
+<script th:src="@{/webjars/tom-select/dist/js/tom-select.complete.min.js}"></script>
+<script th:src="@{/js/infra.js}"></script>
+<script th:src="@{/js/table.js}"></script>
+<script th:src="@{/js/default.js}"></script>
+<script>
+    preLoad();
+    initTable();
+    initTableRowEvent();
+    initFlatPickr('#createTimeRange');
+    initFlatPickr('#endTimeRange');
+    initStatusSelect();
+    initExitCodeSelect();
+
+    function preLoad() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const jobExecutionId = urlParams.get('jobExecutionId');
+        if (!jobExecutionId) {
+            showErrorToast('jobExecutionId 未设置');
+            return;
+        }
+        $("#jobExecutionId").val(jobExecutionId);
+
+        const stepName = urlParams.get('stepName');
+        if (stepName) {
+            $('#stepName').val(stepName);
+        }
+    }
+
+    function initTableRowEvent() {
+        $('#dataTable').on('dbl-click-row.bs.table', function (event, row, $element) {
+            httpClient(`/batch/monitor/step/subJobExecution?jobExecutionId=${row.jobExecutionId}&stepExecutionId=${row.stepExecutionId}`, 'GET', null, function (res) {
+                if (res.existed) {
+                    window.location.href = `/batch/monitor/job?jobName=${res.jobName}&jobExecutionId=${res.jobExecutionId}`;
+                } else {
+                    showWarningToast(`${row.stepName} 不存在子 Job`);
+                }
+            });
+        });
+    }
+
+    function refresh() {
+        $('#dataTable').bootstrapTable('refreshOptions', {
+            pageNumber: 1,
+            sortOrder: "desc",
+            sortName: "stepExecutionId"
+        });
+    }
+
+    function detailFormatter(index, row) {
+        return `
+        <div class="row ms-3 mt-3 mb-3 me-3">
+            <div class="col-md-3 mb-3">
+                <div class="d-flex align-items-center">
+                    <label for="readCount" class="form-label text-nowrap me-2">readCount: </label>
+                    <input type="text" class="form-control" id="readCount" name="readCount" value="${row.readCount}" disabled>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="d-flex align-items-center">
+                    <label for="filterCount" class="form-label text-nowrap me-2">filterCount: </label>
+                    <input type="text" class="form-control" id="filterCount" name="filterCount" value="${row.filterCount}" disabled>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="d-flex align-items-center">
+                    <label for="writeCount" class="form-label text-nowrap me-2">writeCount: </label>
+                    <input type="text" class="form-control" id="writeCount" name="writeCount" value="${row.writeCount}" disabled>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="d-flex align-items-center">
+                    <label for="commitCount" class="form-label text-nowrap me-2">commitCount: </label>
+                    <input type="text" class="form-control" id="commitCount" name="commitCount" value="${row.commitCount}" disabled>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="d-flex align-items-center">
+                    <label for="readSkipCount" class="form-label text-nowrap me-2">readSkipCount: </label>
+                    <input type="text" class="form-control" id="readSkipCount" name="readSkipCount" value="${row.readSkipCount}" disabled>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="d-flex align-items-center">
+                    <label for="processSkipCount" class="form-label text-nowrap me-2">processSkipCount: </label>
+                    <input type="text" class="form-control" id="processSkipCount" name="processSkipCount" value="${row.processSkipCount}" disabled>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="d-flex align-items-center">
+                    <label for="writeSkipCount" class="form-label text-nowrap me-2">writeSkipCount: </label>
+                    <input type="text" class="form-control" id="writeSkipCount" name="writeSkipCount" value="${row.writeSkipCount}" disabled>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="d-flex align-items-center">
+                    <label for="rollbackCount" class="form-label text-nowrap me-2">rollbackCount: </label>
+                    <input type="text" class="form-control" id="rollbackCount" name="rollbackCount" value="${row.rollbackCount}" disabled>
+                </div>
+            </div>
+        </div>
+        `;
+    }
+
+</script>
+</body>
+</html>

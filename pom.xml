@@ -6,7 +6,7 @@
     <parent>
         <artifactId>alatka</artifactId>
         <groupId>com.alatka</groupId>
-        <version>1.76.0</version>
+        <version>1.78.0-SNAPSHOT</version>
     </parent>
 
     <groupId>com.alatka.batch</groupId>
@@ -19,12 +19,14 @@
         <module>alatka-batch-flow-admin</module>
         <module>alatka-batch-param</module>
         <module>alatka-batch-param-admin</module>
+        <module>alatka-batch-monitor</module>
+        <module>alatka-batch-monitor-admin</module>
         <module>alatka-batch-example</module>
         <module>alatka-batch-infra</module>
     </modules>
 
     <properties>
-        <revision>0.5.0</revision>
+        <revision>0.6.0-SNAPSHOT</revision>
     </properties>
 
     <dependencyManagement>
