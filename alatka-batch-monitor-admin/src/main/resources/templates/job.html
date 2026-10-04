@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>alatka-batch-monitor-admin</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/tom-select/dist/css/tom-select.bootstrap5.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/highlightjs/styles/vs.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/flatpickr/dist/flatpickr.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/infra.css}">
+</head>
+<body>
+<div class="container mt-4">
+    <div class="card mb-3">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Job Execution 查询</h5>
+            <button class="btn btn-sm btn-outline-secondary"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#cardCollapse"
+                    aria-expanded="true"
+                    aria-controls="cardCollapse">
+                <i class="bi bi-arrows-angle-contract"></i>
+            </button>
+        </div>
+        <div class="card-body collapse show" id="cardCollapse">
+            <form id="searchForm" class="row g-3">
+                <input type="hidden" name="jobExecutionId" id="jobExecutionId">
+                <div class="col-md-4">
+                    <label for="jobName" class="form-label">jobName</label>
+                    <input type="text" class="form-control" id="jobName" name="jobName" placeholder="输入 jobName">
+                </div>
+                <div class="col-md-4">
+                    <label for="createTimeRange" class="form-label">createTime</label>
+                    <input type="text" class="form-control bg-white" id="createTimeRange" name="createTimeRange"
+                           placeholder="选择时间" readonly>
+                </div>
+                <div class="col-md-4">
+                    <label for="endTimeRange" class="form-label">endTime</label>
+                    <input type="text" class="form-control bg-white" id="endTimeRange" name="endTimeRange"
+                           placeholder="选择时间" readonly>
+                </div>
+                <div class="col-md-3">
+                    <label for="status" class="form-label">status</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="exitCode" class="form-label">exitCode</label>
+                    <select class="form-select" id="exitCode" name="exitCode">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="exitMessage" class="form-label">exitMessage</label>
+                    <input type="text" class="form-control" id="exitMessage" name="exitMessage"
+                           placeholder="输入 exitMessage">
+                </div>
+                <div class="col-12 text-center">
+                    <button type="button" class="btn btn-secondary me-2" id="resetButton">
+                        <i class="bi bi-arrow-counterclockwise"></i> 重置
+                    </button>
+                    <button type="button" class="btn btn-primary" id="searchButton">
+                        <i class="bi bi-search"></i> 查询
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <table id="dataTable"
+           data-toggle="table"
+           data-method="get"
+           data-url="/batch/monitor/job/page"
+           data-sort-name="jobExecutionId"
+           data-sort-order="desc"
+           data-striped="true"
+           data-pagination="true"
+           data-pagination-loop="false"
+           data-detail-view="true"
+           data-detail-view-by-click="true"
+           data-detail-formatter="detailFormatter"
+           data-side-pagination="server"
+           data-click-to-select="true"
+           data-show-columns="true"
+           data-maintain-selected="true">
+        <thead>
+        <tr>
+            <th data-field="jobExecutionId" data-visible="false" data-sortable="true">jobExecutionId</th>
+            <th data-field="version" data-visible="false">version</th>
+            <th data-field="jobInstanceId" data-visible="false">jobInstanceId</th>
+            <th data-field="createTime" data-sortable="true">createTime</th>
+            <th data-field="startTime" data-sortable="true">startTime</th>
+            <th data-field="endTime" data-sortable="true">endTime</th>
+            <th data-field="status" data-formatter="statusFormatter">status</th>
+            <th data-field="exitCode" data-formatter="statusFormatter">exitCode</th>
+            <th data-field="exitMessage" data-formatter="exitMessageFormatter">exitMessage</th>
+            <th data-field="lastUpdated" data-sortable="true">lastUpdated</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+
+<div class="modal fade" id="exitMessageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">异常信息</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <pre class="ms-1 me-auto"><code class="language-java"></code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/interactjs/dist/interact.min.js}"></script>
+<script th:src="@{/webjars/highlightjs/highlight.min.js}"></script>
+<script th:src="@{/webjars/highlightjs/languages/java.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/webjars/flatpickr/dist/flatpickr.min.js}"></script>
+<script th:src="@{/webjars/flatpickr/dist/l10n/zh.js}"></script>
+<script th:src="@{/webjars/tom-select/dist/js/tom-select.complete.min.js}"></script>
+<script th:src="@{/js/infra.js}"></script>
+<script th:src="@{/js/table.js}"></script>
+<script th:src="@{/js/default.js}"></script>
+<script>
+    preLoad();
+    initTable();
+    initTableRowEvent();
+    initFlatPickr('#createTimeRange');
+    initFlatPickr('#endTimeRange');
+    initStatusSelect();
+    initExitCodeSelect();
+
+    function preLoad() {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        const jobName = urlParams.get('jobName');
+        jobName && $("#jobName").val(jobName).addClass('is-readonly');
+
+        const jobExecutionId = urlParams.get('jobExecutionId');
+        jobExecutionId && $("#jobExecutionId").val(jobExecutionId);
+    }
+
+    function initTableRowEvent() {
+        $('#dataTable').on('dbl-click-row.bs.table', function (event, row, $element) {
+            window.location.href = `/batch/monitor/step?jobExecutionId=${row.jobExecutionId}`;
+        });
+    }
+
+    function refresh() {
+        $('#dataTable').bootstrapTable('refreshOptions', {
+            pageNumber: 1,
+            sortOrder: "desc",
+            sortName: "jobExecutionId"
+        });
+    }
+
+    function detailFormatter(index, row) {
+        const paramContainerId = `param-detail-${row.jobExecutionId}`;
+        initParamList(row.jobExecutionId, (html) => {
+            $(`#${paramContainerId}`).html(html);
+        });
+
+        const stepContainerId = `step-execution-${row.jobExecutionId}`;
+        initStepList(row.jobExecutionId, 1, (html) => {
+            $(`#${stepContainerId}`).html(html);
+        });
+
+        return `<div class="p-3 text-center text-muted small">
+                    <div class="p-3 bg-light rounded shadow-sm" style="width: 0; min-width: 100%; overflow: hidden;">
+                        <div id="${paramContainerId}" class="d-flex flex-wrap pb-0 pt-2 mb-2 bg-white p-3 rounded-3 border border-secondary border-opacity-25">
+                        </div>
+                        <div id="${stepContainerId}" class="d-flex flex-nowrap position-relative overflow-x-auto pb-4 pt-2 bg-light p-3 rounded-3 border border-secondary border-opacity-25" style="scrollbar-width: thin;">
+                        </div>
+                    </div>
+                </div>`;
+    }
+
+    function initParamList(jobExecutionId, callback) {
+        httpClient(`/batch/monitor/job/params/list?jobExecutionId=${jobExecutionId}`, 'GET', null, function (list) {
+            let html = '';
+            list.forEach(function (param) {
+                html += `<span class="me-1 mb-2 badge ${param.identifying === 'Y' ? 'bg-primary' : 'bg-secondary'}">${param.parameterName} = ${param.parameterValue}</span>`;
+            });
+            html = html === '' ? `<span class="mb-2 badge bg-warning">未配置参数</span>` : html;
+            callback(html);
+        }, function (msg) {
+            showErrorToast(`接口响应失败: ${msg}`);
+        });
+    }
+
+    function initStepList(jobExecutionId, index, callback) {
+        httpClient(`/batch/monitor/step/list?jobExecutionId=${jobExecutionId}&index=${index}`, 'GET', null, function (res) {
+            let html = res.list.map((item) => `
+                <div id="step-node-${item.stepExecutionId}" class="px-4 text-center position-relative" style="min-width: 150px; z-index: 1; background: linear-gradient(to bottom, transparent 34px, #dee2e6 34px, #dee2e6 36px, transparent 36px);">
+                    <div class="rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center bg-light" style="width: 32px; height: 32px;">
+                        <span class="badge ${mapping(item.status)}">${item.status}</span>
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center mt-2 gap-1">
+                        <a href="/batch/monitor/step?jobExecutionId=${jobExecutionId}&stepName=${item.stepName}" class="fw-bold small text-decoration-none">${item.stepName}</a>
+                    </div>
+                    <div class="text-muted" style="font-size: 0.7rem;">${item.lastUpdated}</div>
+                </div>
+            `).join('');
+
+            const moreHtml = res.hasNext ? `
+                <div id="more-step-button-${index}" class="d-flex align-items-center more-node ps-2" style="min-width: 80px; z-index: 1;">
+                    <div class="bg-light position-relative d-flex align-items-center justify-content-center" style="z-index: 1; height: 100%;">
+                        <button class="btn btn-sm btn-white border shadow-sm p-0 d-flex flex-column align-items-center justify-content-center"
+                                style="width: 28px; height: 70px; border-radius: 15px; background: white;"
+                                onclick="moreStepList('${jobExecutionId}', ${index})">
+                            <i class="bi bi-chevron-right text-primary mb-1" style="font-size: 0.8rem; -webkit-text-stroke: 1px;"></i>
+                            <span style="font-size: 0.65rem; writing-mode: vertical-lr; letter-spacing: 0.2rem; margin-top: 2px;"
+                                  class="text-muted fw-bold">更多</span>
+                        </button>
+                    </div>
+                </div>` : '';
+
+            callback(html + moreHtml);
+        });
+    }
+
+    function moreStepList(jobExecutionId, index) {
+        initStepList(jobExecutionId, index + 1, (html) => {
+            $(`#more-step-button-${index}`).remove();
+            $(`#step-execution-${jobExecutionId}`).append(html);
+        });
+    }
+
+</script>
+</body>
+</html>
