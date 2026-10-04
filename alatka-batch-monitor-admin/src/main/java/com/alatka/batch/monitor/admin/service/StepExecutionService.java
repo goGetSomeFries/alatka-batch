@@ -5,6 +5,7 @@ import com.alatka.batch.monitor.admin.entity.StepExecution;
 import com.alatka.batch.monitor.admin.model.*;
 import com.alatka.batch.monitor.admin.repository.StepExecutionRepository;
 import com.alatka.batch.monitor.jobstep.JobParametersExtractorWrapper;
+import com.alatka.batch.monitor.jobstep.JobStepBeanPostProcessor;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -42,7 +43,7 @@ public class StepExecutionService {
         if (stepExecution.getExecutionContext().getString(Step.STEP_TYPE_KEY).equals(JobStep.class.getName())) {
             JobExecutionParams jobExecutionParams =
                     Optional.ofNullable(this.jobExecutionParamsService.queryByKV(JobParametersExtractorWrapper.PARENT_STEP_EXECUTION_ID, stepExecutionId.toString(), JobParameter.ParameterType.LONG))
-                            .orElseThrow(() -> new IllegalArgumentException("应用端确认是否配置 " + JobParametersExtractorWrapper.class.getName()));
+                            .orElseThrow(() -> new IllegalArgumentException("应用端确认是否配置 alatka-batch-monitor 模块 -> " + JobStepBeanPostProcessor.class.getName()));
             Long subJobExecutionId = jobExecutionParams.getJobExecutionId();
             String jobName = jobExecutionParamsService.queryOne(subJobExecutionId, JobParametersExtractorWrapper.CURRENT_JOB_NAME).getParameterValue();
             res.setJobName(jobName);
