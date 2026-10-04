@@ -11,20 +11,23 @@ Job 中 Step Flow、Split 并行、条件决策的串联配置，自动构建完
 
 ### 项目结构
 
-| 模块                       | 描述                                                                                              |
-|--------------------------|-------------------------------------------------------------------------------------------------|
-| alatka-batch-param       | Spring Batch Job参数动态生成                                                                          |
-| alatka-batch-param-admin | 后台管理端，Job参数维护功能                                                                                 |
-| alatka-batch-flow        | 流程核心模块，包括Job解析，加载等功能                                                                            |
-| alatka-batch-flow-admin  | 后台管理端，提供Job流程维护、设计等功能                                                                           |
-| alatka-batch-infra       | 提供基础功能                                                                                          |
-| alatka-batch-example     | 示例模块，用于演示 alatka-batch-param、alatka-batch-param-admin、alatka-batch-flow、alatka-batch-flow-admin |
+| 模块                         | 描述                                                |
+|----------------------------|---------------------------------------------------|
+| alatka-batch-monitor       | Spring Batch 跑批结果监控相关插件                           |
+| alatka-batch-monitor-admin | 后台管理端，跑批结果监控查询                                    |
+| alatka-batch-param         | Spring Batch Job参数动态生成                            |
+| alatka-batch-param-admin   | 后台管理端，Job参数维护功能                                   |
+| alatka-batch-flow          | 流程核心模块，包括Job解析，加载等功能                              |
+| alatka-batch-flow-admin    | 后台管理端，提供Job流程维护、设计等功能                             |
+| alatka-batch-infra         | 提供基础功能                                            |
+| alatka-batch-example       | 示例模块，用于演示 alatka-batch-xxx、alatka-batch-xxx-admin |
 
 ### 版本对应关系
 
 | alatka-batch | alatka-dependencies | alatka        |
 |--------------|---------------------|---------------|
-| 0.5.0        | 1.76.0              | 1.76.0        |
+| 0.6.0        | 1.78.0              | 1.78.0        |
+| 0.5.0        | 1.76.0-1.77.0       | 1.76.0-1.77.0 |
 | 0.4.0        | 1.75.0              | 1.75.0        |
 | 0.3.0        | 1.72.0-1.74.0       | 1.72.0-1.74.0 |
 | 0.2.0        | 1.71.0              | 1.71.0        |
