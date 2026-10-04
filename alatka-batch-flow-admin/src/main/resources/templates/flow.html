@@ -60,6 +60,10 @@
         </div>
     </div>
     <div class="col-12 text-end mb-3">
+        <button type="button" class="btn btn-sm btn-outline-dark me-3" id="monitorButton"
+                onclick="redirectToMonitor()">
+            <i class="bi bi-clock-history"></i> 跑批记录查询
+        </button>
         <button type="button" class="btn btn-sm btn-outline-dark me-3" id="paramButton"
                 onclick="redirectToParam()">
             <i class="bi bi-sliders"></i> 参数维护
@@ -314,6 +318,21 @@
             window.location.href = `/batch/param?type=job&name=${row.key}`;
         }, function () {
             showWarningToast("请求路径不存在，确认后端是否配置alatka-batch-param-admin.jar");
+        });
+    }
+
+    function redirectToMonitor() {
+        const selections = $('#dataTable').bootstrapTable('getSelections');
+        if (selections.length !== 1) {
+            showWarningToast("请选择一条记录");
+            return;
+        }
+        httpClient('/batch/monitor/exist', 'HEAD', null, function (data) {
+        }, function (msg) {
+            const row = selections[0];
+            window.location.href = `/batch/monitor/job?orderBy=jobExecutionId&direction=desc&pageSize=10&pageNo=1&jobName=${row.groupKey}.${row.key}`;
+        }, function () {
+            showWarningToast("请求路径不存在，确认后端是否配置alatka-batch-monitor-admin.jar");
         });
     }
 
