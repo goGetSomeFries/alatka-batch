@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.alatka.batch</groupId>
+        <artifactId>alatka-batch-support</artifactId>
+        <version>${revision}</version>
+    </parent>
+    <artifactId>alatka-batch-admin-bundle</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.alatka.batch.param</groupId>
+            <artifactId>alatka-batch-param-admin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alatka.batch.monitor</groupId>
+            <artifactId>alatka-batch-monitor-admin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alatka.batch.flow</groupId>
+            <artifactId>alatka-batch-flow-admin</artifactId>
+        </dependency>
+    </dependencies>
+</project>
