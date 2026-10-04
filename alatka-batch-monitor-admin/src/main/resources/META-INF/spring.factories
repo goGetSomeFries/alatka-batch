@@ -1,0 +1,2 @@
+# org.springframework.boot.env.EnvironmentPostProcessor=\
+com.alatka.batch.monitor.admin.support.CustomEnvironmentPostProcessor
