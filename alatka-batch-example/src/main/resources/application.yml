@@ -20,3 +20,6 @@ alatka:
   batch:
     flow:
       type: database
+    monitor:
+      jobStepBeanPostProcessor:
+        enabled: true
