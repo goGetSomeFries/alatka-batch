@@ -1,13 +1,22 @@
-# 基于Spring Batch实现的可视化流程编排库
+# 基于 Spring Batch 实现的轻量级增强框架
 
-为 Spring Batch 提供可视化流程编排能力。开发者只需实现底层 Step、Flow 等逻辑并注册为 Spring Bean，通过拖拽流程图即可完成
-Job 中 Step Flow、Split 并行、条件决策的串联配置，自动构建完整 Job，并支持动态加载；让复杂的批处理作业配置像画流程图一样直观。
+`alatka-batch` 是一套基于 Spring Batch 构建的开箱即用批处理生态框架。它通过 **`alatka-batch-flow`** 提供可视化拖拽编排能力，将底层的
+Step、Flow、Split 与 Decider 自动构建为可动态加载的 Job，让复杂批处理配置直观如画图；结合 **`alatka-batch-param`**
+实现参数校验与动态维护；同时借助 **`alatka-batch-monitor`** 打造全链路可视化监控，实现低侵入、高可视化的现代批处理运维体验。
 
 ### 功能概述
 
-- 可视化拖拽配置 Step 间的顺序、分支、并行、决策关系
-- 自动解析流程图并动态组装为 Spring Batch Job，支持在线刷新
-- 开发者仅需实现 Step/Flow 等业务 Bean，与流程编排解耦
+- **alatka-batch-flow & alatka-batch-flow-admin**
+    - 可视化拖拽配置 Step 间的顺序、分支、并行、决策关系
+    - 自动解析流程图并动态组装为 Spring Batch Job，支持在线刷新
+    - 开发者仅需实现 Step/Flow 等业务 Bean，与流程编排解耦
+- **alatka-batch-monitor & alatka-batch-monitor-admin**
+    - 跑批结果监控，支持子 Job（JobStep）嵌套查询
+    - 高亮展示 Job/Step 的运行状态、执行节点信息
+    - 异常堆栈查看与数据读写/跳过/重试指标统计
+- **alatka-batch-param & alatka-batch-param-admin**
+    - 提供动态参数的定义、默认值注入
+    - 支持全局参数与 Job 级参数
 
 ### 项目结构
 
@@ -21,6 +30,8 @@ Job 中 Step Flow、Split 并行、条件决策的串联配置，自动构建完
 | alatka-batch-flow-admin    | 后台管理端，提供job流程维护、设计等功能                             |
 | alatka-batch-infra         | 提供基础功能                                            |
 | alatka-batch-example       | 示例模块，用于演示 alatka-batch-xxx、alatka-batch-xxx-admin |
+| alatka-batch-bundle        | 集成 alatka-batch-xxx，简化依赖配置                        |
+| alatka-batch-admin-bundle  | 集成 alatka-batch-xxx-admin，简化依赖配置                  |
 
 `alatka-batch`、`alatka-dependencies`、`alatka`
 相关制品已上传至阿里云仓库，如需下载可进行如下配置：[ :point_right: maven相关配置](https://gitee.com/asuka2001/alatka-batch/wikis/%E5%85%AB%E3%80%81maven%E7%9B%B8%E5%85%B3%E9%85%8D%E7%BD%AE)
