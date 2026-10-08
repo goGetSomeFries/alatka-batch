@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AutoConfiguration {
 
-    public static final String JOB_STEP_BEAN_POST_PROCESSOR_ENABLED = "alatka.batch.monitor.jobStepBeanPostProcessor.enabled";
+    public static final String SUB_JOB_PLUGIN_ENABLED = "alatka.batch.monitor.subJobPlugin.enabled";
 
     @Bean
-    @ConditionalOnProperty(value = JOB_STEP_BEAN_POST_PROCESSOR_ENABLED, matchIfMissing = true)
+    @ConditionalOnProperty(value = SUB_JOB_PLUGIN_ENABLED, matchIfMissing = true)
     public JobStepBeanPostProcessor jobStepBeanPostProcessor() {
         return new JobStepBeanPostProcessor();
     }
