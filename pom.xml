@@ -23,6 +23,7 @@
         <module>alatka-batch-monitor-admin</module>
         <module>alatka-batch-example</module>
         <module>alatka-batch-infra</module>
+        <module>alatka-batch-support</module>
     </modules>
 
     <properties>
