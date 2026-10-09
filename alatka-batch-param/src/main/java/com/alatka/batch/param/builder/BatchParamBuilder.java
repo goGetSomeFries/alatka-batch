@@ -11,6 +11,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 @Component
@@ -18,12 +20,19 @@ public class BatchParamBuilder {
 
     private ParamRepository paramRepository;
 
-    public String build(String jobName, String groupKey) {
-        return this.getList(jobName, groupKey)
+    public Properties build(String jobName, String groupKey) {
+        Properties properties = new Properties();
+        Map<String, String> map = this.getList(jobName, groupKey)
                 .stream()
                 .peek(entity -> entity.setValue(this.formatValue(entity.getValue())))
-                .map(entity -> entity.getKey().concat("=").concat(entity.getValue()))
-                .collect(Collectors.joining(","));
+                .collect(Collectors.toMap(BatchParam::getKey, this::doBuild));
+        properties.putAll(map);
+
+        return properties;
+    }
+
+    private String doBuild(BatchParam entity) {
+        return entity.getValue() + "," + entity.getClazz() + "," + entity.getIdentifying();
     }
 
     public List<BatchParam> getList(String jobName, String groupKey) {

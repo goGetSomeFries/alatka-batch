@@ -14,8 +14,13 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,6 +82,18 @@ public class ParamService {
                 }).collect(Collectors.toList());
     }
 
+    public Map<String, String> classType() {
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put(String.class.getSimpleName(), String.class.getName());
+        map.put(Long.class.getSimpleName(), Long.class.getName());
+        map.put(Double.class.getSimpleName(), Double.class.getName());
+        map.put(LocalDate.class.getSimpleName(), LocalDate.class.getName());
+        map.put(LocalTime.class.getSimpleName(), LocalTime.class.getName());
+        map.put(LocalDateTime.class.getSimpleName(), LocalDateTime.class.getName());
+
+        return map;
+    }
+
     private Specification<BatchParam> condition(BatchParam condition) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> list = new ArrayList<>();
@@ -94,6 +111,12 @@ public class ParamService {
             }
             if (condition.getType() != null) {
                 list.add(criteriaBuilder.equal(root.get("type").as(String.class), condition.getType()));
+            }
+            if (condition.getClazz() != null) {
+                list.add(criteriaBuilder.like(root.get("clazz").as(String.class), "%" + condition.getClazz() + "%"));
+            }
+            if (condition.getIdentifying() != null) {
+                list.add(criteriaBuilder.equal(root.get("identifying").as(Boolean.class), condition.getIdentifying()));
             }
             if (condition.getEnabled() != null) {
                 list.add(criteriaBuilder.equal(root.get("enabled").as(Boolean.class), condition.getEnabled()));

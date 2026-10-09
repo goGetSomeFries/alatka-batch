@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.stream.Collectors;
+
 @Tag(name = "参数示例接口")
 @RestController
 @RequestMapping("/batch/example/param")
@@ -19,7 +21,8 @@ public class ParamExampleController {
     @Operation(summary = "构建参数")
     @GetMapping("/build")
     public String build(@RequestParam String jobName, @RequestParam String groupKey) {
-        return batchParamBuilder.build(jobName, groupKey);
+        return batchParamBuilder.build(jobName, groupKey)
+                .entrySet().stream().map(entry -> entry.getKey() + "=" + entry.getValue()).collect(Collectors.joining(";"));
     }
 
     @Autowired

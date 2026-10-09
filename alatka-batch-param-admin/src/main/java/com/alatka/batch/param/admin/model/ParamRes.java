@@ -40,6 +40,12 @@ public class ParamRes {
     @Schema(description = "参数类型", requiredMode = Schema.RequiredMode.REQUIRED)
     private String type;
 
+    @Schema(description = "Java 类型", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String clazz;
+
+    @Schema(description = "Job Parameter Identifying", requiredMode = Schema.RequiredMode.REQUIRED)
+    private Boolean identifying;
+
     @Schema(description = "是否可用", requiredMode = Schema.RequiredMode.REQUIRED)
     private Boolean enabled;
 
@@ -121,6 +127,22 @@ public class ParamRes {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getClazz() {
+        return clazz;
+    }
+
+    public void setClazz(String clazz) {
+        this.clazz = clazz;
+    }
+
+    public Boolean getIdentifying() {
+        return identifying;
+    }
+
+    public void setIdentifying(Boolean identifying) {
+        this.identifying = identifying;
     }
 
     public Boolean getEnabled() {

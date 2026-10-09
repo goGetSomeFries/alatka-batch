@@ -50,6 +50,12 @@ public class BatchParam {
     @Column(name = "P_TYPE")
     private String type;
 
+    @Column(name = "P_CLAZZ")
+    private String clazz;
+
+    @Column(name = "P_IDENTIFYING")
+    private Boolean identifying;
+
     @Column(name = "P_ENABLED")
     private Boolean enabled;
 
@@ -135,6 +141,22 @@ public class BatchParam {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getClazz() {
+        return clazz;
+    }
+
+    public void setClazz(String clazz) {
+        this.clazz = clazz;
+    }
+
+    public Boolean getIdentifying() {
+        return identifying;
+    }
+
+    public void setIdentifying(Boolean identifying) {
+        this.identifying = identifying;
     }
 
     public Boolean getEnabled() {

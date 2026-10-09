@@ -169,10 +169,10 @@ function refresh() {
 
 function enabledFormatter(arg) {
     if (arg === true) {
-        return "正常";
+        return `<span class="badge bg-success">正常</span>`;
     }
     if (arg === false) {
-        return "禁用";
+        return `<span class="badge bg-success">禁用</span>`;
     }
     return "/";
 }
