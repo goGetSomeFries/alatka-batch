@@ -42,10 +42,8 @@
                 </div>
                 <div class="col-md-2">
                     <label for="enabled" class="form-label">是否可用</label>
-                    <select class="form-select" id="enabled" name="enabled">
+                    <select class="form-select alk-select-enabled" id="enabled" name="enabled">
                         <option value="">全部</option>
-                        <option value="true" selected>正常</option>
-                        <option value="false">禁用</option>
                     </select>
                 </div>
                 <div class="col-12 text-center">
@@ -156,9 +154,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="editEnabled" class="form-label">是否可用</label>
-                        <select class="form-select" id="editEnabled" name="enabled" required>
-                            <option value="true">正常</option>
-                            <option value="false">禁用</option>
+                        <select class="form-select alk-select-enabled" id="editEnabled" name="enabled" required>
                         </select>
                     </div>
                 </form>
@@ -247,6 +243,7 @@
 <script th:src="@{/js/table.js}"></script>
 <script>
     initGroupSelect();
+    initEnabledSelect();
     initTable();
     initDeployModal();
 

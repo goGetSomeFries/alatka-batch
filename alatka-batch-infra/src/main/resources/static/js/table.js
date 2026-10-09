@@ -172,7 +172,7 @@ function enabledFormatter(arg) {
         return `<span class="badge bg-success">正常</span>`;
     }
     if (arg === false) {
-        return `<span class="badge bg-success">禁用</span>`;
+        return `<span class="badge bg-danger">禁用</span>`;
     }
     return "/";
 }
@@ -181,15 +181,16 @@ function initEnabledSelect() {
     $(".alk-select-enabled").each(function () {
         let tomSelect = new TomSelect(this, {
             plugins: ['remove_button'],
+            options: [{value: true, text: '正常'}, {value: false, text: '禁用'}],
+            items: [true],
             render: {
                 option: function (data, escape) {
-                    return `${enabledFormatter(data.value)}`;
+                    return `<div>${enabledFormatter(data.value)}</div>`;
                 },
                 item: function (data, escape) {
-                    return `${enabledFormatter(data.value)}`;
+                    return `<div>${enabledFormatter(data.value)}</div>`;
                 }
             }
         });
-        tomSelect.addO
     });
 }

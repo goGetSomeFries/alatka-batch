@@ -54,18 +54,14 @@
                 </div>
                 <div class="col-md-3">
                     <label for="identifying" class="form-label">Identifying</label>
-                    <select class="form-select" id="identifying" name="identifying">
-                        <option value="">全部</option>
-                        <option value="true">Y</option>
-                        <option value="false">N</option>
+                    <select class="form-select alk-select-identifying" id="identifying" name="identifying">
+                        <option value="" selected>全部</option>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label for="enabled" class="form-label">是否可用</label>
-                    <select class="form-select" id="enabled" name="enabled">
+                    <select class="form-select alk-select-enabled" id="enabled" name="enabled">
                         <option value="">全部</option>
-                        <option value="true" selected>正常</option>
-                        <option value="false">禁用</option>
                     </select>
                 </div>
                 <div class="col-12 text-center">
@@ -167,16 +163,13 @@
                     </div>
                     <div class="col-3">
                         <label for="editIdentifying" class="form-label">Identifying</label>
-                        <select class="form-select" id="editIdentifying" name="identifying" required>
-                            <option value="true" selected>Y</option>
-                            <option value="false">N</option>
+                        <select class="form-select alk-select-identifying" id="editIdentifying" name="identifying"
+                                required>
                         </select>
                     </div>
                     <div class="col-3">
                         <label for="editEnabled" class="form-label">是否可用</label>
-                        <select class="form-select" id="editEnabled" name="enabled" required>
-                            <option value="true">正常</option>
-                            <option value="false">禁用</option>
+                        <select class="form-select alk-select-enabled" id="editEnabled" name="enabled" required>
                         </select>
                     </div>
                 </form>
@@ -218,6 +211,8 @@
     preLoad();
     initTable();
     initClazzSelect();
+    initEnabledSelect();
+    initIdentifyingSelect();
 
     function preLoad() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -255,6 +250,24 @@
                         text: `<div>${clazzFormatter(value)}</div>`
                     });
                 });
+            });
+        });
+    }
+
+    function initIdentifyingSelect() {
+        $(".alk-select-identifying").each(function () {
+            let tomSelect = new TomSelect(this, {
+                plugins: ['remove_button'],
+                options: [{value: true, text: 'Y'}, {value: false, text: 'N'}],
+                items: $(this).find("option:selected").length > 0 ? undefined : [true],
+                render: {
+                    option: function (data, escape) {
+                        return `<div>${identifyingFormatter(data.value)}</div>`;
+                    },
+                    item: function (data, escape) {
+                        return `<div>${identifyingFormatter(data.value)}</div>`;
+                    }
+                }
             });
         });
     }
