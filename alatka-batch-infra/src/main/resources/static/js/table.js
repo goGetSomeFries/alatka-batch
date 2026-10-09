@@ -176,3 +176,20 @@ function enabledFormatter(arg) {
     }
     return "/";
 }
+
+function initEnabledSelect() {
+    $(".alk-select-enabled").each(function () {
+        let tomSelect = new TomSelect(this, {
+            plugins: ['remove_button'],
+            render: {
+                option: function (data, escape) {
+                    return `${enabledFormatter(data.value)}`;
+                },
+                item: function (data, escape) {
+                    return `${enabledFormatter(data.value)}`;
+                }
+            }
+        });
+        tomSelect.addO
+    });
+}

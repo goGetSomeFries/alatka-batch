@@ -119,7 +119,7 @@
             <th data-field="value">参数值</th>
             <th data-field="desc">描述</th>
             <th data-field="type">类型</th>
-            <th data-field="clazz" data-formatter="clazzFormatter">Java 类型</th>
+            <th data-field="clazz" data-align="center" data-formatter="clazzFormatter">Java 类型</th>
             <th data-field="identifying" data-align="center" data-formatter="identifyingFormatter">Identifying</th>
             <th data-field="enabled" data-align="center" data-formatter="enabledFormatter">是否可用</th>
         </tr>
@@ -236,23 +236,24 @@
     }
 
     function initClazzSelect() {
-        let tomSelect = new TomSelect('.alk-select-clazz', {
-            plugins: ['remove_button'],
-            render: {
-                option: function (data, escape) {
-                    return `${data.badgeHtml}`;
-                },
-                item: function (data, escape) {
-                    return `${data.badgeHtml}`;
-                }
-            }
-        });
         httpClient('/batch/param/classes', 'GET', null, function (data) {
-            Object.entries(data).forEach(([key, value]) => {
-                tomSelect.addOption({
-                    value: value,
-                    text: key,
-                    badgeHtml: `<div>${clazzFormatter(key)}</div>`
+            $(".alk-select-clazz").each(function () {
+                let tomSelect = new TomSelect(this, {
+                    plugins: ['remove_button'],
+                    render: {
+                        option: function (data, escape) {
+                            return `${data.text}`;
+                        },
+                        item: function (data, escape) {
+                            return `${data.text}`;
+                        }
+                    }
+                });
+                Object.entries(data).forEach(([key, value]) => {
+                    tomSelect.addOption({
+                        value: key,
+                        text: `<div>${clazzFormatter(value)}</div>`
+                    });
                 });
             });
         });

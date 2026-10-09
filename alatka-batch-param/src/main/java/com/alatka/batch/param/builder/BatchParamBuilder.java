@@ -25,14 +25,11 @@ public class BatchParamBuilder {
         Map<String, String> map = this.getList(jobName, groupKey)
                 .stream()
                 .peek(entity -> entity.setValue(this.formatValue(entity.getValue())))
-                .collect(Collectors.toMap(BatchParam::getKey, this::doBuild));
+                .collect(Collectors.toMap(BatchParam::getKey,
+                        entity -> entity.getValue() + "," + entity.getClazz() + "," + entity.getIdentifying()));
         properties.putAll(map);
 
         return properties;
-    }
-
-    private String doBuild(BatchParam entity) {
-        return entity.getValue() + "," + entity.getClazz() + "," + entity.getIdentifying();
     }
 
     public List<BatchParam> getList(String jobName, String groupKey) {

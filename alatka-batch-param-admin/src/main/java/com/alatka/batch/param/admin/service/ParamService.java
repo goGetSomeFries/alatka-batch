@@ -17,10 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +27,18 @@ public class ParamService {
     private ParamRepository paramRepository;
 
     private BatchParamBuilder batchParamBuilder;
+
+    private Map<String, String> typeMap = new LinkedHashMap<>();
+
+    {
+        typeMap.put(String.class.getName(), String.class.getSimpleName());
+        typeMap.put(Long.class.getName(), Long.class.getSimpleName());
+        typeMap.put(Double.class.getName(), Double.class.getSimpleName());
+        typeMap.put(LocalDate.class.getName(), LocalDate.class.getSimpleName());
+        typeMap.put(LocalTime.class.getName(), LocalTime.class.getSimpleName());
+        typeMap.put(LocalDateTime.class.getName(), LocalDateTime.class.getSimpleName());
+        typeMap.put(Date.class.getName(), Date.class.getSimpleName());
+    }
 
     public Long create(ParamReq req) {
         BatchParam entity = new BatchParam();
@@ -69,6 +78,7 @@ public class ParamService {
                 .map(entity -> {
                     ParamRes res = new ParamRes();
                     BeanUtils.copyProperties(entity, res);
+                    res.setClazz(this.typeMap.getOrDefault(entity.getClazz(), entity.getClazz()));
                     return res;
                 });
     }
@@ -78,20 +88,13 @@ public class ParamService {
                 .map(entity -> {
                     ParamRes res = new ParamRes();
                     BeanUtils.copyProperties(entity, res);
+                    res.setClazz(this.typeMap.getOrDefault(entity.getClazz(), entity.getClazz()));
                     return res;
                 }).collect(Collectors.toList());
     }
 
     public Map<String, String> classType() {
-        Map<String, String> map = new LinkedHashMap<>();
-        map.put(String.class.getSimpleName(), String.class.getName());
-        map.put(Long.class.getSimpleName(), Long.class.getName());
-        map.put(Double.class.getSimpleName(), Double.class.getName());
-        map.put(LocalDate.class.getSimpleName(), LocalDate.class.getName());
-        map.put(LocalTime.class.getSimpleName(), LocalTime.class.getName());
-        map.put(LocalDateTime.class.getSimpleName(), LocalDateTime.class.getName());
-
-        return map;
+        return this.typeMap;
     }
 
     private Specification<BatchParam> condition(BatchParam condition) {
