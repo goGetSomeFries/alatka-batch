@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,16 +30,16 @@ public class ParamService {
 
     private BatchParamBuilder batchParamBuilder;
 
-    private Map<String, String> typeMap = new LinkedHashMap<>();
+    private List<String> typeList = new ArrayList<>();
 
     {
-        typeMap.put(String.class.getName(), String.class.getSimpleName());
-        typeMap.put(Long.class.getName(), Long.class.getSimpleName());
-        typeMap.put(Double.class.getName(), Double.class.getSimpleName());
-        typeMap.put(LocalDate.class.getName(), LocalDate.class.getSimpleName());
-        typeMap.put(LocalTime.class.getName(), LocalTime.class.getSimpleName());
-        typeMap.put(LocalDateTime.class.getName(), LocalDateTime.class.getSimpleName());
-        typeMap.put(Date.class.getName(), Date.class.getSimpleName());
+        typeList.add(String.class.getName());
+        typeList.add(Long.class.getName());
+        typeList.add(Double.class.getName());
+        typeList.add(LocalDate.class.getName());
+        typeList.add(LocalTime.class.getName());
+        typeList.add(LocalDateTime.class.getName());
+        typeList.add(Date.class.getName());
     }
 
     public Long create(ParamReq req) {
@@ -78,7 +80,6 @@ public class ParamService {
                 .map(entity -> {
                     ParamRes res = new ParamRes();
                     BeanUtils.copyProperties(entity, res);
-                    res.setClazz(this.typeMap.getOrDefault(entity.getClazz(), entity.getClazz()));
                     return res;
                 });
     }
@@ -88,13 +89,12 @@ public class ParamService {
                 .map(entity -> {
                     ParamRes res = new ParamRes();
                     BeanUtils.copyProperties(entity, res);
-                    res.setClazz(this.typeMap.getOrDefault(entity.getClazz(), entity.getClazz()));
                     return res;
                 }).collect(Collectors.toList());
     }
 
-    public Map<String, String> classType() {
-        return this.typeMap;
+    public List<String> classType() {
+        return this.typeList;
     }
 
     private Specification<BatchParam> condition(BatchParam condition) {

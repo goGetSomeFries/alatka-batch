@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Tag(name = "参数")
 @RestController
@@ -57,7 +56,7 @@ public class ParamController {
 
     @Operation(summary = "Java 类型查询")
     @GetMapping("/classes")
-    public ResMessage<Map<String, String>> classType() {
+    public ResMessage<List<String>> classType() {
         return ResMessage.success(paramService.classType());
     }
 

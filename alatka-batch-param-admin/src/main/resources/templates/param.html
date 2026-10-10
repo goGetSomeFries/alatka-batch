@@ -40,10 +40,8 @@
                 </div>
                 <div class="col-md-3">
                     <label for="type" class="form-label">类型</label>
-                    <select class="form-select" id="type" name="type">
-                        <option value="">全部</option>
-                        <option value="global">global</option>
-                        <option value="job">job</option>
+                    <select class="form-select alk-select-type" id="type" name="type">
+                        <option value="" selected>全部</option>
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -114,7 +112,7 @@
             <th data-field="key">参数键</th>
             <th data-field="value">参数值</th>
             <th data-field="desc">描述</th>
-            <th data-field="type">类型</th>
+            <th data-field="type" data-formatter="typeFormatter">类型</th>
             <th data-field="clazz" data-align="center" data-formatter="clazzFormatter">Java 类型</th>
             <th data-field="identifying" data-align="center" data-formatter="identifyingFormatter">Identifying</th>
             <th data-field="enabled" data-align="center" data-formatter="enabledFormatter">是否可用</th>
@@ -151,9 +149,7 @@
                     </div>
                     <div class="col-3">
                         <label for="editType" class="form-label">类型</label>
-                        <select class="form-select" id="editType" name="type" required>
-                            <option value="global">global</option>
-                            <option value="job">job</option>
+                        <select class="form-select alk-select-type" id="editType" name="type" required>
                         </select>
                     </div>
                     <div class="col-3">
@@ -208,26 +204,29 @@
 <script th:src="@{/js/infra.js}"></script>
 <script th:src="@{/js/table.js}"></script>
 <script>
-    preLoad();
-    initTable();
     initClazzSelect();
     initEnabledSelect();
+    initTypeSelect();
     initIdentifyingSelect();
+    preLoad();
+    initTable();
 
     function preLoad() {
         const urlParams = new URLSearchParams(window.location.search);
         const type = urlParams.get('type');
         if (type) {
+            let tomSelect = $('#type').get(0).tomselect;
+            if (tomSelect) {
+                tomSelect.setValue(type);
+                tomSelect.lock();
+                $(tomSelect.wrapper).addClass('is-readonly-tomSelect');
+            }
+
             const name = urlParams.get('name');
             const key = urlParams.get('key');
-            $("#type").val(type).addClass('is-readonly');
             $("#name").val(name).addClass('is-readonly');
             $("#key").val(key);
         }
-    }
-
-    function clazzFormatter(value) {
-        return `<span class="badge bg-primary">${value}</span>`;
     }
 
     function initClazzSelect() {
@@ -244,14 +243,18 @@
                         }
                     }
                 });
-                Object.entries(data).forEach(([key, value]) => {
+                data.forEach((value) => {
                     tomSelect.addOption({
-                        value: key,
+                        value: value,
                         text: `<div>${clazzFormatter(value)}</div>`
                     });
                 });
             });
         });
+    }
+
+    function clazzFormatter(value) {
+        return `<span class="badge bg-primary">${value}</span>`;
     }
 
     function initIdentifyingSelect() {
@@ -277,6 +280,32 @@
             return `<span class="badge bg-primary">Y</span>`
         }
         return `<span class="badge bg-secondary">N</span>`;
+    }
+
+    function initTypeSelect() {
+        $(".alk-select-type").each(function () {
+            let tomSelect = new TomSelect(this, {
+                plugins: ['remove_button'],
+                options: [{value: 'job', text: 'job'}, {value: 'global', text: 'global'}],
+                items: $(this).find("option:selected").length > 0 ? undefined : ['global'],
+                render: {
+                    option: function (data, escape) {
+                        return `<div>${typeFormatter(data.value)}</div>`;
+                    },
+                    item: function (data, escape) {
+                        return `<div>${typeFormatter(data.value)}</div>`;
+                    }
+                }
+            });
+            console.log($(this).prop("id") + "===========" + tomSelect.items);
+        });
+    }
+
+    function typeFormatter(arg) {
+        if (arg === 'job') {
+            return `<span class="badge bg-primary">job</span>`
+        }
+        return `<span class="badge bg-secondary">global</span>`;
     }
 </script>
 </body>

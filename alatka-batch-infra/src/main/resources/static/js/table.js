@@ -1,29 +1,34 @@
 function initTable() {
-    $("#resetButton").click(function () {
-        $("#resetButton").off('click').on('click', function () {
-            const $searchForm = $("#searchForm");
-            const cache = {};
+    $("#resetButton").off('click').on('click', function () {
+        const $searchForm = $("#searchForm");
+        const cache = {};
 
-            $searchForm.find(".is-readonly").each(function () {
-                const key = this.name || this.id;
-                cache[key] = $(this).val();
-            });
-
-            $searchForm[0].reset();
-            $searchForm.find('select').each(function () {
-                if (this.tomselect) {
-                    this.tomselect.clear();
-                }
-            });
-
-            $searchForm.find(".is-readonly").each(function () {
-                const key = this.name || this.id;
-                if (cache[key] !== undefined) {
-                    $(this).val(cache[key]);
-                }
-            });
+        $searchForm.find(".is-readonly").each(function () {
+            const key = this.name || this.id;
+            cache[key] = $(this).val();
         });
-    })
+
+        $searchForm[0].reset();
+        $searchForm.find(".is-readonly").each(function () {
+            const key = this.name || this.id;
+            if (cache[key] !== undefined) {
+                $(this).val(cache[key]);
+            }
+        });
+
+        $searchForm.find('select').each(function () {
+            if (this.tomselect && !this.tomselect.isLocked) {
+                if (this.tomselect.isLocked) {
+                    return;
+                }
+                this.tomselect.clear();
+                const initValue = $(this).data('alk-init-value');
+                if (initValue) {
+                    this.tomselect.setValue(initValue);
+                }
+            }
+        });
+    });
 
     $("#searchButton").click(function () {
         refresh();
@@ -108,13 +113,17 @@ function showEditModal(url, created) {
 
         const row = selection[0];
         Object.keys(row).forEach(field => {
-            const $input = $(`#editForm [name="${field}"], #editForm #${field}`);
+            const $input = $(`#editForm [name="${field}"]`);
             if ($input.length) {
                 let value = row[field];
-                if (typeof value === 'boolean') {
-                    value = value ? 'true' : 'false';
+                if ($input[0].tomselect) {
+                    $input[0].tomselect.setValue(value);
+                } else {
+                    if (typeof value === 'boolean') {
+                        value = value ? 'true' : 'false';
+                    }
+                    $input.val(value);
                 }
-                $input.val(value);
             }
         });
     }
@@ -127,6 +136,15 @@ function showEditModal(url, created) {
             event.preventDefault();
             event.stopPropagation();
             $editForm.addClass('was-validated');
+            $editForm.find('select').each(function () {
+                if (this.tomselect) {
+                    if (this.checkValidity()) {
+                        $(this.tomselect.wrapper).removeClass('is-invalid').addClass('is-valid');
+                    } else {
+                        $(this.tomselect.wrapper).removeClass('is-valid').addClass('is-invalid');
+                    }
+                }
+            });
         } else {
             $editForm.serializeArray().forEach(item => {
                 formData[item.name] = item.value === '' ? null : item.value;
@@ -192,5 +210,6 @@ function initEnabledSelect() {
                 }
             }
         });
+        $(this).data('alk-init-value', tomSelect.items[0]);
     });
 }
