@@ -27,10 +27,10 @@ function initStatusSelect() {
         maxItems: null,
         render: {
             option: function (data, escape) {
-                return `<div>${data.badgeHtml}</div>`;
+                return `<div>${data.text}</div>`;
             },
             item: function (data, escape) {
-                return `<div>${data.badgeHtml}</div>`;
+                return `<div>${data.text}</div>`;
             }
         }
     });
@@ -38,8 +38,7 @@ function initStatusSelect() {
         data.forEach((value) => {
             tomSelect.addOption({
                 value: value,
-                text: value,
-                badgeHtml: statusFormatter(value)
+                text: statusFormatter(value)
             });
         });
     });
@@ -52,17 +51,16 @@ function initExitCodeSelect() {
         create: function (input) {
             return {
                 value: input,
-                text: input,
-                badgeHtml: statusFormatter(input)
+                text: statusFormatter(input)
             }
         },
         createOnBlur: true,
         render: {
             option: function (data, escape) {
-                return `<div>${data.badgeHtml}</div>`;
+                return `<div>${data.text}</div>`;
             },
             item: function (data, escape) {
-                return `<div>${data.badgeHtml}</div>`;
+                return `<div>${data.text}</div>`;
             }
         }
     });
@@ -70,8 +68,7 @@ function initExitCodeSelect() {
         data.forEach((value) => {
             tomSelect.addOption({
                 value: value,
-                text: value,
-                badgeHtml: statusFormatter(value)
+                text: statusFormatter(value)
             });
         });
     });
