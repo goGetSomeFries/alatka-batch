@@ -6,6 +6,7 @@
     <title>alatka-batch-param-admin</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/tom-select/dist/css/tom-select.bootstrap5.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/infra.css}">
 </head>
@@ -39,18 +40,26 @@
                 </div>
                 <div class="col-md-3">
                     <label for="type" class="form-label">类型</label>
-                    <select class="form-select" id="type" name="type">
-                        <option value="">全部</option>
-                        <option value="global">global</option>
-                        <option value="job">job</option>
+                    <select class="form-select alk-select-type" id="type" name="type">
+                        <option value="" selected>全部</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="clazz" class="form-label">Java 类型</label>
+                    <select class="form-select alk-select-clazz" id="clazz" name="clazz">
+                        <option value="" selected>全部</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="identifying" class="form-label">Identifying</label>
+                    <select class="form-select alk-select-identifying" id="identifying" name="identifying">
+                        <option value="" selected>全部</option>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label for="enabled" class="form-label">是否可用</label>
-                    <select class="form-select" id="enabled" name="enabled">
+                    <select class="form-select alk-select-enabled" id="enabled" name="enabled">
                         <option value="">全部</option>
-                        <option value="true" selected>正常</option>
-                        <option value="false">禁用</option>
                     </select>
                 </div>
                 <div class="col-12 text-center">
@@ -103,51 +112,60 @@
             <th data-field="key">参数键</th>
             <th data-field="value">参数值</th>
             <th data-field="desc">描述</th>
-            <th data-field="type">类型</th>
-            <th data-field="enabled" data-formatter="enabledFormatter">是否可用</th>
+            <th data-field="type" data-formatter="typeFormatter">类型</th>
+            <th data-field="clazz" data-align="center" data-formatter="clazzFormatter">Java 类型</th>
+            <th data-field="identifying" data-align="center" data-formatter="identifyingFormatter">Identifying</th>
+            <th data-field="enabled" data-align="center" data-formatter="enabledFormatter">是否可用</th>
         </tr>
         </thead>
     </table>
 </div>
 
 <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">编辑参数</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="editForm">
+                <form id="editForm" class="row g-3">
                     <input type="hidden" id="editId" name="id">
-                    <div class="mb-3">
+                    <div class="col-4">
                         <label for="editName" class="form-label">名称</label>
                         <input type="text" class="form-control" id="editName" name="name" required>
                     </div>
-                    <div class="mb-3">
+                    <div class="col-4">
                         <label for="editKey" class="form-label">参数键</label>
                         <input type="text" class="form-control" id="editKey" name="key" required>
                     </div>
-                    <div class="mb-3">
+                    <div class="col-4">
                         <label for="editValue" class="form-label">参数值</label>
                         <input type="text" class="form-control" id="editValue" name="value" required>
                     </div>
-                    <div class="mb-3">
+                    <div class="col-12">
                         <label for="editDesc" class="form-label">描述</label>
                         <input type="text" class="form-control" id="editDesc" name="desc">
                     </div>
-                    <div class="mb-3">
+                    <div class="col-3">
                         <label for="editType" class="form-label">类型</label>
-                        <select class="form-select" id="editType" name="type" required>
-                            <option value="global">global</option>
-                            <option value="job">job</option>
+                        <select class="form-select alk-select-type" id="editType" name="type" required>
                         </select>
                     </div>
-                    <div class="mb-3">
+                    <div class="col-3">
+                        <label for="editClazz" class="form-label">Java 类型</label>
+                        <select class="form-select alk-select-clazz" id="editClazz" name="clazz" required>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <label for="editIdentifying" class="form-label">Identifying</label>
+                        <select class="form-select alk-select-identifying" id="editIdentifying" name="identifying"
+                                required>
+                        </select>
+                    </div>
+                    <div class="col-3">
                         <label for="editEnabled" class="form-label">是否可用</label>
-                        <select class="form-select" id="editEnabled" name="enabled" required>
-                            <option value="true">正常</option>
-                            <option value="false">禁用</option>
+                        <select class="form-select alk-select-enabled" id="editEnabled" name="enabled" required>
                         </select>
                     </div>
                 </form>
@@ -182,23 +200,124 @@
 <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/webjars/tom-select/dist/js/tom-select.complete.min.js}"></script>
 <script th:src="@{/js/infra.js}"></script>
 <script th:src="@{/js/table.js}"></script>
 <script>
+    initClazzSelect();
+    initEnabledSelect();
+    initTypeSelect();
+    initIdentifyingSelect();
+    preLoad();
+    initTable();
+
     function preLoad() {
         const urlParams = new URLSearchParams(window.location.search);
         const type = urlParams.get('type');
         if (type) {
+            let tomSelect = $('#type').get(0).tomselect;
+            if (tomSelect) {
+                tomSelect.setValue(type);
+                tomSelect.lock();
+                $(tomSelect.wrapper).addClass('is-readonly-tomSelect');
+            }
+
             const name = urlParams.get('name');
             const key = urlParams.get('key');
-            $("#type").val(type).addClass('is-readonly');
             $("#name").val(name).addClass('is-readonly');
             $("#key").val(key);
         }
     }
 
-    preLoad();
-    initTable();
+    function initClazzSelect() {
+        httpClient('/batch/param/classes', 'GET', null, function (data) {
+            const options = data.map(value => ({
+                value: value,
+                text: `<div>${clazzFormatter(value)}</div>`
+            }));
+            $(".alk-select-clazz").each(function () {
+                let selected = $(this).find("option:selected").length > 0;
+                let tomSelect = new TomSelect(this, {
+                    plugins: ['remove_button'],
+                    options: options,
+                    items: selected ? undefined : [data[0]],
+                    render: {
+                        option: function (data, escape) {
+                            return `${data.text}`;
+                        },
+                        item: function (data, escape) {
+                            return `${data.text}`;
+                        }
+                    }
+                });
+                if (!selected) {
+                    $(this).data('alk-init-value', tomSelect.items[0]);
+                }
+            });
+        });
+    }
+
+    function clazzFormatter(value) {
+        return `<span class="badge bg-primary">${value}</span>`;
+    }
+
+    function initIdentifyingSelect() {
+        $(".alk-select-identifying").each(function () {
+            let selected = $(this).find("option:selected").length > 0;
+            let tomSelect = new TomSelect(this, {
+                plugins: ['remove_button'],
+                options: [{value: 'true', text: 'Y'}, {value: 'false', text: 'N'}],
+                items: selected ? undefined : ['true'],
+                render: {
+                    option: function (data, escape) {
+                        return `<div>${identifyingFormatter(data.value)}</div>`;
+                    },
+                    item: function (data, escape) {
+                        return `<div>${identifyingFormatter(data.value)}</div>`;
+                    }
+                }
+            });
+            if (!selected) {
+                $(this).data('alk-init-value', tomSelect.items[0]);
+            }
+        });
+    }
+
+    function identifyingFormatter(arg) {
+        if (arg === true || arg === 'true') {
+            return `<span class="badge bg-primary">Y</span>`
+        }
+        return `<span class="badge bg-secondary">N</span>`;
+    }
+
+    function initTypeSelect() {
+        $(".alk-select-type").each(function () {
+            let selected = $(this).find("option:selected").length > 0;
+            let tomSelect = new TomSelect(this, {
+                plugins: ['remove_button'],
+                options: [{value: 'job', text: 'job'}, {value: 'group', text: 'group'}],
+                items: selected ? undefined : ['job'],
+                render: {
+                    option: function (data, escape) {
+                        return `<div>${typeFormatter(data.value)}</div>`;
+                    },
+                    item: function (data, escape) {
+                        return `<div>${typeFormatter(data.value)}</div>`;
+                    }
+                }
+            });
+            if (!selected) {
+                $(this).data('alk-init-value', tomSelect.items[0]);
+            }
+        });
+    }
+
+    function typeFormatter(arg) {
+        if (arg === 'job') {
+            return `<span class="badge bg-primary">job</span>`
+        }
+        return `<span class="badge bg-secondary">group</span>`;
+    }
 </script>
 </body>
 </html>

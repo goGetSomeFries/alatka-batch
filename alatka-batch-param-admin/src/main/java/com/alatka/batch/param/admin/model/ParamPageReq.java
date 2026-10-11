@@ -18,6 +18,12 @@ public class ParamPageReq extends PageReqMessage {
     @Schema(description = "参数类型")
     private String type;
 
+    @Schema(description = "Java 类型")
+    private String clazz;
+
+    @Schema(description = "Job Parameter Identifying")
+    private Boolean identifying;
+
     @Schema(description = "是否可用")
     private Boolean enabled;
 
@@ -51,6 +57,22 @@ public class ParamPageReq extends PageReqMessage {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getClazz() {
+        return clazz;
+    }
+
+    public void setClazz(String clazz) {
+        this.clazz = clazz;
+    }
+
+    public Boolean getIdentifying() {
+        return identifying;
+    }
+
+    public void setIdentifying(Boolean identifying) {
+        this.identifying = identifying;
     }
 
     public Boolean getEnabled() {

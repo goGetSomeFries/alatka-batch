@@ -31,7 +31,7 @@ public class JobExecutionPageReq extends PageReqMessage {
 
     private List<String> status;
 
-    private String exitCode;
+    private List<String> exitCode;
 
     private String exitMessage;
 
@@ -107,11 +107,11 @@ public class JobExecutionPageReq extends PageReqMessage {
         this.status = status;
     }
 
-    public String getExitCode() {
+    public List<String> getExitCode() {
         return exitCode;
     }
 
-    public void setExitCode(String exitCode) {
+    public void setExitCode(List<String> exitCode) {
         this.exitCode = exitCode;
     }
 

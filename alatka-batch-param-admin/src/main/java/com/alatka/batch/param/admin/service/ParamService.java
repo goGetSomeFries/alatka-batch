@@ -26,6 +26,15 @@ public class ParamService {
 
     private BatchParamBuilder batchParamBuilder;
 
+    private List<String> typeList = new ArrayList<>();
+
+    {
+        typeList.add("string");
+        typeList.add("long");
+        typeList.add("double");
+        typeList.add("date");
+    }
+
     public Long create(ParamReq req) {
         BatchParam entity = new BatchParam();
         BeanUtils.copyProperties(req, entity);
@@ -77,6 +86,10 @@ public class ParamService {
                 }).collect(Collectors.toList());
     }
 
+    public List<String> classType() {
+        return this.typeList;
+    }
+
     private Specification<BatchParam> condition(BatchParam condition) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> list = new ArrayList<>();
@@ -84,7 +97,7 @@ public class ParamService {
                 list.add(criteriaBuilder.equal(root.get("id").as(Long.class), condition.getId()));
             }
             if (condition.getName() != null) {
-                list.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + condition.getName() + "%"));
+                list.add(criteriaBuilder.equal(root.get("name").as(String.class), condition.getName()));
             }
             if (condition.getKey() != null) {
                 list.add(criteriaBuilder.like(root.get("key").as(String.class), "%" + condition.getKey() + "%"));
@@ -94,6 +107,12 @@ public class ParamService {
             }
             if (condition.getType() != null) {
                 list.add(criteriaBuilder.equal(root.get("type").as(String.class), condition.getType()));
+            }
+            if (condition.getClazz() != null) {
+                list.add(criteriaBuilder.like(root.get("clazz").as(String.class), "%" + condition.getClazz() + "%"));
+            }
+            if (condition.getIdentifying() != null) {
+                list.add(criteriaBuilder.equal(root.get("identifying").as(Boolean.class), condition.getIdentifying()));
             }
             if (condition.getEnabled() != null) {
                 list.add(criteriaBuilder.equal(root.get("enabled").as(Boolean.class), condition.getEnabled()));
