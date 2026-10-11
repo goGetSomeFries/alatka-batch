@@ -295,7 +295,7 @@
             let selected = $(this).find("option:selected").length > 0;
             let tomSelect = new TomSelect(this, {
                 plugins: ['remove_button'],
-                options: [{value: 'job', text: 'job'}, {value: 'global', text: 'global'}],
+                options: [{value: 'job', text: 'job'}, {value: 'group', text: 'group'}],
                 items: selected ? undefined : ['job'],
                 render: {
                     option: function (data, escape) {
@@ -316,7 +316,7 @@
         if (arg === 'job') {
             return `<span class="badge bg-primary">job</span>`
         }
-        return `<span class="badge bg-secondary">global</span>`;
+        return `<span class="badge bg-secondary">group</span>`;
     }
 </script>
 </body>

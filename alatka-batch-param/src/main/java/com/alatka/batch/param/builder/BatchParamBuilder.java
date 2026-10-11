@@ -42,7 +42,7 @@ public class BatchParamBuilder {
 
         Specification<BatchParam> specC = (root, query, criteriaBuilder) ->
                 criteriaBuilder.and(criteriaBuilder.equal(root.get("name").as(String.class), groupKey),
-                        criteriaBuilder.equal(root.get("type").as(String.class), BatchParam.Type.global.name()));
+                        criteriaBuilder.equal(root.get("type").as(String.class), BatchParam.Type.group.name()));
 
         Specification<BatchParam> finalSpec = specA.and(specB.or(specC));
         Sort sort = Sort.by("key");

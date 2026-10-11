@@ -60,7 +60,7 @@ public class BatchParam {
     private Boolean enabled;
 
     public enum Type {
-        global, job
+        group, job
     }
 
     public Long getId() {
