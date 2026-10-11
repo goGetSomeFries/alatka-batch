@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -19,11 +20,18 @@ public class BatchParamBuilder {
     private ParamRepository paramRepository;
 
     public String build(String jobName, String groupKey) {
-        return this.getList(jobName, groupKey)
+        Map<String, String> map = this.getList(jobName, groupKey)
                 .stream()
                 .peek(entity -> entity.setValue(this.formatValue(entity.getValue())))
-                .map(entity -> entity.getKey().concat("=").concat(entity.getValue()))
-                .collect(Collectors.joining(","));
+                .collect(Collectors.toMap(this::buildKey, BatchParam::getValue));
+
+        return map.entrySet().stream().map(entry -> entry.getKey() + "=" + entry.getValue()).collect(Collectors.joining(","));
+    }
+
+    private String buildKey(BatchParam entity) {
+        String identifying = entity.getIdentifying() ? "+" : "-";
+        String clazz = entity.getClazz();
+        return identifying + entity.getKey() + "(" + clazz + ")";
     }
 
     public List<BatchParam> getList(String jobName, String groupKey) {
@@ -36,7 +44,7 @@ public class BatchParamBuilder {
 
         Specification<BatchParam> specC = (root, query, criteriaBuilder) ->
                 criteriaBuilder.and(criteriaBuilder.equal(root.get("name").as(String.class), groupKey),
-                        criteriaBuilder.equal(root.get("type").as(String.class), BatchParam.Type.global.name()));
+                        criteriaBuilder.equal(root.get("type").as(String.class), BatchParam.Type.group.name()));
 
         Specification<BatchParam> finalSpec = specA.and(specB.or(specC));
         Sort sort = Sort.by("key");
