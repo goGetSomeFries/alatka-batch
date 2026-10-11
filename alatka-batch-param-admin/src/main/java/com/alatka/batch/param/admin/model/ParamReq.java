@@ -29,6 +29,14 @@ public class ParamReq {
     @NotEmpty(message = "value 不能为空")
     private String type;
 
+    @Schema(description = "Java 类型", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotEmpty(message = "clazz 不能为空")
+    private String clazz;
+
+    @Schema(description = "Job Parameter Identifying", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "identifying 不能为空")
+    private Boolean identifying;
+
     @Schema(description = "是否可用", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "enabled 不能为空")
     private Boolean enabled;
@@ -79,6 +87,22 @@ public class ParamReq {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getClazz() {
+        return clazz;
+    }
+
+    public void setClazz(String clazz) {
+        this.clazz = clazz;
+    }
+
+    public Boolean getIdentifying() {
+        return identifying;
+    }
+
+    public void setIdentifying(Boolean identifying) {
+        this.identifying = identifying;
     }
 
     public Boolean getEnabled() {

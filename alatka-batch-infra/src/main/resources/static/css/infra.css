@@ -4,3 +4,10 @@
     cursor: default;
     pointer-events: none;
 }
+
+.is-readonly-tomSelect {
+    background-color: var(--bs-secondary-bg, #e9ecef);
+    opacity: 1;
+    cursor: default;
+    pointer-events: none;
+}
