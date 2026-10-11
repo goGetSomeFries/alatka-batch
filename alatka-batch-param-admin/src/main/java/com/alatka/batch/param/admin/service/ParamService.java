@@ -14,7 +14,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +29,18 @@ public class ParamService {
     private ParamRepository paramRepository;
 
     private BatchParamBuilder batchParamBuilder;
+
+    private List<String> typeList = new ArrayList<>();
+
+    {
+        typeList.add(String.class.getName());
+        typeList.add(Long.class.getName());
+        typeList.add(Double.class.getName());
+        typeList.add(LocalDate.class.getName());
+        typeList.add(LocalTime.class.getName());
+        typeList.add(LocalDateTime.class.getName());
+        typeList.add(Date.class.getName());
+    }
 
     public Long create(ParamReq req) {
         BatchParam entity = new BatchParam();
@@ -77,6 +93,10 @@ public class ParamService {
                 }).collect(Collectors.toList());
     }
 
+    public List<String> classType() {
+        return this.typeList;
+    }
+
     private Specification<BatchParam> condition(BatchParam condition) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> list = new ArrayList<>();
@@ -84,7 +104,7 @@ public class ParamService {
                 list.add(criteriaBuilder.equal(root.get("id").as(Long.class), condition.getId()));
             }
             if (condition.getName() != null) {
-                list.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + condition.getName() + "%"));
+                list.add(criteriaBuilder.equal(root.get("name").as(String.class), condition.getName()));
             }
             if (condition.getKey() != null) {
                 list.add(criteriaBuilder.like(root.get("key").as(String.class), "%" + condition.getKey() + "%"));
@@ -94,6 +114,12 @@ public class ParamService {
             }
             if (condition.getType() != null) {
                 list.add(criteriaBuilder.equal(root.get("type").as(String.class), condition.getType()));
+            }
+            if (condition.getClazz() != null) {
+                list.add(criteriaBuilder.like(root.get("clazz").as(String.class), "%" + condition.getClazz() + "%"));
+            }
+            if (condition.getIdentifying() != null) {
+                list.add(criteriaBuilder.equal(root.get("identifying").as(Boolean.class), condition.getIdentifying()));
             }
             if (condition.getEnabled() != null) {
                 list.add(criteriaBuilder.equal(root.get("enabled").as(Boolean.class), condition.getEnabled()));

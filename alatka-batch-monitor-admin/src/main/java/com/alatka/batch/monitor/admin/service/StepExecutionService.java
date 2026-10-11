@@ -85,10 +85,10 @@ public class StepExecutionService {
                 list.add(criteriaBuilder.like(root.get("stepName").as(String.class), "%" + condition.getStepName() + "%"));
             }
             if (condition.getStatus() != null) {
-                list.add(criteriaBuilder.equal(root.get("status").as(String.class), condition.getStatus()));
+                list.add(root.get("status").as(String.class).in(condition.getStatus()));
             }
             if (condition.getExitCode() != null) {
-                list.add(criteriaBuilder.equal(root.get("exitCode").as(String.class), condition.getExitCode()));
+                list.add(root.get("exitCode").as(String.class).in(condition.getExitCode()));
             }
             if (condition.getExitMessage() != null) {
                 list.add(criteriaBuilder.like(root.get("exitMessage").as(String.class), "%" + condition.getExitMessage() + "%"));

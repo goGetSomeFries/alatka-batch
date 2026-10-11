@@ -54,6 +54,12 @@ public class ParamController {
         return ResMessage.success(paramService.getList(jobName, groupKey));
     }
 
+    @Operation(summary = "Java 类型查询")
+    @GetMapping("/classes")
+    public ResMessage<List<String>> classType() {
+        return ResMessage.success(paramService.classType());
+    }
+
     @Autowired
     public void setParamService(ParamService paramService) {
         this.paramService = paramService;
