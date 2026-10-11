@@ -312,7 +312,7 @@
         httpClient('/batch/param/exist', 'HEAD', null, function (data) {
         }, function (msg) {
             const row = selections[0];
-            window.location.href = `/batch/param?type=job&name=${row.key}`;
+            window.location.href = `/batch/param?type=job&name=${row.groupKey}.${row.key}`;
         }, function () {
             showWarningToast("请求路径不存在，确认后端是否配置alatka-batch-param-admin.jar");
         });
@@ -385,10 +385,10 @@
     }
 
     function initParamList(jobName, groupKey, callback) {
-        httpClient(`/batch/param/list?groupKey=${groupKey}&jobName=${jobName}`, 'GET', null, function (list) {
+        httpClient(`/batch/param/list?groupKey=${groupKey}&jobName=${groupKey}.${jobName}`, 'GET', null, function (list) {
             let html = '';
             list.forEach(function (param) {
-                const href = `/batch/param?type=${param.type}&key=${param.key}&name=${param.type === 'job' ? jobName : groupKey}`;
+                const href = `/batch/param?type=${param.type}&key=${param.key}&name=${param.type === 'job' ? groupKey + "." + jobName : groupKey}`;
                 html += `<a href="${href}" class="me-1 mb-2 badge text-decoration-none ${param.type === 'job' ? 'bg-success' : 'bg-secondary'}">${param.key} = ${param.value}</a>`;
             });
             html = html === '' ? `<span class="mb-2 badge bg-warning">未配置参数</span>` : html;
