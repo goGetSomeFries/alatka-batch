@@ -47,7 +47,7 @@
                 <div class="col-md-3">
                     <label for="clazz" class="form-label">Java 类型</label>
                     <select class="form-select alk-select-clazz" id="clazz" name="clazz">
-                        <option value="">全部</option>
+                        <option value="" selected>全部</option>
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -231,9 +231,16 @@
 
     function initClazzSelect() {
         httpClient('/batch/param/classes', 'GET', null, function (data) {
+            const options = data.map(value => ({
+                value: value,
+                text: `<div>${clazzFormatter(value)}</div>`
+            }));
             $(".alk-select-clazz").each(function () {
+                let selected = $(this).find("option:selected").length > 0;
                 let tomSelect = new TomSelect(this, {
                     plugins: ['remove_button'],
+                    options: options,
+                    items: selected ? undefined : [data[0]],
                     render: {
                         option: function (data, escape) {
                             return `${data.text}`;
@@ -243,12 +250,9 @@
                         }
                     }
                 });
-                data.forEach((value) => {
-                    tomSelect.addOption({
-                        value: value,
-                        text: `<div>${clazzFormatter(value)}</div>`
-                    });
-                });
+                if (!selected) {
+                    $(this).data('alk-init-value', tomSelect.items[0]);
+                }
             });
         });
     }
@@ -259,10 +263,11 @@
 
     function initIdentifyingSelect() {
         $(".alk-select-identifying").each(function () {
+            let selected = $(this).find("option:selected").length > 0;
             let tomSelect = new TomSelect(this, {
                 plugins: ['remove_button'],
-                options: [{value: true, text: 'Y'}, {value: false, text: 'N'}],
-                items: $(this).find("option:selected").length > 0 ? undefined : [true],
+                options: [{value: 'true', text: 'Y'}, {value: 'false', text: 'N'}],
+                items: selected ? undefined : ['true'],
                 render: {
                     option: function (data, escape) {
                         return `<div>${identifyingFormatter(data.value)}</div>`;
@@ -272,11 +277,14 @@
                     }
                 }
             });
+            if (!selected) {
+                $(this).data('alk-init-value', tomSelect.items[0]);
+            }
         });
     }
 
     function identifyingFormatter(arg) {
-        if (arg) {
+        if (arg === true || arg === 'true') {
             return `<span class="badge bg-primary">Y</span>`
         }
         return `<span class="badge bg-secondary">N</span>`;
@@ -284,10 +292,11 @@
 
     function initTypeSelect() {
         $(".alk-select-type").each(function () {
+            let selected = $(this).find("option:selected").length > 0;
             let tomSelect = new TomSelect(this, {
                 plugins: ['remove_button'],
                 options: [{value: 'job', text: 'job'}, {value: 'global', text: 'global'}],
-                items: $(this).find("option:selected").length > 0 ? undefined : ['global'],
+                items: selected ? undefined : ['job'],
                 render: {
                     option: function (data, escape) {
                         return `<div>${typeFormatter(data.value)}</div>`;
@@ -297,7 +306,9 @@
                     }
                 }
             });
-            console.log($(this).prop("id") + "===========" + tomSelect.items);
+            if (!selected) {
+                $(this).data('alk-init-value', tomSelect.items[0]);
+            }
         });
     }
 

@@ -18,9 +18,6 @@ function initTable() {
 
         $searchForm.find('select').each(function () {
             if (this.tomselect && !this.tomselect.isLocked) {
-                if (this.tomselect.isLocked) {
-                    return;
-                }
                 this.tomselect.clear();
                 const initValue = $(this).data('alk-init-value');
                 if (initValue) {
@@ -104,6 +101,15 @@ function showEditModal(url, created) {
     if (created) {
         $('#editForm')[0]?.reset();
         $('#editForm input[type="hidden"]').val('');
+        $('#editForm').find('select').each(function () {
+            if (this.tomselect) {
+                this.tomselect.clear();
+                const initValue = $(this).data('alk-init-value');
+                if (initValue) {
+                    this.tomselect.setValue(initValue);
+                }
+            }
+        });
     } else {
         const selection = $('#dataTable').bootstrapTable('getSelections');
         if (selection.length !== 1) {
@@ -116,17 +122,24 @@ function showEditModal(url, created) {
             const $input = $(`#editForm [name="${field}"]`);
             if ($input.length) {
                 let value = row[field];
+                if (typeof value === 'boolean') {
+                    value = value ? 'true' : 'false';
+                }
                 if ($input[0].tomselect) {
                     $input[0].tomselect.setValue(value);
                 } else {
-                    if (typeof value === 'boolean') {
-                        value = value ? 'true' : 'false';
-                    }
                     $input.val(value);
                 }
             }
         });
     }
+
+    $('#editForm').removeClass('was-validated');
+    $('#editForm').find('select').each(function () {
+        if (this.tomselect) {
+            $(this.tomselect.wrapper).removeClass('is-invalid is-valid');
+        }
+    });
 
     $('#editModal').modal('show');
     $('#saveEditBtn').off('click').on('click', function (event) {
@@ -186,21 +199,18 @@ function refresh() {
 }
 
 function enabledFormatter(arg) {
-    if (arg === true) {
+    if (arg === true || arg === 'true') {
         return `<span class="badge bg-success">正常</span>`;
     }
-    if (arg === false) {
-        return `<span class="badge bg-danger">禁用</span>`;
-    }
-    return "/";
+    return `<span class="badge bg-danger">禁用</span>`;
 }
 
 function initEnabledSelect() {
     $(".alk-select-enabled").each(function () {
         let tomSelect = new TomSelect(this, {
             plugins: ['remove_button'],
-            options: [{value: true, text: '正常'}, {value: false, text: '禁用'}],
-            items: [true],
+            options: [{value: 'true', text: '正常'}, {value: 'false', text: '禁用'}],
+            items: ['true'],
             render: {
                 option: function (data, escape) {
                     return `<div>${enabledFormatter(data.value)}</div>`;
