@@ -104,7 +104,7 @@ public class ParamService {
                 list.add(criteriaBuilder.equal(root.get("id").as(Long.class), condition.getId()));
             }
             if (condition.getName() != null) {
-                list.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + condition.getName() + "%"));
+                list.add(criteriaBuilder.equal(root.get("name").as(String.class), condition.getName()));
             }
             if (condition.getKey() != null) {
                 list.add(criteriaBuilder.like(root.get("key").as(String.class), "%" + condition.getKey() + "%"));
