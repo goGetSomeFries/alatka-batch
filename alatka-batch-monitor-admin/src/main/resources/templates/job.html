@@ -10,11 +10,11 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/highlightjs/styles/vs.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/flatpickr/dist/flatpickr.min.css}"/>
-    <link rel="stylesheet" th:href="@{/css/infra.css}">
+    <link rel="stylesheet" th:href="@{/css/alatka-batch-infra.css}">
 </head>
 <body>
 <div class="container mt-4">
-    <div class="card mb-3">
+    <div class="card">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Job Execution 查询</h5>
             <button class="btn btn-sm btn-outline-secondary"
@@ -46,13 +46,11 @@
                 <div class="col-md-3">
                     <label for="status" class="form-label">status</label>
                     <select class="form-select" id="status" name="status">
-                        <option value="">全部</option>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label for="exitCode" class="form-label">exitCode</label>
                     <select class="form-select" id="exitCode" name="exitCode">
-                        <option value="">全部</option>
                     </select>
                 </div>
                 <div class="col-md-6">
@@ -86,21 +84,22 @@
            data-detail-formatter="detailFormatter"
            data-side-pagination="server"
            data-click-to-select="true"
+           data-show-button-text="true"
            data-show-columns="true"
            data-thead-classes="text-center"
            data-maintain-selected="true">
         <thead>
         <tr>
-            <th data-field="jobExecutionId" data-visible="false" data-sortable="true">jobExecutionId</th>
-            <th data-field="version" data-visible="false">version</th>
-            <th data-field="jobInstanceId" data-visible="false">jobInstanceId</th>
-            <th data-field="createTime" data-sortable="true">createTime</th>
-            <th data-field="startTime" data-sortable="true">startTime</th>
-            <th data-field="endTime" data-sortable="true">endTime</th>
+            <th data-field="jobExecutionId" data-align="right" data-visible="false" data-sortable="true">jobExecutionId</th>
+            <th data-field="version" data-align="right" data-visible="false">version</th>
+            <th data-field="jobInstanceId" data-align="right" data-visible="false">jobInstanceId</th>
+            <th data-field="createTime" data-align="center" data-sortable="true">createTime</th>
+            <th data-field="startTime" data-align="center" data-sortable="true">startTime</th>
+            <th data-field="endTime" data-align="center" data-sortable="true">endTime</th>
             <th data-field="status" data-align="center" data-formatter="statusFormatter">status</th>
             <th data-field="exitCode" data-align="center" data-formatter="statusFormatter">exitCode</th>
             <th data-field="exitMessage" data-formatter="exitMessageFormatter">exitMessage</th>
-            <th data-field="lastUpdated" data-sortable="true">lastUpdated</th>
+            <th data-field="lastUpdated" data-align="center" data-sortable="true">lastUpdated</th>
         </tr>
         </thead>
     </table>
@@ -130,17 +129,17 @@
 <script th:src="@{/webjars/flatpickr/dist/flatpickr.min.js}"></script>
 <script th:src="@{/webjars/flatpickr/dist/l10n/zh.js}"></script>
 <script th:src="@{/webjars/tom-select/dist/js/tom-select.complete.min.js}"></script>
-<script th:src="@{/js/infra.js}"></script>
-<script th:src="@{/js/table.js}"></script>
-<script th:src="@{/js/default.js}"></script>
+<script th:src="@{/js/alatka-batch-infra.js}"></script>
+<script th:src="@{/js/alatka-batch-table.js}"></script>
+<script th:src="@{/js/alatka-batch-monitor-default.js}"></script>
 <script>
-    preLoad();
-    initTable();
-    initTableRowEvent();
     initFlatPickr('#createTimeRange');
     initFlatPickr('#endTimeRange');
     initStatusSelect();
     initExitCodeSelect();
+    preLoad();
+    initTable();
+    initTableRowEvent();
 
     function preLoad() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -205,7 +204,7 @@
             let html = res.list.map((item) => `
                 <div id="step-node-${item.stepExecutionId}" class="px-4 text-center position-relative" style="min-width: 150px; z-index: 1; background: linear-gradient(to bottom, transparent 34px, #dee2e6 34px, #dee2e6 36px, transparent 36px);">
                     <div class="rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center bg-light" style="width: 32px; height: 32px;">
-                        <span class="badge ${mapping(item.status)}">${item.status}</span>
+                        ${statusFormatter(item.status)}
                     </div>
                     <div class="d-flex justify-content-center align-items-center mt-2 gap-1">
                         <a href="/batch/monitor/step?jobExecutionId=${jobExecutionId}&stepName=${item.stepName}" class="fw-bold small text-decoration-none">${item.stepName}</a>

@@ -8,10 +8,11 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/tom-select/dist/css/tom-select.bootstrap5.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/alatka-batch-infra.css}">
 </head>
 <body>
 <div class="container mt-4">
-    <div class="card mb-3">
+    <div class="card">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h5 class="mb-0">流程组查询</h5>
             <button class="btn btn-sm btn-outline-secondary"
@@ -36,7 +37,6 @@
                 <div class="col-md-3">
                     <label for="enabled" class="form-label">是否可用</label>
                     <select class="form-select alk-select-enabled" id="enabled" name="enabled">
-                        <option value="">全部</option>
                     </select>
                 </div>
                 <div class="col-12 text-center">
@@ -50,20 +50,6 @@
             </form>
         </div>
     </div>
-    <div class="col-12 text-end mb-3">
-        <button type="button" class="btn btn-sm btn-outline-info" id="addButton"
-                onclick="showEditModal('/batch/flow/group/create', true)">
-            <i class="bi bi-plus-lg"></i> 新增
-        </button>
-        <button type="button" class="btn btn-sm btn-outline-warning" id="editButton"
-                onclick="showEditModal('/batch/flow/group/update', false)">
-            <i class="bi bi-pencil-square"></i> 更新
-        </button>
-        <button type="button" class="btn btn-sm btn-danger" id="deleteButton"
-                onclick="showDeleteModal('/batch/flow/group/delete')">
-            <i class="bi bi-trash"></i> 删除
-        </button>
-    </div>
 
     <table id="dataTable"
            data-toggle="table"
@@ -76,16 +62,18 @@
            data-pagination-loop="false"
            data-side-pagination="server"
            data-click-to-select="true"
+           data-show-button-text="true"
+           data-show-columns="true"
            data-thead-classes="text-center"
            data-maintain-selected="true">
         <thead>
         <tr>
             <th data-radio="true"></th>
-            <th data-field="id">ID</th>
+            <th data-field="id" data-visible="false" data-sortable="true" data-align="right">ID</th>
             <th data-field="createBy">创建人</th>
-            <th data-field="createAt" data-sortable="true">创建日期</th>
+            <th data-field="createAt" data-align="center" data-sortable="true">创建日期</th>
             <th data-field="updateBy">更新人</th>
-            <th data-field="updateAt" data-sortable="true">更新日期</th>
+            <th data-field="updateAt" data-align="center" data-sortable="true">更新日期</th>
             <th data-field="key" data-sortable="true">关键字</th>
             <th data-field="name">名称</th>
             <th data-field="enabled" data-align="center" data-formatter="enabledFormatter">是否可用</th>
@@ -150,11 +138,53 @@
 <script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
 <script th:src="@{/webjars/tom-select/dist/js/tom-select.complete.min.js}"></script>
-<script th:src="@{/js/infra.js}"></script>
-<script th:src="@{/js/table.js}"></script>
+<script th:src="@{/js/alatka-batch-infra.js}"></script>
+<script th:src="@{/js/alatka-batch-table.js}"></script>
 <script>
-    initTable();
     initEnabledSelect();
+    initTable();
+
+    function buttonsFunction() {
+        return {
+            addBtn: {
+                text: '新增',
+                icon: 'bi-plus-lg',
+                attributes: {
+                    title: '新增',
+                    class: 'btn btn-outline-info'
+                },
+                event: function () {
+                    showEditModal('/batch/flow/group/create', true);
+                }
+            },
+            editBtn: {
+                text: '更新',
+                icon: 'bi-pencil-square',
+                attributes: {
+                    title: '更新',
+                    class: 'btn btn-outline-warning'
+                },
+                event: function () {
+                    showEditModal('/batch/flow/group/update', false);
+                }
+            },
+            deleteBtn: {
+                text: '删除',
+                icon: 'bi-trash',
+                attributes: {
+                    title: '删除',
+                    class: 'btn btn-danger me-3'
+                },
+                event: function () {
+                    showDeleteModal('/batch/flow/group/delete');
+                }
+            }
+        }
+    }
+
+    function buttonsOrderFunction() {
+        return ['addBtn', 'editBtn', 'deleteBtn', 'columns'];
+    }
 </script>
 </body>
 </html>
