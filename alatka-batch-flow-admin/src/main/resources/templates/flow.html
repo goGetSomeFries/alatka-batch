@@ -8,10 +8,11 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/tom-select/dist/css/tom-select.bootstrap5.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/alatka-batch-infra.css}">
 </head>
 <body>
 <div class="container mt-4">
-    <div class="card mb-3">
+    <div class="card">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h5 class="mb-0">流程查询</h5>
             <button class="btn btn-sm btn-outline-secondary"
@@ -34,16 +35,13 @@
                     <input type="text" class="form-control" id="name" name="name" placeholder="输入名称">
                 </div>
                 <div class="col-md-4">
-                    <label for="groupKey" class="form-label">流程组名称</label>
+                    <label for="groupKey" class="form-label">流程组</label>
                     <select class="form-select alk-select-groupKey" id="groupKey" name="groupKey">
-                        <option value="">全部</option>
-                        <option value="default_">默认</option>
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label for="enabled" class="form-label">是否可用</label>
+                    <label for="enabled" class="form-label">状态</label>
                     <select class="form-select alk-select-enabled" id="enabled" name="enabled">
-                        <option value="">全部</option>
                     </select>
                 </div>
                 <div class="col-12 text-center">
@@ -56,36 +54,6 @@
                 </div>
             </form>
         </div>
-    </div>
-    <div class="col-12 text-end mb-3">
-        <button type="button" class="btn btn-sm btn-outline-dark me-3" id="monitorButton"
-                onclick="redirectToMonitor()">
-            <i class="bi bi-clock-history"></i> 跑批记录查询
-        </button>
-        <button type="button" class="btn btn-sm btn-outline-dark me-3" id="paramButton"
-                onclick="redirectToParam()">
-            <i class="bi bi-sliders"></i> 参数维护
-        </button>
-        <button type="button" class="btn btn-sm btn-outline-primary" id="deployButton"
-                onclick="showDeployModal()">
-            <i class="bi bi-rocket"></i> 部署流程图
-        </button>
-        <button type="button" class="btn btn-sm btn-outline-secondary me-3" id="graphButton"
-                onclick="redirectToGraph()">
-            <i class="bi bi-palette"></i> 设计流程图
-        </button>
-        <button type="button" class="btn btn-sm btn-outline-info" id="addButton"
-                onclick="showEditModal('/batch/flow/create', true)">
-            <i class="bi bi-plus-lg"></i> 新增
-        </button>
-        <button type="button" class="btn btn-sm btn-outline-warning" id="editButton"
-                onclick="showEditModal('/batch/flow/update', false)">
-            <i class="bi bi-pencil-square"></i> 更新
-        </button>
-        <button type="button" class="btn btn-sm btn-danger" id="deleteButton"
-                onclick="showDeleteModal('/batch/flow/delete')">
-            <i class="bi bi-trash"></i> 删除
-        </button>
     </div>
 
     <table id="dataTable"
@@ -101,20 +69,23 @@
            data-detail-formatter="detailFormatter"
            data-side-pagination="server"
            data-click-to-select="true"
+           data-show-button-text="true"
+           data-show-columns="true"
+           data-thead-classes="text-center"
            data-maintain-selected="true">
         <thead>
         <tr>
             <th data-radio="true"></th>
-            <th data-field="id">ID</th>
+            <th data-field="id" data-visible="false" data-sortable="true" data-align="right">ID</th>
             <th data-field="createBy">创建人</th>
-            <th data-field="createAt" data-sortable="true">创建日期</th>
+            <th data-field="createAt" data-align="center" data-sortable="true">创建日期</th>
             <th data-field="updateBy">更新人</th>
-            <th data-field="updateAt" data-sortable="true">更新日期</th>
+            <th data-field="updateAt" data-align="center" data-sortable="true">更新日期</th>
             <th data-field="key" data-sortable="true">关键字</th>
             <th data-field="name">名称</th>
             <th data-field="listeners" data-formatter="listenersFormatter">监听</th>
-            <th data-field="groupKey" data-formatter="groupKeyFormatter">流程组</th>
-            <th data-field="enabled" data-align="center" data-formatter="enabledFormatter">是否可用</th>
+            <th data-field="groupKey" data-align="center" data-formatter="groupKeyFormatter">流程组</th>
+            <th data-field="enabled" data-align="center" data-formatter="enabledFormatter">状态</th>
         </tr>
         </thead>
     </table>
@@ -147,13 +118,12 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="editGroupKey" class="form-label">流程组名称</label>
+                        <label for="editGroupKey" class="form-label">流程组</label>
                         <select class="form-select alk-select-groupKey" id="editGroupKey" name="groupKey" required>
-                            <option value="default_">默认</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="editEnabled" class="form-label">是否可用</label>
+                        <label for="editEnabled" class="form-label">状态</label>
                         <select class="form-select alk-select-enabled" id="editEnabled" name="enabled" required>
                         </select>
                     </div>
@@ -195,8 +165,8 @@
                     <div class="row">
                         <div class="col-md-12 mb-3">
                             <label for="deployKey" class="form-label">流程</label>
-                            <select class="form-select alk-select-deployKey" multiple id="deployKey" name="key"
-                                    aria-describedby="deployKeyDesc">
+                            <select class="form-select" multiple id="deployKey" name="key"
+                                    aria-describedby="deployKeyDesc" required>
                             </select>
                             <div id="deployKeyDesc" class="form-text">
                                 可部署多个流程
@@ -239,10 +209,10 @@
 <script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
 <script th:src="@{/webjars/tom-select/dist/js/tom-select.complete.min.js}"></script>
-<script th:src="@{/js/infra.js}"></script>
-<script th:src="@{/js/table.js}"></script>
+<script th:src="@{/js/alatka-batch-infra.js}"></script>
+<script th:src="@{/js/alatka-batch-table.js}"></script>
 <script>
-    initGroupSelect();
+    initGroupKeySelect();
     initEnabledSelect();
     initTable();
     initDeployModal();
@@ -253,44 +223,98 @@
             plugins: ['remove_button'],
             placeholder: '请选择...'
         });
-        $deployKey.data('tomSelect-instance', tomSelect);
 
         $('#saveDeployBtn').off('click').on('click', function (event) {
-            const formData = {};
+            event.preventDefault();
+            event.stopPropagation();
             const $deployForm = $('#deployForm');
             if (!$deployForm[0].checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
                 $deployForm.addClass('was-validated');
-            } else {
-                formData['path'] = $('#deployPath').val();
-                formData['uris'] = $('#deployUris').val().split(",").map(item => item.trim());
-                const tomSelect = $('#deployKey').data('tomSelect-instance');
-                formData['flowIdList'] = tomSelect.getValue();
-                httpClient('/batch/flow/deploy', 'POST', formData, function (data) {
-                    showSuccessToast('部署成功！');
-                    $('#deployModal').modal('hide');
-                    refresh();
-                });
+                if ($deployKey[0].checkValidity()) {
+                    $(tomSelect.wrapper).removeClass('is-invalid').addClass('is-valid');
+                } else {
+                    $(tomSelect.wrapper).removeClass('is-valid').addClass('is-invalid');
+                }
+                return;
             }
-        });
-    }
-
-    function initGroupSelect() {
-        httpClient('/batch/flow/group/map', 'GET', null, function (data) {
-            const map = new Map(Object.entries(data));
-            map.forEach((value, key) => {
-                $('.alk-select-groupKey').append($('<option>', {value: key, text: value}))
+            const formData = {};
+            formData['path'] = $('#deployPath').val();
+            formData['uris'] = $('#deployUris').val().split(",").map(item => item.trim());
+            formData['flowIdList'] = tomSelect.getValue();
+            httpClient('/batch/flow/deploy', 'POST', formData, function (data) {
+                showInfoToast(JSON.stringify(data, null, 2));
+                $('#deployModal').modal('hide');
+                refresh();
             });
         });
     }
 
-    function groupKeyFormatter(arg) {
-        const keyValuePairs = {};
-        $('select#groupKey option').each(function () {
-            keyValuePairs[$(this).val()] = $(this).text();
+    function showDeployModal() {
+        httpClient('/batch/flow/undeploy', 'GET', null, function (list) {
+            if (list.length === 0) {
+                showWarningToast('无待部署流程！');
+                return;
+            }
+
+            const tomSelect = $('#deployKey')[0].tomselect;
+            tomSelect.clear();
+            tomSelect.clearOptions();
+            const newOptions = list.map(data => ({
+                value: data.id,
+                text: `${data.key} - ${data.name}`
+            }));
+
+            tomSelect.addOptions(newOptions);
+
+            $('#deployPath').val('');
+            $('#deployUris').val('');
+
+            $('#deployForm').removeClass('was-validated');
+            $(tomSelect.wrapper).removeClass('is-invalid is-valid');
+            $('#deployModal').modal('show');
         });
-        return keyValuePairs[arg];
+
+    }
+
+    function initGroupKeySelect() {
+        let $select = $(".alk-select-groupKey");
+        $select.each(function () {
+            let tomSelect = new TomSelect(this, {
+                plugins: ['remove_button'],
+                placeholder: '选择流程组',
+                options: [{value: 'default_', text: `<div><span class="badge bg-secondary">默认组</span></div>`}],
+                render: {
+                    option: function (data, escape) {
+                        return `${data.text}`;
+                    },
+                    item: function (data, escape) {
+                        return `${data.text}`;
+                    }
+                }
+            });
+        });
+        httpClient('/batch/flow/group/map', 'GET', null, function (data) {
+            sessionStorage.setItem('alatka.batch.flow.groupKeyMapping', JSON.stringify(data));
+            const options = Object.entries(data).map(([key, value]) => ({
+                value: key,
+                text: `<div><span class="badge bg-primary">${value}</span></div>`
+            }));
+            $select.each(function () {
+                this.tomselect.addOption(options);
+                if (this.id !== 'groupKey') {
+                    this.tomselect.setValue([Object.values(this.tomselect.options)[0].value]);
+                    $(this).data('alk-init-value', Object.values(this.tomselect.options)[0].value);
+                }
+            });
+        });
+    }
+
+    function groupKeyFormatter(key) {
+        if (key === 'default_') {
+            return `<span class="badge bg-secondary">默认组</span>`;
+        }
+        let mapping = JSON.parse(sessionStorage.getItem('alatka.batch.flow.groupKeyMapping') || {});
+        return `<span class="badge bg-primary">${mapping[key] || key}</span>`;
     }
 
     function redirectToGraph() {
@@ -331,32 +355,6 @@
         }, function () {
             showWarningToast("请求路径不存在，确认后端是否配置alatka-batch-monitor-admin.jar");
         });
-    }
-
-    function showDeployModal() {
-        httpClient('/batch/flow/undeploy', 'GET', null, function (list) {
-            if (list.length === 0) {
-                showWarningToast('无待部署流程！');
-                return;
-            }
-
-            const tomSelect = $('#deployKey').data('tomSelect-instance');
-            tomSelect.clear();
-            tomSelect.clearOptions();
-            const newOptions = list.map(data => ({
-                value: data.id,
-                text: `${data.key} - ${data.name}`
-            }));
-
-            tomSelect.addOptions(newOptions);
-            tomSelect.refreshOptions(false);
-
-            $('#deployPath').val('');
-            $('#deployUris').val('');
-
-            $('#deployModal').modal('show');
-        });
-
     }
 
     function detailFormatter(index, row) {
@@ -464,11 +462,96 @@
         const tags = arg.split(',');
         let html = '';
         tags.forEach(function (tag) {
-            html += '<span class="badge bg-primary">' + tag + '</span> ';
+            html += `<span class="badge bg-primary">${tag}</span> `;
         });
         return html;
     }
 
+    function buttonsFunction() {
+        return {
+            monitorBtn: {
+                text: '跑批记录查询',
+                icon: 'bi-clock-history',
+                attributes: {
+                    title: '跑批记录查询',
+                    class: 'btn btn-outline-dark me-3'
+                },
+                event: function () {
+                    redirectToMonitor();
+                }
+            },
+            paramBtn: {
+                text: '参数维护',
+                icon: 'bi-sliders',
+                attributes: {
+                    title: '参数维护',
+                    class: 'btn btn-outline-dark me-3'
+                },
+                event: function () {
+                    redirectToParam();
+                }
+            },
+            deployBtn: {
+                text: '部署流程图',
+                icon: 'bi-rocket',
+                attributes: {
+                    title: '部署流程图',
+                    class: 'btn btn-outline-primary'
+                },
+                event: function () {
+                    showDeployModal();
+                }
+            },
+            designBtn: {
+                text: '设计流程图',
+                icon: 'bi-palette',
+                attributes: {
+                    title: '设计流程图',
+                    class: 'btn btn-outline-secondary me-3'
+                },
+                event: function () {
+                    redirectToGraph();
+                }
+            },
+            addBtn: {
+                text: '新增',
+                icon: 'bi-plus-lg',
+                attributes: {
+                    title: '新增',
+                    class: 'btn btn-outline-info'
+                },
+                event: function () {
+                    showEditModal('/batch/flow/create', true);
+                }
+            },
+            editBtn: {
+                text: '更新',
+                icon: 'bi-pencil-square',
+                attributes: {
+                    title: '更新',
+                    class: 'btn btn-outline-warning'
+                },
+                event: function () {
+                    showEditModal('/batch/flow/update', false);
+                }
+            },
+            deleteBtn: {
+                text: '删除',
+                icon: 'bi-trash',
+                attributes: {
+                    title: '删除',
+                    class: 'btn btn-danger me-3'
+                },
+                event: function () {
+                    showDeleteModal('/batch/flow/delete');
+                }
+            }
+        }
+    }
+
+    function buttonsOrderFunction() {
+        return ['monitorBtn', 'paramBtn', 'deployBtn', 'designBtn', 'addBtn', 'editBtn', 'deleteBtn', 'columns'];
+    }
 </script>
 </body>
 </html>

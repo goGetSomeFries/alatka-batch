@@ -24,6 +24,7 @@ function initFlatPickr($containerId) {
 function initStatusSelect() {
     let tomSelect = new TomSelect('#status', {
         plugins: ['remove_button'],
+        placeholder: '选择',
         maxItems: null,
         render: {
             option: function (data, escape) {
@@ -47,6 +48,7 @@ function initStatusSelect() {
 function initExitCodeSelect() {
     let tomSelect = new TomSelect('#exitCode', {
         plugins: ['remove_button'],
+        placeholder: '选择',
         maxItems: null,
         create: function (input) {
             return {
@@ -74,6 +76,27 @@ function initExitCodeSelect() {
     });
 }
 
+function statusFormatter(key) {
+    if (!key) {
+        return `<span class="badge bg-warning">未知</span>`;
+    }
+    switch (key) {
+        case 'COMPLETED':
+            return `<span class="badge bg-success">${key}</span>`;
+        case 'FAILED':
+            return `<span class="badge bg-danger">${key}</span>`;
+        case 'UNKNOWN':
+            return `<span class="badge bg-warning">${key}</span>`;
+        case 'STARTING':
+        case 'STARTED':
+        case 'NOOP':
+        case 'EXECUTING':
+            return `<span class="badge bg-primary">${key}</span>`;
+        default:
+            return `<span class="badge bg-secondary">${key}</span>`;
+    }
+}
+
 function exitMessageFormatter(message) {
     if (!message) {
         return "";
@@ -93,30 +116,4 @@ function exitMessageFunction(element) {
     const value = $(element).attr('data-content');
     $('#exitMessageModal code').text(value);
     $('#exitMessageModal').modal('show');
-}
-
-function statusFormatter(arg) {
-    if (!arg) {
-        return '';
-    }
-    let bg = mapping(arg);
-    return `<span class="badge ${bg}">${arg}</span>`;
-}
-
-function mapping(code) {
-    switch (code) {
-        case 'COMPLETED':
-            return 'bg-success';
-        case 'FAILED':
-            return 'bg-danger';
-        case 'UNKNOWN':
-            return 'bg-warning';
-        case 'STARTING':
-        case 'STARTED':
-        case 'NOOP':
-        case 'EXECUTING':
-            return 'bg-primary';
-        default:
-            return 'bg-secondary';
-    }
 }
