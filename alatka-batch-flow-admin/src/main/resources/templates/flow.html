@@ -166,7 +166,7 @@
                         <div class="col-md-12 mb-3">
                             <label for="deployKey" class="form-label">流程</label>
                             <select class="form-select" multiple id="deployKey" name="key"
-                                    aria-describedby="deployKeyDesc">
+                                    aria-describedby="deployKeyDesc" required>
                             </select>
                             <div id="deployKeyDesc" class="form-text">
                                 可部署多个流程
@@ -230,7 +230,7 @@
             const $deployForm = $('#deployForm');
             if (!$deployForm[0].checkValidity()) {
                 $deployForm.addClass('was-validated');
-                if ($deployForm[0].checkValidity()) {
+                if ($deployKey[0].checkValidity()) {
                     $(tomSelect.wrapper).removeClass('is-invalid').addClass('is-valid');
                 } else {
                     $(tomSelect.wrapper).removeClass('is-valid').addClass('is-invalid');
@@ -242,7 +242,7 @@
             formData['uris'] = $('#deployUris').val().split(",").map(item => item.trim());
             formData['flowIdList'] = tomSelect.getValue();
             httpClient('/batch/flow/deploy', 'POST', formData, function (data) {
-                showSuccessToast('部署成功！');
+                showInfoToast(JSON.stringify(data, null, 2));
                 $('#deployModal').modal('hide');
                 refresh();
             });
@@ -265,7 +265,6 @@
             }));
 
             tomSelect.addOptions(newOptions);
-            tomSelect.refreshOptions(false);
 
             $('#deployPath').val('');
             $('#deployUris').val('');

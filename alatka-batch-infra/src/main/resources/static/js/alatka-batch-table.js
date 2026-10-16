@@ -146,7 +146,7 @@ function showEditModal(url, created) {
     } else {
         const selection = $('#dataTable').bootstrapTable('getSelections');
         if (selection.length !== 1) {
-            showWarningToast("请选择一条记录进行编辑");
+            showWarningToast("请选择一条记录");
             return;
         }
 
