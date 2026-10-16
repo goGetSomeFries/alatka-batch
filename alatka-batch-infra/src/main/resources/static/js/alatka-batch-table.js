@@ -243,6 +243,7 @@ function initEnabledSelect() {
     $(".alk-select-enabled").each(function () {
         let tomSelect = new TomSelect(this, {
             plugins: ['remove_button'],
+            placeholder: '选择状态',
             options: [{value: 'true', text: '正常'}, {value: 'false', text: '禁用'}],
             items: ['true'],
             render: {
