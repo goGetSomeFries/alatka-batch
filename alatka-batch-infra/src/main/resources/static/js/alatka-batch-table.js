@@ -57,6 +57,10 @@ function initTable() {
         onLoadError: function (status) {
             showErrorToast(`接口请求失败, http code: ${status}`);
         },
+        iconSize: 'sm',
+        buttonsClass: 'sm',
+        buttons: buttonsFunction,
+        buttonsOrder: buttonsOrderFunction(),
 
         queryParams: function (params) {
             const formData = new FormData($('#searchForm')[0]);
@@ -69,6 +73,24 @@ function initTable() {
                     searchData[key].push(value);
                 } else if (value) {
                     searchData[key] = value;
+                }
+            });
+
+            $('#searchForm').find('select').each(function () {
+                if (this.tomselect) {
+                    const fieldName = $(this).attr('name');
+                    const tsVal = this.tomselect.getValue();
+
+                    if (fieldName) {
+                        if (Array.isArray(tsVal)) {
+                            if (tsVal.length) searchData[fieldName] = tsVal;
+                            else delete searchData[fieldName];
+                        } else if (tsVal !== null && tsVal !== undefined && tsVal !== '') {
+                            searchData[fieldName] = tsVal;
+                        } else {
+                            delete searchData[fieldName];
+                        }
+                    }
                 }
             });
 
@@ -97,74 +119,86 @@ function initTable() {
     })
 }
 
+function buttonsFunction() {
+    return {};
+}
+
+function buttonsOrderFunction() {
+    return ['addBtn', 'editBtn', 'deleteBtn', 'columns'];
+}
+
 function showEditModal(url, created) {
+    const $form = $('#editForm');
+    const $modal = $('#editModal');
+    const formEl = $form[0];
     if (created) {
-        $('#editForm')[0]?.reset();
-        $('#editForm input[type="hidden"]').val('');
-        $('#editForm').find('select').each(function () {
-            if (this.tomselect) {
-                this.tomselect.clear();
-                const initValue = $(this).data('alk-init-value');
-                if (initValue) {
-                    this.tomselect.setValue(initValue);
-                }
+        formEl?.reset();
+        $form.find('input[type="hidden"]').val('');
+        $form.find('select').each(function () {
+            if (!this.tomselect) return;
+            this.tomselect.clear();
+
+            const initValue = $(this).data('alk-init-value');
+            if (initValue !== undefined && initValue !== null && initValue !== '') {
+                this.tomselect.setValue(initValue);
             }
         });
     } else {
         const selection = $('#dataTable').bootstrapTable('getSelections');
         if (selection.length !== 1) {
-            showWarningToast("请选择一条记录进行编辑");
+            showWarningToast("请选择一条记录");
             return;
         }
 
         const row = selection[0];
         Object.keys(row).forEach(field => {
-            const $input = $(`#editForm [name="${field}"]`);
-            if ($input.length) {
-                let value = row[field];
-                if (typeof value === 'boolean') {
-                    value = value ? 'true' : 'false';
-                }
-                if ($input[0].tomselect) {
-                    $input[0].tomselect.setValue(value);
-                } else {
-                    $input.val(value);
-                }
+            const $field = $form.find(`[name="${field}"]`);
+            if (!$field.length) return;
+
+            let value = row[field];
+
+            if (typeof value === 'boolean') {
+                value = value ? 'true' : 'false';
+            }
+            if (value === null || value === undefined) {
+                value = '';
+            }
+            if ($field[0].tomselect) {
+                $field[0].tomselect.setValue(value);
+            } else {
+                $field.val(value);
             }
         });
     }
-
-    $('#editForm').removeClass('was-validated');
-    $('#editForm').find('select').each(function () {
+    $form.removeClass('was-validated');
+    $form.find('select').each(function () {
         if (this.tomselect) {
             $(this.tomselect.wrapper).removeClass('is-invalid is-valid');
         }
     });
 
-    $('#editModal').modal('show');
+    $modal.modal('show');
     $('#saveEditBtn').off('click').on('click', function (event) {
-        const formData = {};
-        const $editForm = $('#editForm');
-        if (!$editForm[0].checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-            $editForm.addClass('was-validated');
-            $editForm.find('select').each(function () {
-                if (this.tomselect) {
-                    if (this.checkValidity()) {
-                        $(this.tomselect.wrapper).removeClass('is-invalid').addClass('is-valid');
-                    } else {
-                        $(this.tomselect.wrapper).removeClass('is-valid').addClass('is-invalid');
-                    }
+        event.preventDefault();
+        event.stopPropagation();
+        if (!formEl.checkValidity()) {
+            $form.addClass('was-validated');
+            $form.find('select').each(function () {
+                if (!this.tomselect) return;
+                if (this.checkValidity()) {
+                    $(this.tomselect.wrapper).removeClass('is-invalid').addClass('is-valid');
+                } else {
+                    $(this.tomselect.wrapper).removeClass('is-valid').addClass('is-invalid');
                 }
             });
-        } else {
-            $editForm.serializeArray().forEach(item => {
-                formData[item.name] = item.value === '' ? null : item.value;
-            });
-            submitFunction(url, created ? 'POST' : 'PUT', formData, created ? '新增' : '更新');
-            $('#editModal').modal('hide');
+            return;
         }
+        const formData = {};
+        $form.serializeArray().forEach(item => {
+            formData[item.name] = item.value === '' ? null : item.value;
+        });
+        submitFunction(url, created ? 'POST' : 'PUT', formData, created ? '新增' : '更新');
+        $modal.modal('hide');
     });
 }
 
@@ -209,6 +243,7 @@ function initEnabledSelect() {
     $(".alk-select-enabled").each(function () {
         let tomSelect = new TomSelect(this, {
             plugins: ['remove_button'],
+            placeholder: '选择状态',
             options: [{value: 'true', text: '正常'}, {value: 'false', text: '禁用'}],
             items: ['true'],
             render: {
