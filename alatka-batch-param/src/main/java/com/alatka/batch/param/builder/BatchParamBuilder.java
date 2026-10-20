@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -55,6 +56,7 @@ public class BatchParamBuilder {
     private String formatValue(String value) {
         PropertyConverter propertyConverter = ApplicationContextUtil.getBeansOfType(PropertyConverter.class).values()
                 .stream()
+                .sorted(Comparator.comparing(PropertyConverter::order))
                 .filter(bean -> bean.matched(value))
                 .findFirst()
                 .orElseGet(() -> ApplicationContextUtil.getBean(FallbackPropertyConverter.class));

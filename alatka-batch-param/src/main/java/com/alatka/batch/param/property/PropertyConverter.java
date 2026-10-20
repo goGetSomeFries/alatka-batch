@@ -10,4 +10,6 @@ public interface PropertyConverter {
 
     String convert(String value);
 
+    int order();
+
 }
