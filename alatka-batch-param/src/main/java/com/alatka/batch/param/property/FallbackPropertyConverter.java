@@ -14,4 +14,9 @@ public class FallbackPropertyConverter implements PropertyConverter {
     public String convert(String value) {
         return value;
     }
+
+    @Override
+    public int order() {
+        return Integer.MAX_VALUE;
+    }
 }
