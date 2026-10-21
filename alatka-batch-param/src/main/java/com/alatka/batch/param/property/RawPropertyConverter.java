@@ -14,4 +14,9 @@ public class RawPropertyConverter implements PropertyConverter {
     public String convert(String value) {
         return value;
     }
+
+    @Override
+    public int order() {
+        return 20;
+    }
 }
