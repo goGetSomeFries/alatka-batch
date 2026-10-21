@@ -16,7 +16,7 @@ Step、Flow、Split 与 Decider 自动构建为可动态加载的 Job，让复�
     - 异常堆栈查看与数据读写/跳过/重试指标统计
 - **alatka-batch-param & alatka-batch-param-admin**
     - 提供动态参数的定义、默认值注入
-    - 支持全局参数与 Job 级参数
+    - 支持 Group 级参数与 Job 级参数
 
 ### 项目结构
 
@@ -40,7 +40,8 @@ Step、Flow、Split 与 Decider 自动构建为可动态加载的 Job，让复�
 
 | alatka-batch | alatka-dependencies       | alatka                    |
 |--------------|---------------------------|---------------------------|
-| 0.9.0-jdk17  | 1.81.0-jdk17              | 1.81.0-jdk17              |
+| 0.10.0-jdk17 | 1.83.0-jdk17              | 1.83.0-jdk17              |
+| 0.9.0-jdk17  | 1.81.0-jdk17-1.82.0-jdk17 | 1.81.0-jdk17-1.82.0-jdk17 |
 | 0.8.0-jdk17  | 1.80.0-jdk17              | 1.80.0-jdk17              |
 | 0.7.0-jdk17  | 1.79.0-jdk17              | 1.79.0-jdk17              |
 | 0.6.0-jdk17  | 1.78.0-jdk17              | 1.78.0-jdk17              |
