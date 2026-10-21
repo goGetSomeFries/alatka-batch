@@ -15,4 +15,9 @@ public abstract class VariablePropertyConverter implements PropertyConverter {
     private String formatProperty(String value) {
         return value.substring(PropertyConverter.PREFIX.length(), value.length() - PropertyConverter.SUFFIX.length());
     }
+
+    @Override
+    public int order() {
+        return 10;
+    }
 }
