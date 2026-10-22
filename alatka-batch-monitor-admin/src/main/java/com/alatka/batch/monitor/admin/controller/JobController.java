@@ -2,6 +2,7 @@ package com.alatka.batch.monitor.admin.controller;
 
 import com.alatka.batch.infra.model.PageResMessage;
 import com.alatka.batch.infra.model.ResMessage;
+import com.alatka.batch.monitor.admin.model.JobActionReq;
 import com.alatka.batch.monitor.admin.model.JobExecutionPageReq;
 import com.alatka.batch.monitor.admin.model.JobExecutionParamsRes;
 import com.alatka.batch.monitor.admin.model.JobExecutionRes;
@@ -70,6 +71,12 @@ public class JobController {
     @GetMapping("/exitCode/list")
     public ResMessage<List<String>> exitCodeList() {
         return ResMessage.success(jobExecutionService.exitCodeList());
+    }
+
+    @Operation(summary = "重启、停止、放弃")
+    @PostMapping("/action")
+    public ResMessage<Void> action(@RequestBody JobActionReq req) {
+        return ResMessage.success(() -> jobExecutionService.action(req));
     }
 
     @Autowired
