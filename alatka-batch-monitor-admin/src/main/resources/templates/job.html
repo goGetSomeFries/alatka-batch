@@ -90,7 +90,10 @@
            data-maintain-selected="true">
         <thead>
         <tr>
-            <th data-field="jobExecutionId" data-align="right" data-visible="false" data-sortable="true">jobExecutionId</th>
+            <th data-radio="true"></th>
+            <th data-field="jobExecutionId" data-align="right" data-visible="false" data-sortable="true">
+                jobExecutionId
+            </th>
             <th data-field="version" data-align="right" data-visible="false">version</th>
             <th data-field="jobInstanceId" data-align="right" data-visible="false">jobInstanceId</th>
             <th data-field="createTime" data-align="center" data-sortable="true">createTime</th>
@@ -114,6 +117,41 @@
             </div>
             <div class="modal-body">
                 <pre class="ms-1 me-auto"><code class="language-java"></code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="actionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Job</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="actionForm">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="actionJobExecutionId" class="form-label">jobExecutionId</label>
+                            <input type="text" class="form-control" id="actionJobExecutionId" name="jobExecutionId"
+                                   disabled>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="actionEndpoint" class="form-label">endpoint</label>
+                            <input type="text" class="form-control" id="actionEndpoint" name="endpoint"
+                                   aria-describedby="actionEndpointDesc" required>
+                            <div id="buildUrisDesc" class="form-text">
+                                例如：192.x.xx.xx:8000
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="saveActionBtn">确认</button>
             </div>
         </div>
     </div>
@@ -237,6 +275,80 @@
         });
     }
 
+    function showActionModal(action) {
+        const selections = $('#dataTable').bootstrapTable('getSelections');
+        if (selections.length !== 1) {
+            showWarningToast("请选择一条记录");
+            return;
+        }
+
+        let $actionModal = $('#actionModal');
+        $actionModal.find('.modal-title').text(`${action} Job`);
+
+        const jobExecutionId = selections.map(row => row.jobExecutionId)[0];
+        $actionModal.find('#actionJobExecutionId').val(jobExecutionId);
+
+        let $actionForm = $('#actionForm');
+        $actionForm.removeClass('was-validated');
+
+        $actionModal.modal('show');
+        $('#saveActionBtn').off('click').on('click', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            if (!$actionForm[0].checkValidity()) {
+                $actionForm.addClass('was-validated');
+                return;
+            }
+            const formData = {};
+            formData['jobExecutionId'] = jobExecutionId;
+            formData['actionCode'] = action.toLowerCase();
+            formData['endpoint'] = $("#actionEndpoint").val();
+            submitFunction(`/batch/monitor/job/action`, 'POST', formData, `${action} `);
+            $actionModal.modal('hide');
+        });
+    }
+
+    function buttonsFunction() {
+        return {
+            restartBtn: {
+                text: 'Restart',
+                icon: 'bi-arrow-clockwise',
+                attributes: {
+                    title: '重启',
+                    class: 'btn btn-outline-primary'
+                },
+                event: function () {
+                    showActionModal('Restart');
+                }
+            },
+            abandonBtn: {
+                text: 'Abandon',
+                icon: 'bi-x-octagon-fill',
+                attributes: {
+                    title: '放弃',
+                    class: 'btn btn-outline-secondary'
+                },
+                event: function () {
+                    showActionModal('Abandon');
+                }
+            },
+            stopBtn: {
+                text: 'Stop',
+                icon: 'bi-stop-fill',
+                attributes: {
+                    title: '停止',
+                    class: 'btn btn-outline-warning me-3'
+                },
+                event: function () {
+                    showActionModal('Stop');
+                }
+            }
+        }
+    }
+
+    function buttonsOrderFunction() {
+        return ['restartBtn', 'abandonBtn', 'stopBtn', 'columns'];
+    }
 </script>
 </body>
 </html>
