@@ -39,8 +39,9 @@ public class ControllerExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResMessage<Void> handleException(Exception e) {
-        logger.error(e.getMessage(), e);
-        return ResMessage.error(e.getMessage());
+        String message = e.getMessage();
+        logger.error(message, e);
+        return ResMessage.error(message.split("\\R", 2)[0]);
     }
 
 }
