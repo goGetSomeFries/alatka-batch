@@ -14,6 +14,7 @@ Step、Flow、Split 与 Decider 自动构建为可动态加载的 Job，让复�
     - 跑批结果监控，支持子 Job（JobStep）嵌套查询
     - 高亮展示 Job/Step 的运行状态、执行节点信息
     - 异常堆栈查看与数据读写/跳过/重试指标统计
+    - 批处理执行、重启、停止
 - **alatka-batch-param & alatka-batch-param-admin**
     - 提供动态参数的定义、默认值注入
     - 支持 Group 级参数与 Job 级参数
@@ -37,6 +38,7 @@ Step、Flow、Split 与 Decider 自动构建为可动态加载的 Job，让复�
 
 | alatka-batch | alatka-dependencies | alatka        |
 |--------------|---------------------|---------------|
+| 0.11.0       | 1.84.0              | 1.84.0        |
 | 0.10.0       | 1.83.0              | 1.83.0        |
 | 0.9.0        | 1.81.0-1.82.0       | 1.81.0-1.82.0 |
 | 0.8.0        | 1.80.0              | 1.80.0        |
