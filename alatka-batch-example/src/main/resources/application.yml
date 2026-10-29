@@ -23,3 +23,5 @@ alatka:
     monitor:
       subJobPlugin:
         enabled: true
+      operatorController:
+        enabled: true
