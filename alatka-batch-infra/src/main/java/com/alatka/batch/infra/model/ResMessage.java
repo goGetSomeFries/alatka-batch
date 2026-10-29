@@ -23,6 +23,10 @@ public class ResMessage<T> {
         this.msg = msg;
     }
 
+    public boolean isSuccess() {
+        return "0000".equals(code);
+    }
+
     public static ResMessage<Void> success(Executor executor) {
         executor.execute();
         return new ResMessage<>("0000", null, "success");
