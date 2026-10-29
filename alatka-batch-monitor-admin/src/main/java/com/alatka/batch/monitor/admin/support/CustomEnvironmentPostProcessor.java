@@ -6,14 +6,17 @@ import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CustomEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        environment.getPropertySources().addLast(
-                new MapPropertySource("alatka.batch.monitor", Collections.singletonMap(AutoConfiguration.SUB_JOB_PLUGIN_ENABLED, false))
-        );
+        Map<String, Object> source = new HashMap<>();
+        source.put(AutoConfiguration.SUB_JOB_PLUGIN_ENABLED, false);
+        source.put(AutoConfiguration.OPERATOR_CONTROLLER_ENABLED, false);
+
+        environment.getPropertySources().addLast(new MapPropertySource("alatka.batch.monitor", source));
     }
 }
