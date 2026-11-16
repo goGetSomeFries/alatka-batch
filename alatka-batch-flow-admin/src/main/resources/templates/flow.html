@@ -313,7 +313,7 @@
         if (key === 'default_') {
             return `<span class="badge bg-secondary">默认组</span>`;
         }
-        let mapping = JSON.parse(sessionStorage.getItem('alatka.batch.flow.groupKeyMapping') || {});
+        let mapping = JSON.parse(sessionStorage.getItem('alatka.batch.flow.groupKeyMapping') || '{}');
         return `<span class="badge bg-primary">${mapping[key] || key}</span>`;
     }
 
