@@ -55,7 +55,7 @@ Step、Flow、Split 与 Decider 自动构建为可动态加载的 Job，让复�
 
 ### [ :point_right: 访问wiki查看更多教程](https://gitee.com/asuka2001/alatka-batch/wikis)
 
-### [ :point_right: 一键快速试用](https://gitee.com/asuka2001/alatka-batch/wikis/%E3%80%87%E3%80%81%E4%B8%80%E9%94%AE%E8%AF%95%E7%94%A8)
+### [ :point_right: 点击我一键快速试用](https://gitee.com/asuka2001/alatka-batch/wikis/%E4%B8%80%E3%80%81%E4%B8%80%E9%94%AE%E8%AF%95%E7%94%A8)
 
 ### github地址
 
